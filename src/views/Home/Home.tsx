@@ -1,12 +1,13 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring, type MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useReducedMotion, type MotionValue } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import styles from './Home.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import ScreenshotFrame from '../../components/ScreenshotFrame/ScreenshotFrame';
 
 const SHIPPED_PROJECTS = [
   'Sanad', 'Focuscare', 'Charge Pulse', 'DSV Fleet', 'Factory OS',
@@ -15,6 +16,7 @@ const SHIPPED_PROJECTS = [
 ];
 
 const Marquee = () => {
+  const reduce = useReducedMotion();
   // Two copies for seamless loop. Each item is a real shipped project.
   const items = [...SHIPPED_PROJECTS, ...SHIPPED_PROJECTS];
 
@@ -23,8 +25,8 @@ const Marquee = () => {
       <span className={styles.marqueeLabel} aria-hidden="true">Recently shipped /</span>
       <motion.div
         className={styles.marqueeContent}
-        animate={{ x: [0, '-50%'] }}
-        transition={{ repeat: Infinity, duration: 45, ease: 'linear' }}
+        animate={reduce ? undefined : { x: [0, '-50%'] }}
+        transition={reduce ? undefined : { repeat: Infinity, duration: 45, ease: 'linear' }}
       >
         {items.map((name, i) => (
           <span key={i} className={styles.marqueeItem}>
@@ -70,17 +72,120 @@ const Hero = () => {
   );
 };
 
+/* Flagship product plate — the hero's visual payoff. A single framed real
+   product screenshot floating in negative space with one restrained floor-glow. */
+const FlagshipPlate = () => (
+  <section className={styles.flagshipSection}>
+    <div className={styles.flagshipGlow} aria-hidden="true" />
+    <div className={styles.flagshipInner}>
+      <ScreenshotFrame
+        src="/projects/charge-pulse/hero.png"
+        alt="ChargePulse — live EV charging network map with nearby-station availability panel"
+        routeLabel="network-map"
+        aspect="16 / 10"
+        bottomFade
+        priority
+        sizes="(max-width: 768px) 100vw, 1040px"
+      />
+    </div>
+  </section>
+);
+
+type Work = {
+  id: string; src: string; route: string; name: string; blurb: string; tag: string; alt: string; feature?: boolean;
+};
+
+const SELECTED_WORK: Work[] = [
+  {
+    id: 'sanad', src: '/projects/sanad/dashboard.png', route: 'clinical-notes',
+    name: 'Sanad', blurb: 'Citation-linked SOAP notes, written in the room.', tag: 'Healthcare',
+    alt: 'Sanad Clinical Notes — clinician dashboard with encounters, drafts awaiting review and average note time', feature: true,
+  },
+  {
+    id: 'grospace', src: '/projects/grospace/dashboard.png', route: 'deal-pipeline',
+    name: 'Grospace', blurb: 'AI lease extraction + deal pipeline for commercial real estate.', tag: 'Real Estate',
+    alt: 'Grospace — commercial real-estate deal pipeline across sourcing, LOI, diligence and closed stages',
+  },
+  {
+    id: 'sales-call-coach', src: '/projects/sales-call-coach/dashboard.png', route: 'rep-scorecard',
+    name: 'CallCoach', blurb: 'AI-scored rep scorecards and coaching clips.', tag: 'Sales',
+    alt: 'CallCoach — sales rep scorecard with performance trend chart and team benchmarks',
+  },
+];
+
+const BentoTile = ({ item, index }: { item: Work; index: number }) => {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      className={`${styles.bentoTile} ${item.feature ? styles.bentoFeature : ''}`}
+      initial={reduce ? false : { opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-10% 0px' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: reduce ? 0 : index * 0.08 }}
+    >
+      <Link href={`/product/${item.id}`} className={styles.bentoLink}>
+        <ScreenshotFrame
+          src={item.src}
+          alt={item.alt}
+          routeLabel={item.route}
+          fill={item.feature}
+          aspect={item.feature ? undefined : '16 / 10'}
+          sizes={item.feature ? '(max-width: 1024px) 100vw, 620px' : '(max-width: 1024px) 100vw, 400px'}
+          className={styles.bentoFrame}
+        />
+        <div className={styles.bentoCaption}>
+          <div className={styles.bentoCaptionText}>
+            <h3 className={styles.bentoName}>{item.name}</h3>
+            <p className={styles.bentoBlurb}>{item.blurb}</p>
+          </div>
+          <div className={styles.bentoMeta}>
+            <span className={styles.bentoStatus}>
+              <span className={styles.bentoDot} aria-hidden="true" />
+              Shipped
+            </span>
+            <span className={styles.bentoTag}>{item.tag}</span>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
+
+const SelectedWork = () => (
+  <section className={styles.selectedSection}>
+    <div className={styles.selectedInner}>
+      <div className={styles.selectedHeader}>
+        <div>
+          <span className={styles.selectedEyebrow}>Selected work</span>
+          <h2 className={styles.selectedTitle}>Shipped, not slideware.</h2>
+        </div>
+        <Link href="/portfolio" className={styles.selectedLink}>
+          View all work
+          <ArrowUpRight size={14} />
+        </Link>
+      </div>
+      <div className={styles.bentoGrid}>
+        {SELECTED_WORK.map((item, i) => (
+          <BentoTile key={item.id} item={item} index={i} />
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
 const ScrubWord = ({ word, progress, start, end }: { word: string; progress: MotionValue<number>; start: number; end: number; }) => {
+  const reduce = useReducedMotion();
   const opacity = useTransform(progress, [start, end], [0.12, 1]);
   const y = useTransform(progress, [start, end], [16, 0]);
   return (
-    <motion.span className={styles.introWord} style={{ opacity, y }}>
+    <motion.span className={styles.introWord} style={reduce ? undefined : { opacity, y }}>
       {word}
     </motion.span>
   );
 };
 
 const IntroSection = () => {
+  const reduce = useReducedMotion();
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -105,8 +210,8 @@ const IntroSection = () => {
             return <ScrubWord key={i} word={w} progress={scrollYProgress} start={t0} end={t1} />;
           })}
         </h2>
-        <motion.p style={{ opacity: subtextOpacity, y: subtextY }} className={styles.introSubtext}>
-          BuildspaceLabs is redefining how complex technical products are built. We combine deep AI expertise with rapid product development, delivering production-ready, world-class software that you can be proud of. We&apos;re not just a vendor; we&apos;re your technical co-founders.
+        <motion.p style={reduce ? undefined : { opacity: subtextOpacity, y: subtextY }} className={styles.introSubtext}>
+          BuildspaceLabs pairs deep AI expertise with rapid product development to ship production-ready software you can be proud of — not a vendor, but the technical team behind the build.
         </motion.p>
       </div>
     </section>
@@ -116,6 +221,7 @@ const IntroSection = () => {
 type ValueProp = { number: string; title: string; desc: string };
 
 const ValueCard = ({ prop }: { prop: ValueProp }) => {
+  const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -128,8 +234,8 @@ const ValueCard = ({ prop }: { prop: ValueProp }) => {
   const numberOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.18]);
 
   return (
-    <motion.article ref={ref} className={styles.valueCard} style={{ opacity, y }}>
-      <motion.span className={styles.valueNumber} style={{ y: numberY, opacity: numberOpacity }}>
+    <motion.article ref={ref} className={styles.valueCard} style={reduce ? undefined : { opacity, y }}>
+      <motion.span className={styles.valueNumber} style={reduce ? undefined : { y: numberY, opacity: numberOpacity }}>
         {prop.number}
       </motion.span>
       <div className={styles.valueCardBody}>
@@ -141,6 +247,7 @@ const ValueCard = ({ prop }: { prop: ValueProp }) => {
 };
 
 const ValuePropsSection = ({ valueProps }: { valueProps: ValueProp[] }) => {
+  const reduce = useReducedMotion();
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -154,11 +261,11 @@ const ValuePropsSection = ({ valueProps }: { valueProps: ValueProp[] }) => {
     <section ref={ref} className={styles.valuePropsSection}>
       <div className={styles.valuePropsSplit}>
         <div className={styles.valuePropsStickyLeft}>
-          <motion.span style={{ y: eyebrowY }} className={styles.valueSectionEyebrow}>Why teams pick us</motion.span>
-          <motion.h2 style={{ y: titleY }} className={styles.valuePropsTitle}>
+          <motion.span style={reduce ? undefined : { y: eyebrowY }} className={styles.valueSectionEyebrow}>Why teams pick us</motion.span>
+          <motion.h2 style={reduce ? undefined : { y: titleY }} className={styles.valuePropsTitle}>
             Four reasons<br />people sign with us.
           </motion.h2>
-          <motion.p style={{ y: subtitleY }} className={styles.valueSectionSubtext}>
+          <motion.p style={reduce ? undefined : { y: subtitleY }} className={styles.valueSectionSubtext}>
             Plain talk — what makes the work different when BuildspaceLabs is the team behind it.
           </motion.p>
         </div>
@@ -174,6 +281,7 @@ const ValuePropsSection = ({ valueProps }: { valueProps: ValueProp[] }) => {
 };
 
 const CTASection = () => {
+  const reduce = useReducedMotion();
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -190,13 +298,13 @@ const CTASection = () => {
     <section ref={ref} className={styles.ctaSection}>
       <div className={styles.ctaGrid} aria-hidden="true" />
       <div className={styles.ctaInner}>
-        <motion.h2 className={styles.ctaHeading} style={{ y: headingY, opacity: headingOpacity }}>
+        <motion.h2 className={styles.ctaHeading} style={reduce ? undefined : { y: headingY, opacity: headingOpacity }}>
           Ready when you are.
         </motion.h2>
-        <motion.p className={styles.ctaSubtext} style={{ y: subtextY, opacity: subtextOpacity }}>
+        <motion.p className={styles.ctaSubtext} style={reduce ? undefined : { y: subtextY, opacity: subtextOpacity }}>
           If you want the cheapest agency, we&apos;re not it. If you want a senior team that ships AI products your users actually pick up — that&apos;s exactly what we do.
         </motion.p>
-        <motion.div className={styles.ctaActions} style={{ y: buttonsY, opacity: buttonsOpacity }}>
+        <motion.div className={styles.ctaActions} style={reduce ? undefined : { y: buttonsY, opacity: buttonsOpacity }}>
           <Link href="/contact-us" className={styles.ctaPrimary}>
             Start a project
             <ArrowRight size={16} />
@@ -219,12 +327,15 @@ const HorizontalScrollCarousel = () => {
   // and viewport width at runtime so the math is responsive and correct.
   const [travel, setTravel] = useState(0);
   const [enabled, setEnabled] = useState(true);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     const measure = () => {
       const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      setEnabled(!isMobile);
-      if (isMobile) {
+      // Reduced motion → degrade the pinned horizontal scroll to a static stack.
+      const off = isMobile || reduce;
+      setEnabled(!off);
+      if (off) {
         setTravel(0);
         return;
       }
@@ -237,7 +348,7 @@ const HorizontalScrollCarousel = () => {
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, []);
+  }, [reduce]);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -269,7 +380,7 @@ const HorizontalScrollCarousel = () => {
     : { height: 'auto' };
 
   return (
-    <section ref={targetRef} className={styles.scrollCarouselContainer} style={sectionStyle}>
+    <section ref={targetRef} className={`${styles.scrollCarouselContainer} ${!enabled ? styles.staticStack : ''}`} style={sectionStyle}>
       <div className={styles.stickyContent}>
         <div className={styles.carouselHeader}>
           <span className={styles.carouselEyebrow}>Our Expertise</span>
@@ -324,7 +435,7 @@ export default function Home() {
     },
     {
       number: '04',
-      title: 'Speed without the smell',
+      title: 'Fast, without the shortcuts',
       desc: "Working prototypes in days, production systems in weeks. Velocity comes from sharp scope and small senior teams — not from cutting corners on the parts that matter.",
     },
   ];
@@ -339,6 +450,12 @@ export default function Home() {
 
         {/* Hero — static editorial */}
         <Hero />
+
+        {/* Flagship product plate — the hero's visual payoff */}
+        <FlagshipPlate />
+
+        {/* Selected work — framed real-screenshot bento */}
+        <SelectedWork />
 
         {/* Intro — scroll-scrubbed word reveal */}
         <IntroSection />

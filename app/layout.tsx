@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import '../src/styles/global.scss';
 import { JsonLd, organizationSchema, SITE_URL } from '@/lib/seo/jsonLd';
 
@@ -14,6 +14,13 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
   weight: ['400', '500', '600', '700'],
   variable: '--font-space-grotesk',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
@@ -92,7 +99,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="dark" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" data-theme="dark" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body>
         <JsonLd data={organizationSchema()} />
         {children}

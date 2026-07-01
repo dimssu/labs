@@ -60,7 +60,7 @@
 
 .eyebrow {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   color: $color-accent;
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
@@ -121,7 +121,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #6bcb77;
+  background: $color-status-live;
 }
 
 /* ── Channel chooser cards ───────────────────── */
@@ -166,7 +166,7 @@
 }
 
 .channelLabel {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -220,7 +220,7 @@
 .formStep {
   display: inline-flex;
   align-items: center;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.75rem;
   letter-spacing: 0.18em;
   color: $color-accent;
@@ -401,7 +401,7 @@
 }
 
 .fieldLabel {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.72rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;

@@ -1,0 +1,145 @@
+@import '../../styles/variables';
+
+.frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $color-border;
+  border-radius: 14px;
+  background: $color-surface;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Hairline top highlight — the light-catch of a real bezel. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+    z-index: 3;
+  }
+}
+
+/* Fill mode: the frame takes its height from the consumer's flex context
+   (e.g. flex: 1 inside a fixed-height bento tile) rather than a hard 100%,
+   so it can share the tile with a caption. On mobile the shot falls back to
+   an intrinsic aspect ratio (see .shotFill) so it never collapses. */
+.frameFill {
+  min-height: 0;
+}
+
+/* Flush inside a parent card: the card supplies the border/radius/clip, so the
+   frame drops its own so it doesn't read as a nested card. */
+.frameSeamless {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+  &::before { display: none; }
+}
+
+.titlebar {
+  position: relative;
+  flex-shrink: 0;
+  height: 36px;
+  background: #18181b;
+  border-bottom: 1px solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+
+  @media (max-width: 480px) {
+    height: 30px;
+  }
+}
+
+/* Right-side "menu" affordance so the titlebar reads as a real window, not a
+   half-drawn mock with an empty right third. Monochrome, matches the dots. */
+.menu {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+
+  i {
+    width: 14px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: #3f3f46;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 480px) {
+    i { width: 11px; }
+  }
+}
+
+.dots {
+  display: inline-flex;
+  gap: 8px;
+
+  i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3f3f46;
+    opacity: 0.5;
+
+    @media (max-width: 480px) {
+      width: 8px;
+      height: 8px;
+    }
+  }
+}
+
+.urlPill {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: $font-mono;
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  color: #52525b;
+  white-space: nowrap;
+
+  @media (max-width: 480px) {
+    font-size: 0.62rem;
+  }
+}
+
+.shot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: $color-surface;
+}
+
+.shotFill {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: auto;
+
+  @media (max-width: 1024px) {
+    flex: none;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+.img {
+  object-fit: cover;
+  object-position: top center;
+}
+
+.bottomFade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 16%;
+  background: linear-gradient(to bottom, transparent, $color-background);
+  z-index: 2;
+  pointer-events: none;
+}

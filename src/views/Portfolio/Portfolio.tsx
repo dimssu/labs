@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Activity, ExternalLink } from 'lucide-react';
 import styles from './Portfolio.module.scss';
+import ScreenshotFrame from '../../components/ScreenshotFrame/ScreenshotFrame';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
@@ -219,7 +219,7 @@ export default function Portfolio() {
                 <span className={styles.gradientText}>Real clients. In production.</span>
               </h1>
               <p className={styles.pageSubtitle}>
-                Each entry below was built for a paying customer and is in active use today. Click any card to read the deep-dive — architecture, decisions, what shipped.
+                Real products built for real teams — from client engagements to shipped MVPs. Click any card to read the deep-dive: architecture, decisions, what shipped.
               </p>
 
               <div className={styles.heroMeta}>
@@ -278,17 +278,14 @@ export default function Portfolio() {
                   >
                     {project.coverImage && (
                       <div className={styles.cardCover}>
-                        <Image
+                        <ScreenshotFrame
+                          seamless
                           src={project.coverImage}
                           alt={project.coverAlt ?? project.title}
-                          width={680}
-                          height={382}
+                          routeLabel={project.coverImage.split('/').pop()!.replace('.png', '')}
+                          aspect="16 / 10"
                           sizes="(max-width: 768px) 100vw, 360px"
-                          className={styles.cardCoverImage}
                         />
-                        {project.coverCaption && (
-                          <span className={styles.cardCoverCaption}>{project.coverCaption}</span>
-                        )}
                       </div>
                     )}
 

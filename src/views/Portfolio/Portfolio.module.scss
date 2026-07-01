@@ -48,7 +48,7 @@
 }
 
 .monoLabel {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   color: var(--color-accent);
   font-size: 0.9rem;
   display: block;
@@ -125,7 +125,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #6bcb77;
+  background: $color-status-live;
 }
 
 .heroMetaDivider {
@@ -293,8 +293,8 @@
   flex-shrink: 0;
 
   &.live {
-    background: rgba(39, 201, 63, 0.12);
-    color: #27c93f;
+    background: rgba(107, 203, 119, 0.12);
+    color: $color-status-live;
   }
 
   &.prototype {
@@ -404,45 +404,13 @@
   font-weight: 500;
 }
 
-/* ── Card cover image ─────────────────────── */
+/* ── Card cover (framed browser window, flush to the card's top edges) ── */
 .cardCover {
-  position: relative;
   margin: -2rem -2rem 1.5rem;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
   border-bottom: 1px solid $color-border;
-  background: $color-surface-hover;
+  overflow: hidden;
 
   @media (max-width: 480px) {
     margin: -1.5rem -1.5rem 1.25rem;
   }
-}
-
-.cardCoverImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top left;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  .card:hover & {
-    transform: scale(1.03);
-  }
-}
-
-.cardCoverCaption {
-  position: absolute;
-  left: 0.85rem;
-  bottom: 0.65rem;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  padding: 4px 9px;
-  border-radius: 999px;
-  letter-spacing: 0.02em;
 }

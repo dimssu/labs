@@ -2,7 +2,7 @@
 @import '../../styles/mixins';
 
 .logo {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+  font-family: $font-mono;
   font-size: 1.75rem;
   letter-spacing: -0.02em;
   display: inline-flex;

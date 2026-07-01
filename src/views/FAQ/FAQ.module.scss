@@ -52,7 +52,7 @@
 
 .eyebrow {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   color: $color-accent;
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
@@ -201,7 +201,7 @@
 }
 
 .jumpCount {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.72rem;
   color: $color-text-muted;
   padding: 1px 6px;
@@ -210,7 +210,7 @@
 }
 
 .searchSummary {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.85rem;
   color: $color-text-muted;
   margin: 0;
@@ -272,7 +272,7 @@
 
 .categoryNumber {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   color: $color-accent;
@@ -303,7 +303,7 @@
 }
 
 .categoryCount {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.78rem;
   color: $color-text-muted;
   letter-spacing: 0.06em;
@@ -333,7 +333,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.95rem;
   color: $color-text-primary;
   text-decoration: none;
@@ -418,7 +418,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   font-size: 0.95rem;
   color: $color-text-primary;
   text-decoration: none;

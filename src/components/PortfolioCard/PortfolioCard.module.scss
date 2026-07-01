@@ -45,8 +45,8 @@
   letter-spacing: 0.05em;
 
   &.live {
-    background: rgba(39, 201, 63, 0.15);
-    color: #27c93f;
+    background: rgba(107, 203, 119, 0.15);
+    color: $color-status-live;
   }
 
   &.prototype {

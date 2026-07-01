@@ -12,11 +12,12 @@
   --color-text-secondary: #A1A1AA;
   --color-text-muted: #71717A;
 
-  --color-accent: #3b82f6; 
+  --color-accent: #3b82f6;
   --color-accent-hover: #2563eb;
   --color-badge-bg: rgba(59, 130, 246, 0.15);
   --color-badge-text: #60a5fa;
-  
+  --color-status-live: #6bcb77; /* semantic "shipped / in production" status */
+
   --color-header-bg: rgba(9, 9, 11, 0.85); /* Transparent dark for sticky navbar */
 }
 
@@ -36,7 +37,8 @@
   --color-accent-hover: #2563eb;
   --color-badge-bg: rgba(59, 130, 246, 0.1);
   --color-badge-text: #2563eb;
-  
+  --color-status-live: #6bcb77;
+
   --color-header-bg: rgba(248, 250, 252, 0.85); /* Transparent light for sticky navbar */
 }
 

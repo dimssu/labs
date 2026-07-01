@@ -46,7 +46,7 @@
 }
 
 .monoLabel {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: $font-mono;
   color: $color-accent;
   font-size: 0.9rem;
   display: block;
