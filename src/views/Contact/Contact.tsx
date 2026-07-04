@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import Reveal from '../../components/Reveal';
+import Parallax from '../../components/Parallax';
 import Image from 'next/image';
 import { ArrowRight, Check } from 'lucide-react';
 import styles from './Contact.module.scss';
@@ -173,23 +174,30 @@ export default function Contact() {
       <Header />
       <main className={styles.main}>
         <section className={styles.section} aria-labelledby="contact-title">
+          <span className={styles.heroGlow} aria-hidden="true" />
           <div className={styles.shell}>
             {/* Masthead */}
-            <Reveal className={styles.masthead}>
-              <Eyebrow>New enquiry</Eyebrow>
-              <h1 id="contact-title" className={styles.title}>
-                Start a build.
-              </h1>
-              <p className={styles.lede}>
-                A senior builder replies, usually within a day. No SDRs, no
-                discovery-call gauntlet.
-              </p>
-            </Reveal>
+            <header className={styles.masthead}>
+              <Reveal delay={0.02}>
+                <Eyebrow>New enquiry</Eyebrow>
+              </Reveal>
+              <Reveal variant="blur" delay={0.08}>
+                <h1 id="contact-title" className={styles.title}>
+                  Start a build.
+                </h1>
+              </Reveal>
+              <Reveal delay={0.18}>
+                <p className={styles.lede}>
+                  A senior builder replies, usually within a day. No SDRs, no
+                  discovery-call gauntlet.
+                </p>
+              </Reveal>
+            </header>
 
             {/* Two-column body */}
             <div className={styles.split}>
               {/* Left — narrative + coordinates */}
-              <Reveal className={styles.info}>
+              <Reveal className={styles.info} delay={0.06}>
                 <p className={styles.narrative}>
                   Send the shape of what you are trying to ship — a product, a
                   drop-in module, or a technical call you are weighing. Every
@@ -205,7 +213,8 @@ export default function Contact() {
                   ))}
                 </dl>
 
-                <div className={styles.infoVisual}>
+                <Parallax amount={16} className={styles.infoVisual}>
+                  <span className={styles.infoVisualGrid} aria-hidden="true" />
                   <Image
                     src="/media/contact.webp"
                     alt="Send the shape of what you want to build and a senior builder ships it"
@@ -213,11 +222,11 @@ export default function Contact() {
                     sizes="(max-width: 900px) 92vw, 420px"
                     className={styles.infoImg}
                   />
-                </div>
+                </Parallax>
               </Reveal>
 
               {/* Right — the form */}
-              <Reveal className={styles.formCol} delay={0.08}>
+              <Reveal className={styles.formCol} delay={0.14}>
                 {/* aria-live region announces the in-place confirmation */}
                 <div aria-live="polite" className={styles.liveRegion}>
                   {receipt && (
@@ -374,6 +383,7 @@ export default function Contact() {
                         className={styles.submitBtn}
                         disabled={status === 'submitting'}
                       >
+                        <span className={styles.sheen} aria-hidden="true" />
                         <span>{status === 'submitting' ? 'Sending' : 'Send'}</span>
                         <ArrowRight size={18} aria-hidden="true" className={styles.submitArrow} />
                       </button>

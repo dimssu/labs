@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono';
 import '../src/styles/global.scss';
 import { JsonLd, organizationSchema, SITE_URL } from '@/lib/seo/jsonLd';
 import MotionProvider from '@/components/MotionProvider';
+import ScrollProgress from '@/components/ScrollProgress';
 
 // Statement face — a contemporary optical-size serif used ONLY for the hero H1
 // and section H2s. Reads as established/editorial (McKinsey / Stripe Press
@@ -112,7 +113,10 @@ export default function RootLayout({
       </head>
       <body>
         <JsonLd data={organizationSchema()} />
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <ScrollProgress />
+          {children}
+        </MotionProvider>
       </body>
     </html>
   );

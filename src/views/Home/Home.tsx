@@ -1,9 +1,10 @@
 'use client';
 
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import Reveal from '../../components/Reveal';
+import Parallax from '../../components/Parallax';
+import HeroVisual from '../../components/HeroVisual';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Home.module.scss';
@@ -143,13 +144,14 @@ const CADENCE = [
 function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
+      <span className={styles.heroGlow} aria-hidden="true" />
       <div className={styles.shell}>
         <div className={styles.heroGrid}>
           <div className={styles.heroText}>
             <Reveal delay={0.02}>
               <Eyebrow>AI-native product studio · a Vruoom company</Eyebrow>
             </Reveal>
-            <Reveal delay={0.1}>
+            <Reveal variant="blur" delay={0.08}>
               <h1 id="hero-title" className={styles.heroTitle}>
                 We design and ship production AI products.
               </h1>
@@ -164,7 +166,7 @@ function Hero() {
             <Reveal delay={0.26}>
               <div className={styles.heroActions}>
                 <Button href="/contact-us" variant="primary">Start a build</Button>
-                <Button href="/portfolio" variant="secondary">See the work</Button>
+                <Button href="/portfolio" variant="secondary" magnetic={false}>See the work</Button>
               </div>
             </Reveal>
             <Reveal delay={0.34}>
@@ -175,16 +177,7 @@ function Hero() {
           </div>
 
           <Reveal className={styles.heroVisual} variant="scale" delay={0.14}>
-            <div className={styles.heroVisualCard}>
-              <Image
-                src="/media/hero.webp"
-                alt="Design, engineering, and AI inputs assembled upward into one elevated, live production system"
-                fill
-                priority
-                sizes="(max-width: 940px) 92vw, 480px"
-                className={styles.heroVisualImg}
-              />
-            </div>
+            <HeroVisual alt="Design, engineering, and AI inputs assembled upward into one elevated, live production system" />
           </Reveal>
         </div>
       </div>
@@ -198,10 +191,10 @@ function ProofStrip() {
       <div className={styles.shell}>
         <div className={styles.proofRow}>
           {PROOF.map((p, i) => (
-            <Reveal key={p.label} className={styles.proofCell} delay={i * 0.1}>
-              <span className={styles.proofMedia}>
+            <Reveal key={p.label} className={styles.proofCell} delay={i * 0.08}>
+              <Parallax amount={10} className={styles.proofMedia}>
                 <Image src={p.img} alt={p.alt} fill sizes="96px" className={styles.proofImg} />
-              </span>
+              </Parallax>
               <CountUp end={p.end} suffix={p.suffix} className={cx(styles.proofValue, 'tnum')} />
               <span className={styles.proofLabel}>{p.label}</span>
               <span className={styles.proofSource}>{p.source}</span>
@@ -262,6 +255,7 @@ function Engagements() {
                     sizes="(max-width: 900px) 92vw, 380px"
                     className={styles.engImg}
                   />
+                  <span className={styles.engMediaGrid} aria-hidden="true" />
                 </span>
                 <span className={styles.engBody}>
                   <h3 className={styles.engTitle}>{e.title}</h3>
@@ -292,7 +286,7 @@ function Industries() {
         />
         <ul className={styles.indGrid}>
           {INDUSTRIES.map((ind, i) => (
-            <Reveal as="li" key={ind.name} className={styles.indCard} delay={i * 0.1}>
+            <Reveal as="li" key={ind.name} className={styles.indCard} delay={i * 0.08}>
               <span className={styles.indMedia}>
                 <Image src={ind.img} alt={ind.name} fill sizes="(max-width: 900px) 92vw, 300px" className={styles.indImg} />
               </span>
@@ -316,6 +310,9 @@ function WorkRow({ item, index }: { item: Work; index: number }) {
       <Link href={`/product/${item.id}`} className={styles.workLink} aria-label={`${item.title}, view project`}>
         <div className={styles.workText}>
           <div className={styles.workMeta}>
+            <span className={cx(styles.workIndex, 'tnum')} aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
             <span className={styles.workIndustry}>{item.industry}</span>
             <span className={styles.statusDot}>
               <span className={styles.dot} aria-hidden="true" />
@@ -331,7 +328,7 @@ function WorkRow({ item, index }: { item: Work; index: number }) {
             </svg>
           </span>
         </div>
-        <div className={styles.workShot}>
+        <Parallax amount={reversed ? 18 : -18} className={styles.workShot}>
           <ScreenshotFrame
             src={item.src}
             alt={item.alt}
@@ -339,7 +336,7 @@ function WorkRow({ item, index }: { item: Work; index: number }) {
             reveal={false}
             sizes="(max-width: 1024px) 92vw, 560px"
           />
-        </div>
+        </Parallax>
       </Link>
     </Reveal>
   );
@@ -439,7 +436,7 @@ function Operate() {
             title="Built for regulated, real-world data"
             standfirst="How we build for teams that carry compliance, security, and uptime obligations."
           />
-          <div className={styles.operateVisual}>
+          <Parallax amount={22} className={styles.operateVisual}>
             <Image
               src="/media/operate-infra.webp"
               alt="Protected data at the center of a shield, deployable across cloud, on-premise, and edge"
@@ -447,7 +444,7 @@ function Operate() {
               sizes="(max-width: 900px) 92vw, 460px"
               className={styles.operateImg}
             />
-          </div>
+          </Parallax>
         </div>
         <div className={styles.operateGrid}>
           <dl className={styles.operateList}>
@@ -483,32 +480,36 @@ function Close() {
   return (
     <section className={styles.close} aria-labelledby="close-title">
       <div className={styles.shell}>
-        <div className={styles.closeGrid}>
-          <div className={styles.closeMain}>
-            <Eyebrow>Start here</Eyebrow>
-            <h2 id="close-title" className={styles.closeTitle}>Have something to build?</h2>
-            <p className={styles.closeLede}>
-              Tell us what you are trying to ship. A senior builder reads it and
-              replies within one business day.
-            </p>
-            <Button href="/contact-us" variant="primary">Start a build</Button>
-          </div>
+        <Reveal variant="scale" className={styles.closePanel}>
+          <span className={styles.closeGrid2} aria-hidden="true" />
+          <span className={styles.closeGlow} aria-hidden="true" />
+          <div className={styles.closeInner}>
+            <div className={styles.closeMain}>
+              <Eyebrow>Start here</Eyebrow>
+              <h2 id="close-title" className={styles.closeTitle}>Have something to build?</h2>
+              <p className={styles.closeLede}>
+                Tell us what you are trying to ship. A senior builder reads it and
+                replies within one business day.
+              </p>
+              <Button href="/contact-us" variant="primary">Start a build</Button>
+            </div>
 
-          <dl className={styles.closeCoords}>
-            {[
-              { k: 'Director', v: <a href="mailto:aryan@vruoom.com" className={styles.coordLink}>aryan@vruoom.com</a> },
-              { k: 'CTO', v: <a href="mailto:priyanshu@vruoom.com" className={styles.coordLink}>priyanshu@vruoom.com</a> },
-              { k: 'Studio', v: 'India, working with teams worldwide' },
-              { k: 'Response', v: 'Within one business day' },
-              { k: 'Entity', v: 'BuildspaceLabs, a Vruoom company' },
-            ].map((row) => (
-              <div key={row.k} className={styles.coordRow}>
-                <dt className={styles.coordKey}>{row.k}</dt>
-                <dd className={styles.coordVal}>{row.v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+            <dl className={styles.closeCoords}>
+              {[
+                { k: 'Director', v: <a href="mailto:aryan@vruoom.com" className={styles.coordLink}>aryan@vruoom.com</a> },
+                { k: 'CTO', v: <a href="mailto:priyanshu@vruoom.com" className={styles.coordLink}>priyanshu@vruoom.com</a> },
+                { k: 'Studio', v: 'India, working with teams worldwide' },
+                { k: 'Response', v: 'Within one business day' },
+                { k: 'Entity', v: 'BuildspaceLabs, a Vruoom company' },
+              ].map((row) => (
+                <div key={row.k} className={styles.coordRow}>
+                  <dt className={styles.coordKey}>{row.k}</dt>
+                  <dd className={styles.coordVal}>{row.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

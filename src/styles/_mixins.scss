@@ -1,12 +1,13 @@
 @import './variables';
 
-/* Plate: a mounted print — sharp corners, hairline rule, one soft shadow. */
+/* Card: an elevated surface that genuinely lifts. Hairline + layered shadow,
+   a whisper-brighter top edge, and a firm decelerate on hover. */
 @mixin card-base {
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: $radius-control;
+  border-radius: $radius-lg;
   padding: $spacing-xl;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-lifted);
   transition: transform $dur-base $ease-out-expo,
               box-shadow $dur-base $ease-out-expo,
               border-color $dur-base $ease-out-expo;
@@ -14,8 +15,90 @@
   &:hover {
     border-color: $color-border-focus;
     transform: translateY(-4px);
-    box-shadow: var(--shadow-plate);
+    box-shadow: var(--shadow-float);
   }
+}
+
+/* Lit card: card-base plus an accent glow that blooms on hover and a top
+   highlight edge. For interactive cards that should feel alive under the cursor. */
+@mixin lit-card {
+  @include card-base;
+  position: relative;
+  overflow: clip;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), transparent 40%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: var(--glow-accent);
+    opacity: 0;
+    transition: opacity $dur-base $ease-out-expo;
+    pointer-events: none;
+    z-index: 0;
+  }
+  &:hover::after { opacity: 1; }
+  > * { position: relative; z-index: 1; }
+}
+
+/* Media plate: how every product screenshot / illustration is mounted — a
+   floating, well-lit surface with a hairline and a deep, soft, cool shadow. */
+@mixin media-plate {
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: var(--shadow-media);
+  overflow: hidden;
+}
+
+/* Blueprint stage: a lit backdrop for a hero visual / illustration. Faint
+   drafting grid + a soft accent aura, masked so it dissolves at the edges. */
+@mixin blueprint-stage {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(90% 90% at 50% 45%, #000 30%, transparent 75%);
+    mask-image: radial-gradient(90% 90% at 50% 45%, #000 30%, transparent 75%);
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--glow-accent);
+  }
+}
+
+/* Statement figure — big tabular number used for proof / stats. */
+@mixin stat-num {
+  font-family: $font-display;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  line-height: 1;
+  color: $color-text-primary;
 }
 
 @mixin flex-center { display: flex; align-items: center; justify-content: center; }

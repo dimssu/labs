@@ -4,15 +4,66 @@
   position: relative;
   background-color: $color-surface-alt;
   border-top: 1px solid $color-border;
-  padding: clamp(64px, 8vw, 96px) 0 48px;
+  padding: clamp(72px, 8vw, 104px) 0 40px;
   margin-top: auto;
+  overflow: clip;
 
-  @media (max-width: 768px) { padding: 56px 0 40px; }
+  @media (max-width: 768px) { padding: 56px 0 32px; }
 }
 
 .footerContainer {
   position: relative;
   z-index: 1;
+}
+
+/* Brand band */
+.brandBand {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  padding-bottom: clamp(40px, 5vw, 56px);
+  margin-bottom: clamp(40px, 5vw, 56px);
+  border-bottom: 1px solid $color-border;
+
+  @media (max-width: 768px) { flex-direction: column; gap: 32px; }
+}
+
+.brandLeft { max-width: 42ch; }
+
+.brandMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 18px;
+}
+.brandName {
+  font-family: $font-body;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $color-text-primary;
+}
+.brandLine {
+  font-size: 16px;
+  line-height: 1.55;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.brandCta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.brandCtaLabel {
+  font-family: $font-display;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: $color-text-primary;
 }
 
 /* 3-column directory */
@@ -22,22 +73,19 @@
   gap: 40px;
 
   @media (max-width: 768px) { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
-  @media (max-width: 480px) { grid-template-columns: 1fr; gap: 36px; }
+  @media (max-width: 480px) { grid-template-columns: 1fr; gap: 32px; }
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+.column { display: flex; flex-direction: column; gap: 14px; }
 
 .columnTitle {
   font-family: $font-body;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  color: $color-text-primary;
-  margin: 0 0 2px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  margin: 0 0 4px;
 }
 
 .list {
@@ -50,6 +98,7 @@
 }
 
 .link {
+  position: relative;
   font-family: $font-body;
   font-size: 15px;
   color: $color-text-secondary;
@@ -61,21 +110,38 @@
   &:hover { color: $color-accent; }
 }
 
-.line {
-  font-family: $font-body;
-  font-size: 15px;
-  color: $color-text-secondary;
-  line-height: 1.5;
+.line { font-family: $font-body; font-size: 15px; color: $color-text-secondary; line-height: 1.5; }
+
+/* Signature wordmark — big, faint, and clipped by the footer edge. */
+.signature {
+  margin-top: clamp(48px, 7vw, 88px);
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: clamp(72px, 15vw, 232px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-border);
+  background: linear-gradient(180deg, var(--color-surface-hover), transparent 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  user-select: none;
+  transform: translateY(14%);
+  pointer-events: none;
+  opacity: 0.9;
+
+  @media (max-width: 768px) { margin-top: 40px; }
 }
 
-/* Colophon line */
+/* Colophon */
 .specRule {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 8px 24px;
-  margin-top: clamp(40px, 5vw, 64px);
+  margin-top: clamp(24px, 3vw, 40px);
   padding-top: 24px;
   border-top: 1px solid $color-border;
 }
@@ -83,8 +149,7 @@
 .specLine,
 .build {
   font-family: $font-body;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 400;
-  letter-spacing: 0;
   color: $color-text-muted;
 }

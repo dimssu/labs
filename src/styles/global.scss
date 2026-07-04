@@ -71,16 +71,50 @@
 
   /* Layout rhythm */
   --content-max: 1180px;
+  --content-wide: 1320px;
   --section-pad: clamp(88px, 10vw, 132px);
   --gutter: clamp(24px, 5vw, 80px);
 
+  /* Depth — layered, cool-tinted. Cards + media genuinely lift off the page. */
+  --shadow-lifted:
+    0 1px 1px rgba(16, 24, 40, 0.04),
+    0 4px 8px -2px rgba(16, 24, 40, 0.06),
+    0 12px 24px -8px rgba(16, 24, 40, 0.08);
+  --shadow-float:
+    0 2px 4px rgba(16, 24, 40, 0.04),
+    0 12px 24px -8px rgba(16, 24, 40, 0.10),
+    0 30px 60px -24px rgba(16, 24, 40, 0.16);
+  --shadow-media:
+    0 2px 6px rgba(16, 24, 40, 0.05),
+    0 18px 36px -12px rgba(16, 24, 40, 0.14),
+    0 44px 80px -32px rgba(16, 24, 40, 0.18);
+  --shadow-accent:
+    0 1px 2px rgba(16, 24, 40, 0.18),
+    0 8px 20px -6px rgba(29, 78, 216, 0.36),
+    0 2px 6px -1px rgba(29, 78, 216, 0.22);
+
+  /* Light — the royal blue as a soft light source (auras, never a flat wash). */
+  --glow-accent:   radial-gradient(60% 60% at 50% 0%, rgba(29, 78, 216, 0.14), rgba(29, 78, 216, 0) 70%);
+  --glow-accent-2: radial-gradient(50% 50% at 100% 0%, rgba(29, 78, 216, 0.10), rgba(29, 78, 216, 0) 72%);
+
+  /* Blueprint textures — structure you feel more than see. */
+  --blueprint-line: rgba(16, 24, 40, 0.05);
+  --blueprint-dot:  rgba(16, 24, 40, 0.07);
+
+  /* Accent surfaces */
+  --accent-wash: rgba(29, 78, 216, 0.045);
+  --accent-edge: rgba(29, 78, 216, 0.16);
+  --accent-ring: rgba(29, 78, 216, 0.28);
+
   /* Motion */
   --ease-register: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: linear(0, 0.0018, 0.0193 2.13%, 0.0784 4.35%, 0.4165 12.65%, 0.5561, 0.6817, 0.7889, 0.8747, 0.9382, 0.981 24.28%, 1.0037, 1.0177, 1.0248 30.77%, 1.0271, 1.0264, 1.0233, 1.0187, 1.0057 43.72%, 0.9995 47.42%, 0.9968, 0.9959, 0.9967 58.98%, 1.0004 69.09%, 1.0018, 1.0015 83.4%, 1);
   --dur-micro: 150ms;
   --dur-fast: 200ms;
   --dur-base: 350ms;
   --dur-draw: 500ms;
   --dur-reveal: 550ms;
+  --dur-slower: 800ms;
 
   color-scheme: light;
 }
@@ -121,6 +155,29 @@
   --shadow-hover: 0 10px 28px -12px rgba(0, 0, 0, 0.55);
   --shadow-hero:  0 16px 44px -20px rgba(0, 0, 0, 0.6);
   --shadow-focus: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent);
+
+  --shadow-lifted:
+    0 1px 1px rgba(0, 0, 0, 0.4),
+    0 8px 20px -8px rgba(0, 0, 0, 0.5);
+  --shadow-float:
+    0 2px 6px rgba(0, 0, 0, 0.5),
+    0 24px 48px -20px rgba(0, 0, 0, 0.7);
+  --shadow-media:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 32px 64px -24px rgba(0, 0, 0, 0.72);
+  --shadow-accent:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    0 10px 28px -6px rgba(110, 140, 255, 0.42);
+
+  --glow-accent:   radial-gradient(60% 60% at 50% 0%, rgba(110, 140, 255, 0.18), rgba(110, 140, 255, 0) 70%);
+  --glow-accent-2: radial-gradient(50% 50% at 100% 0%, rgba(110, 140, 255, 0.14), rgba(110, 140, 255, 0) 72%);
+
+  --blueprint-line: rgba(255, 255, 255, 0.05);
+  --blueprint-dot:  rgba(255, 255, 255, 0.07);
+
+  --accent-wash: rgba(110, 140, 255, 0.08);
+  --accent-edge: rgba(110, 140, 255, 0.22);
+  --accent-ring: rgba(110, 140, 255, 0.36);
 
   color-scheme: dark;
 }
@@ -213,4 +270,75 @@ img { max-width: 100%; }
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ============================================================
+   Utility layer — "Blueprint, Lit"
+   Shared background treatments so every page speaks one language.
+   ============================================================ */
+
+.container-wide {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Blueprint grid — a faint drafting grid you feel more than see. Applied to a
+   ::before layer by consumers, or directly as a background. Fades at the edges. */
+.blueprint-grid {
+  position: relative;
+}
+.blueprint-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 40%, transparent 78%);
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 40%, transparent 78%);
+  z-index: 0;
+}
+
+/* Reusable helpers consumed by modules for accent light + tabular numerals. */
+.glow-top {
+  position: relative;
+  isolation: isolate;
+}
+.glow-top::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--glow-accent);
+  z-index: -1;
+}
+
+/* Global slim scroll-progress bar (mounted once in layout). */
+.scrollProgressRoot {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 100;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+  pointer-events: none;
+}
+
+/* Cool custom scrollbar (desktop) — quiet, on-brand. */
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-focus) transparent;
+  }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-border-focus);
+    border-radius: 999px;
+    border: 3px solid var(--color-background);
+  }
+  *::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
 }

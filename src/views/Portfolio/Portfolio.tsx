@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import Reveal from '../../components/Reveal';
+import Parallax from '../../components/Parallax';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Portfolio.module.scss';
@@ -295,6 +296,7 @@ function WorkCard({ item, delay }: { item: Exhibit; delay: number }) {
               <span className={styles.placeholderTitle}>{item.title}</span>
             </div>
           )}
+          <span className={styles.cardMediaGrid} aria-hidden="true" />
         </div>
 
         <div className={styles.cardBody}>
@@ -342,33 +344,43 @@ export default function Portfolio() {
       <main>
         {/* --- Masthead --------------------------------------------------- */}
         <section className={styles.masthead} aria-labelledby="work-title">
+          <span className={styles.heroGlow} aria-hidden="true" />
           <div className={styles.shell}>
             <div className={styles.mastGrid}>
               <div className={styles.mastheadInner}>
-                <Eyebrow>Selected work</Eyebrow>
-                <h1 id="work-title" className={styles.pageTitle}>
-                  Products in production
-                </h1>
-                <p className={styles.lede}>
-                  The products we&apos;ve designed, built, and shipped for real teams —
-                  running today across regulated and operational domains, from
-                  healthcare and logistics to real estate and revenue.
-                </p>
-                <div className={styles.mastheadActions}>
-                  <Button href="/contact-us" variant="primary">Start a build</Button>
-                  <Button href="/our-services" variant="text">See services</Button>
-                </div>
+                <Reveal delay={0.02}><Eyebrow>Selected work</Eyebrow></Reveal>
+                <Reveal variant="blur" delay={0.08}>
+                  <h1 id="work-title" className={styles.pageTitle}>
+                    Products in production
+                  </h1>
+                </Reveal>
+                <Reveal delay={0.18}>
+                  <p className={styles.lede}>
+                    The products we&apos;ve designed, built, and shipped for real teams —
+                    running today across regulated and operational domains, from
+                    healthcare and logistics to real estate and revenue.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.26}>
+                  <div className={styles.mastheadActions}>
+                    <Button href="/contact-us" variant="primary">Start a build</Button>
+                    <Button href="/our-services" variant="text">See services</Button>
+                  </div>
+                </Reveal>
               </div>
-              <div className={styles.mastVisual}>
-                <Image
-                  src="/media/portfolio.webp"
-                  alt="A curated gallery of shipped products running in production"
-                  fill
-                  priority
-                  sizes="(max-width: 900px) 92vw, 440px"
-                  className={styles.mastImg}
-                />
-              </div>
+              <Reveal variant="scale" delay={0.14} className={styles.mastVisualWrap}>
+                <Parallax amount={14} className={styles.mastVisual}>
+                  <Image
+                    src="/media/portfolio.webp"
+                    alt="A curated gallery of shipped products running in production"
+                    fill
+                    priority
+                    sizes="(max-width: 900px) 92vw, 440px"
+                    className={styles.mastImg}
+                  />
+                  <span className={styles.mastVisualGrid} aria-hidden="true" />
+                </Parallax>
+              </Reveal>
             </div>
           </div>
         </section>
@@ -471,18 +483,22 @@ export default function Portfolio() {
         {/* --- Close ------------------------------------------------------ */}
         <section className={styles.close} aria-labelledby="close-title">
           <div className={styles.shell}>
-            <div className={styles.closeInner}>
-              <Eyebrow>Start here</Eyebrow>
-              <h2 id="close-title" className={styles.closeTitle}>Have something to build?</h2>
-              <p className={styles.closeLede}>
-                Tell us what you&apos;re trying to ship. A senior builder reads it and
-                replies within one business day.
-              </p>
-              <div className={styles.closeActions}>
-                <Button href="/contact-us" variant="primary">Start a build</Button>
-                <Button href="/our-services" variant="text">See services</Button>
+            <Reveal variant="scale" className={styles.closePanel}>
+              <span className={styles.closeGrid2} aria-hidden="true" />
+              <span className={styles.closeGlow} aria-hidden="true" />
+              <div className={styles.closeInner}>
+                <Eyebrow>Start here</Eyebrow>
+                <h2 id="close-title" className={styles.closeTitle}>Have something to build?</h2>
+                <p className={styles.closeLede}>
+                  Tell us what you&apos;re trying to ship. A senior builder reads it and
+                  replies within one business day.
+                </p>
+                <div className={styles.closeActions}>
+                  <Button href="/contact-us" variant="primary">Start a build</Button>
+                  <Button href="/our-services" variant="text">See services</Button>
+                </div>
               </div>
-            </div>
+            </Reveal>
           </div>
         </section>
       </main>

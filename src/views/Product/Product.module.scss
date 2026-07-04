@@ -1,10 +1,11 @@
 @import '../../styles/variables';
+@import '../../styles/mixins';
 
 /* =============================================================
    Product detail (/product/[id])
-   Blueprint & Whitespace — calm, institutional, one blue accent.
-   Matches the homepage system: Eyebrow + serif h2 + standfirst,
-   hairlines, tonal bands, ScreenshotFrame plates.
+   "Blueprint, Lit" — light, editorial, one royal-blue accent used
+   sparingly and as a soft light source. Real depth (lifted plates,
+   accent auras) over a faint drafting grid. Mirrors the Home system.
    ============================================================= */
 
 .page { position: relative; }
@@ -21,8 +22,60 @@
    MASTHEAD
    ============================================================= */
 .hero {
+  position: relative;
   padding-top: clamp(104px, 12vh, 156px);
   padding-bottom: clamp(56px, 7vw, 96px);
+  overflow: hidden;
+
+  /* Faint drafting grid — the "blueprint" half of the identity, masked to a
+     quiet field behind the masthead, never under the headline itself. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, $color-border 1px, transparent 1px),
+      linear-gradient(to bottom, $color-border 1px, transparent 1px);
+    background-size: 46px 46px;
+    opacity: 0.4;
+    -webkit-mask-image: radial-gradient(80% 70% at 78% 20%, #000, transparent 72%);
+    mask-image: radial-gradient(80% 70% at 78% 20%, #000, transparent 72%);
+  }
+
+  .shell { position: relative; z-index: 1; }
+}
+
+/* Grid fades up on load — a quiet "coming to life". No-JS shows it at rest. */
+:global(html.js) .hero::before {
+  animation: heroGridIn 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes heroGridIn {
+  from { opacity: 0; background-position: 0 -40px; }
+  to { opacity: 0.4; background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html.js) .hero::before { animation: none; }
+}
+
+/* Soft accent aura behind the masthead — the blue as a light source. */
+.heroGlow {
+  position: absolute;
+  top: -14%;
+  right: -8%;
+  width: min(760px, 66vw);
+  height: min(760px, 66vw);
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgba(29, 78, 216, 0.13), rgba(29, 78, 216, 0.045) 55%, transparent 72%);
+  filter: blur(8px);
+
+  @media (max-width: 940px) { top: -6%; right: -22%; opacity: 0.75; }
+}
+:global([data-theme='dark']) .heroGlow {
+  background: radial-gradient(closest-side, rgba(110, 140, 255, 0.2), rgba(110, 140, 255, 0.07) 55%, transparent 72%);
 }
 
 .heroText { max-width: 720px; }
@@ -31,6 +84,7 @@
   margin: 22px 0 0;
   font-size: clamp(40px, 5vw, 64px);
   line-height: 1.04;
+  letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
@@ -81,9 +135,48 @@
   flex-wrap: wrap;
 }
 
+/* Hero screenshot mounted on a lit stage — accent-wash field + drafting grid +
+   soft aura so the plate reads as lit and mounted, not a flat image in a box. */
 .heroShot {
+  display: block;
   margin-top: clamp(48px, 6vw, 80px);
 }
+
+.heroStage {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(18px, 2.6vw, 40px);
+  border-radius: $radius-plate;
+  background:
+    radial-gradient(120% 100% at 50% 0%, var(--accent-wash), transparent 62%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--glow-accent);
+    -webkit-mask-image: radial-gradient(85% 85% at 50% 40%, #000 20%, transparent 78%);
+    mask-image: radial-gradient(85% 85% at 50% 40%, #000 20%, transparent 78%);
+  }
+}
+
+.heroStageGrid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(90% 90% at 50% 45%, #000 30%, transparent 76%);
+  mask-image: radial-gradient(90% 90% at 50% 45%, #000 30%, transparent 76%);
+}
+
+.heroShotFrame { display: block; width: 100%; }
 
 .heroShotCaption {
   margin: 16px 0 0;
@@ -94,7 +187,7 @@
 }
 
 /* =============================================================
-   METRICS — full-bleed tonal datasheet strip (like Home proof)
+   METRICS — lit stat cards (big serif figures, real depth)
    ============================================================= */
 .metrics {
   background: $color-surface-alt;
@@ -102,39 +195,33 @@
   padding: clamp(48px, 6vw, 76px) 0;
 }
 
-/* Flex (not stretched grid) so a 2-metric band reads as a tidy left-aligned
-   pair instead of two numbers marooned across a full-width row. */
 .metricsRow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(40px, 7vw, 96px);
-
-  @media (max-width: 720px) { flex-direction: column; gap: 28px; }
+  gap: clamp(16px, 2vw, 24px);
 }
 
 .metricCell {
+  @include lit-card;
+  flex: 1 1 220px;
+  min-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  padding: clamp(24px, 2.6vw, 36px);
 
-  @media (max-width: 720px) {
-    padding-bottom: 24px;
-    border-bottom: 1px solid $color-border;
-    &:last-child { border-bottom: 0; padding-bottom: 0; }
-  }
+  &::before { background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), transparent 40%); }
 }
 
 .metricValue {
-  font-family: $font-body;
+  @include stat-num;
   font-size: clamp(40px, 5vw, 60px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: $color-text-primary;
 }
 
 .metricLabel {
-  margin-top: 4px;
   font-size: 15px;
   color: $color-text-secondary;
 }
@@ -210,7 +297,7 @@
 }
 
 /* =============================================================
-   CAPABILITIES — features + tech stack
+   CAPABILITIES — features + elevated tech stack
    ============================================================= */
 .capGrid {
   display: grid;
@@ -253,7 +340,11 @@
   color: $color-text-primary;
 }
 
+/* Tech stack — an elevated card that lifts off the tonal band. */
 .stack {
+  @include card-base;
+  padding: clamp(24px, 2.4vw, 32px);
+
   @media (min-width: 901px) { position: sticky; top: 120px; }
 }
 
@@ -278,20 +369,68 @@
   border-radius: $radius-pill;
   background: $color-surface;
   border: 1px solid $color-border;
+  box-shadow: var(--shadow-lifted);
   font-size: 14px;
   color: $color-text-secondary;
+  transition: transform $dur-fast $ease-out-expo, box-shadow $dur-fast $ease-out-expo,
+    border-color $dur-fast $ease-out-expo, color $dur-fast $ease-out-expo;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-float);
+    border-color: $accent-edge;
+    color: $color-text-primary;
+  }
 }
 
 /* =============================================================
-   GALLERY — tidy stacked frames
+   GALLERY — lit, mounted frames with scroll parallax
    ============================================================= */
 .gallery {
   display: flex;
   flex-direction: column;
   gap: clamp(44px, 6vw, 80px);
+  /* contain the clip-reveal armed state so it never adds horizontal scroll */
+  overflow-x: clip;
 }
 
 .galleryItem { width: 100%; }
+
+.galleryStage {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(16px, 2.4vw, 36px);
+  border-radius: $radius-plate;
+  background:
+    radial-gradient(120% 100% at 50% 0%, var(--accent-wash), transparent 62%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--glow-accent);
+    -webkit-mask-image: radial-gradient(85% 85% at 50% 45%, #000 20%, transparent 78%);
+    mask-image: radial-gradient(85% 85% at 50% 45%, #000 20%, transparent 78%);
+  }
+}
+
+.galleryStageGrid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(90% 90% at 50% 45%, #000 30%, transparent 76%);
+  mask-image: radial-gradient(90% 90% at 50% 45%, #000 30%, transparent 76%);
+}
+
+.galleryFrame { display: block; width: 100%; }
 
 .galleryCaption {
   margin: 16px 0 0;
@@ -337,11 +476,50 @@
 }
 
 /* =============================================================
-   CLOSE
+   CLOSE — lit panel (blueprint grid inset + accent glow)
    ============================================================= */
 .close { padding: $section-pad 0; }
 
-.closeGrid {
+.closePanel {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: var(--shadow-float);
+  padding: clamp(36px, 5vw, 72px);
+}
+
+.closeGrid2 {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+  mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+}
+
+.closeGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(29, 78, 216, 0.12), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(29, 78, 216, 0.07), transparent 60%);
+}
+:global([data-theme='dark']) .closeGlow {
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(110, 140, 255, 0.16), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(110, 140, 255, 0.1), transparent 60%);
+}
+
+.closeInner {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   align-items: end;
@@ -394,4 +572,12 @@
   font-size: 15px;
   color: $color-text-primary;
   text-align: right;
+}
+
+/* =============================================================
+   REDUCED MOTION
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .tag { transition: none; }
+  .tag:hover { transform: none; }
 }

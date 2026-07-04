@@ -1,7 +1,7 @@
 'use client';
 
-import { type ReactNode } from 'react';
 import Reveal from '../../components/Reveal';
+import Parallax from '../../components/Parallax';
 import styles from './Product.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -17,9 +17,6 @@ interface ProductProps {
 const cx = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(' ');
 
-/* --- Motion ------------------------------------------------------------- */
-
-/** Soft, once-only entrance. Renders fully visible under reduced motion. */
 /* --- Shared section head ------------------------------------------------ */
 
 function SectionHead({
@@ -35,9 +32,9 @@ function SectionHead({
 }) {
   return (
     <header className={styles.sectionHead}>
-      <Eyebrow>{eyebrow}</Eyebrow>
-      <h2 id={id} className={styles.sectionTitle}>{title}</h2>
-      {standfirst && <p className={styles.sectionStandfirst}>{standfirst}</p>}
+      <Reveal><Eyebrow>{eyebrow}</Eyebrow></Reveal>
+      <Reveal delay={0.06}><h2 id={id} className={styles.sectionTitle}>{title}</h2></Reveal>
+      {standfirst && <Reveal delay={0.12}><p className={styles.sectionStandfirst}>{standfirst}</p></Reveal>}
     </header>
   );
 }
@@ -86,43 +83,54 @@ export default function Product({ productId }: ProductProps) {
 
         {/* ── Masthead ──────────────────────────────────────── */}
         <section className={styles.hero} aria-labelledby="product-title">
+          <span className={styles.heroGlow} aria-hidden="true" />
           <div className={styles.shell}>
             <div className={styles.heroText}>
-              <Eyebrow>{category}</Eyebrow>
-              <h1 id="product-title" className={styles.heroTitle}>{product.title}</h1>
-              <p className={styles.heroLede}>{product.subtitle}</p>
+              <Reveal delay={0.02}><Eyebrow>{category}</Eyebrow></Reveal>
+              <Reveal variant="blur" delay={0.08}>
+                <h1 id="product-title" className={styles.heroTitle}>{product.title}</h1>
+              </Reveal>
+              <Reveal delay={0.18}>
+                <p className={styles.heroLede}>{product.subtitle}</p>
+              </Reveal>
 
-              <div className={styles.heroMeta}>
-                <span className={styles.statusPill}>
-                  <span className={styles.statusDotMark} aria-hidden="true" />
-                  {statusLabel}
-                </span>
-                <span className={styles.heroClient}>For {product.client}</span>
-              </div>
+              <Reveal delay={0.26}>
+                <div className={styles.heroMeta}>
+                  <span className={styles.statusPill}>
+                    <span className={styles.statusDotMark} aria-hidden="true" />
+                    {statusLabel}
+                  </span>
+                  <span className={styles.heroClient}>For {product.client}</span>
+                </div>
+              </Reveal>
 
-              <div className={styles.heroActions}>
-                <Button href="/contact-us" variant="primary">Start a build</Button>
-                <Button href="/portfolio" variant="text">Back to all work</Button>
-              </div>
+              <Reveal delay={0.34}>
+                <div className={styles.heroActions}>
+                  <Button href="/contact-us" variant="primary">Start a build</Button>
+                  <Button href="/portfolio" variant="text">Back to all work</Button>
+                </div>
+              </Reveal>
             </div>
 
-            {hasImage ? (
-              <div className={styles.heroShot}>
-                <ScreenshotFrame
-                  src={product.coverImage!.src}
-                  alt={product.coverImage!.alt}
-                  aspect="16 / 10"
-                  reveal={false}
-                  priority
-                  sizes="(max-width: 1024px) 92vw, 1180px"
-                />
+            {hasImage && (
+              <Reveal variant="scale" delay={0.12} className={styles.heroShot}>
+                <div className={styles.heroStage}>
+                  <span className={styles.heroStageGrid} aria-hidden="true" />
+                  <Parallax amount={14} className={styles.heroShotFrame}>
+                    <ScreenshotFrame
+                      src={product.coverImage!.src}
+                      alt={product.coverImage!.alt}
+                      aspect="16 / 10"
+                      reveal={false}
+                      priority
+                      sizes="(max-width: 1024px) 92vw, 1180px"
+                    />
+                  </Parallax>
+                </div>
                 {product.coverImage!.caption && (
                   <p className={styles.heroShotCaption}>{product.coverImage!.caption}</p>
                 )}
-              </div>
-            ) : (
-              /* SLOT: hero product screenshot (no cover image on record yet) */
-              null
+              </Reveal>
             )}
           </div>
         </section>
@@ -131,14 +139,14 @@ export default function Product({ productId }: ProductProps) {
         {hasMetrics && (
           <section className={styles.metrics} aria-label="Results in production">
             <div className={styles.shell}>
-              <div className={styles.metricsRow}>
+              <ul className={styles.metricsRow}>
                 {product.metrics.map((m, i) => (
-                  <div key={i} className={styles.metricCell}>
+                  <Reveal as="li" key={i} className={styles.metricCell} delay={i * 0.08}>
                     <span className={cx(styles.metricValue, 'tnum')}>{m.value}</span>
                     <span className={styles.metricLabel}>{m.label}</span>
-                  </div>
+                  </Reveal>
                 ))}
-              </div>
+              </ul>
               <p className={styles.metricsNote}>
                 Measured on this product&apos;s own deployment for {product.client}.
               </p>
@@ -189,14 +197,16 @@ export default function Product({ productId }: ProductProps) {
                   ))}
                 </ul>
 
-                <aside className={styles.stack} aria-label="Tech stack">
-                  <p className={styles.stackLabel}>Tech stack</p>
-                  <div className={styles.tagRow}>
-                    {product.techStack.map((t, i) => (
-                      <span key={i} className={styles.tag}>{t}</span>
-                    ))}
-                  </div>
-                </aside>
+                <Reveal delay={0.08}>
+                  <aside className={styles.stack} aria-label="Tech stack">
+                    <p className={styles.stackLabel}>Tech stack</p>
+                    <div className={styles.tagRow}>
+                      {product.techStack.map((t, i) => (
+                        <span key={i} className={styles.tag}>{t}</span>
+                      ))}
+                    </div>
+                  </aside>
+                </Reveal>
               </div>
             </div>
           </section>
@@ -213,14 +223,24 @@ export default function Product({ productId }: ProductProps) {
               />
               <div className={styles.gallery}>
                 {galleryItems.map((g, i) => (
-                  <Reveal key={i} className={styles.galleryItem} delay={i * 0.05}>
-                    <ScreenshotFrame
-                      src={g.src}
-                      alt={g.alt}
-                      aspect="16 / 10"
-                      reveal={false}
-                      sizes="(max-width: 1024px) 92vw, 1040px"
-                    />
+                  <Reveal
+                    key={i}
+                    variant="clip"
+                    className={styles.galleryItem}
+                    delay={i * 0.05}
+                  >
+                    <div className={styles.galleryStage}>
+                      <span className={styles.galleryStageGrid} aria-hidden="true" />
+                      <Parallax amount={i % 2 === 0 ? 14 : -14} className={styles.galleryFrame}>
+                        <ScreenshotFrame
+                          src={g.src}
+                          alt={g.alt}
+                          aspect="16 / 10"
+                          reveal={false}
+                          sizes="(max-width: 1024px) 92vw, 1040px"
+                        />
+                      </Parallax>
+                    </div>
                     {g.caption && <p className={styles.galleryCaption}>{g.caption}</p>}
                   </Reveal>
                 ))}
@@ -253,36 +273,40 @@ export default function Product({ productId }: ProductProps) {
         {/* ── Close ─────────────────────────────────────────── */}
         <section className={styles.close} aria-labelledby="close-title">
           <div className={styles.shell}>
-            <div className={styles.closeGrid}>
-              <div className={styles.closeMain}>
-                <Eyebrow>Start here</Eyebrow>
-                <h2 id="close-title" className={styles.closeTitle}>Building something in this space?</h2>
-                <p className={styles.closeLede}>
-                  A short call is enough for us to understand your situation and tell you
-                  whether we are the right team. If we are, a usable version follows inside
-                  the first two weeks.
-                </p>
-                <div className={styles.closeActions}>
-                  <Button href="/contact-us" variant="primary">Start a build</Button>
-                  <Button href="/portfolio" variant="text">See more work</Button>
+            <Reveal variant="scale" className={styles.closePanel}>
+              <span className={styles.closeGrid2} aria-hidden="true" />
+              <span className={styles.closeGlow} aria-hidden="true" />
+              <div className={styles.closeInner}>
+                <div className={styles.closeMain}>
+                  <Eyebrow>Start here</Eyebrow>
+                  <h2 id="close-title" className={styles.closeTitle}>Building something in this space?</h2>
+                  <p className={styles.closeLede}>
+                    A short call is enough for us to understand your situation and tell you
+                    whether we are the right team. If we are, a usable version follows inside
+                    the first two weeks.
+                  </p>
+                  <div className={styles.closeActions}>
+                    <Button href="/contact-us" variant="primary">Start a build</Button>
+                    <Button href="/portfolio" variant="text">See more work</Button>
+                  </div>
                 </div>
-              </div>
 
-              <dl className={styles.closeCoords}>
-                {coords.map((row) => (
-                  <div key={row.k} className={styles.coordRow}>
-                    <dt className={styles.coordKey}>{row.k}</dt>
-                    <dd className={styles.coordVal}>{row.v}</dd>
-                  </div>
-                ))}
-                {hasEngagement && (
-                  <div className={styles.coordRow}>
-                    <dt className={styles.coordKey}>Status</dt>
-                    <dd className={styles.coordVal}>{statusLabel}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
+                <dl className={styles.closeCoords}>
+                  {coords.map((row) => (
+                    <div key={row.k} className={styles.coordRow}>
+                      <dt className={styles.coordKey}>{row.k}</dt>
+                      <dd className={styles.coordVal}>{row.v}</dd>
+                    </div>
+                  ))}
+                  {hasEngagement && (
+                    <div className={styles.coordRow}>
+                      <dt className={styles.coordKey}>Status</dt>
+                      <dd className={styles.coordVal}>{statusLabel}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+            </Reveal>
           </div>
         </section>
 

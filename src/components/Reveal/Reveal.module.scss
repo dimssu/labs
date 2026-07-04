@@ -25,6 +25,19 @@
   transform: none;
 }
 
+/* blur — fade + focus-in. Premium, restrained; great for headlines + ledes. */
+:global(html.js) .reveal.blur {
+  transform: translateY(14px);
+  filter: blur(8px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+:global(html.js) .reveal.blur.inView {
+  transform: none;
+  filter: blur(0);
+}
+
 /* left / right — directional slide, for alternating editorial rows. Kept small
    (≤ the section gutter) so the armed state never triggers horizontal scroll. */
 :global(html.js) .reveal.left {
@@ -58,6 +71,7 @@
     opacity: 1;
     transform: none;
     clip-path: none;
+    filter: none;
     transition: none;
   }
 }

@@ -98,5 +98,30 @@ $border-radius-full: 999px;
 
 // Layout rhythm
 $content-max: var(--content-max);
+$content-wide: var(--content-wide);
 $section-pad: var(--section-pad);
 $gutter: var(--gutter);
+
+// --- "Blueprint, Lit" additions -----------------------------------------
+// Depth: layered, cool-tinted elevation used to lift cards + media off the page.
+$shadow-lifted: var(--shadow-lifted);
+$shadow-float:  var(--shadow-float);
+$shadow-media:  var(--shadow-media);
+$shadow-accent: var(--shadow-accent);   // accent-tinted glow for the primary CTA
+
+// Light: the royal blue also behaves as a light source (soft radial auras).
+$glow-accent:   var(--glow-accent);
+$glow-accent-2: var(--glow-accent-2);
+
+// Blueprint grid textures (used at low opacity behind hero / CTA / stages).
+$blueprint-line: var(--blueprint-line);
+$blueprint-dot:  var(--blueprint-dot);
+
+// Accent surfaces / tints
+$accent-wash:  var(--accent-wash);   // faint blue field for lit stages
+$accent-edge:  var(--accent-edge);   // hairline in the accent hue
+$accent-ring:  var(--accent-ring);   // focus / active ring in accent
+
+// Motion additions
+$ease-spring: var(--ease-spring);
+$dur-slower:  var(--dur-slower);

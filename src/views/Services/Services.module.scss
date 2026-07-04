@@ -1,9 +1,10 @@
 @import '../../styles/variables';
+@import '../../styles/mixins';
 
 /* =============================================================
-   Services — Blueprint & Whitespace
-   Calm, institutional. One blue accent, hairlines, tonal bands.
-   Mirrors the homepage system exactly.
+   Services — "Blueprint, Lit"
+   Editorial light base, one royal-blue hue used as ink AND as a
+   soft light source. Mirrors the Home system exactly.
    ============================================================= */
 
 .page {
@@ -23,11 +24,62 @@
 }
 
 /* ============================================================
-   MASTHEAD
+   MASTHEAD — lit hero
    ============================================================ */
 .masthead {
+  position: relative;
   padding-top: clamp(104px, 12vh, 156px);
   padding-bottom: clamp(64px, 8vw, 104px);
+  overflow: hidden;
+
+  /* Faint drafting grid — the "blueprint" half of the identity. Masked so it
+     sits as a quiet field around the hero visual, never under the headline. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, $color-border 1px, transparent 1px),
+      linear-gradient(to bottom, $color-border 1px, transparent 1px);
+    background-size: 46px 46px;
+    opacity: 0.4;
+    -webkit-mask-image: radial-gradient(80% 75% at 76% 44%, #000, transparent 72%);
+    mask-image: radial-gradient(80% 75% at 76% 44%, #000, transparent 72%);
+  }
+
+  .shell { position: relative; z-index: 1; }
+}
+
+/* Blueprint grid fades up on load — a quiet "coming to life". No-JS shows it at
+   rest; reduced motion opts out. */
+:global(html.js) .masthead::before {
+  animation: svcGridIn 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes svcGridIn {
+  from { opacity: 0; background-position: 0 -40px; }
+  to { opacity: 0.4; background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :global(html.js) .masthead::before { animation: none; }
+}
+
+/* Soft accent aura behind the hero visual — the blue as a light source. */
+.heroGlow {
+  position: absolute;
+  top: -10%;
+  right: -6%;
+  width: min(720px, 60vw);
+  height: min(720px, 60vw);
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgba(29, 78, 216, 0.14), rgba(29, 78, 216, 0.05) 55%, transparent 72%);
+  filter: blur(8px);
+
+  @media (max-width: 900px) { top: auto; bottom: -6%; right: -20%; opacity: 0.7; }
+}
+:global([data-theme='dark']) .heroGlow {
+  background: radial-gradient(closest-side, rgba(110, 140, 255, 0.2), rgba(110, 140, 255, 0.07) 55%, transparent 72%);
 }
 
 .mastGrid {
@@ -41,25 +93,11 @@
 
 .mastText { max-width: 620px; }
 
-.mastVisual {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: $radius-lg;
-  border: 1px solid $color-border;
-  background: $color-surface;
-  box-shadow: $shadow-hero;
-  overflow: hidden;
-
-  @media (max-width: 900px) { max-width: 520px; }
-}
-
-.mastImg { object-fit: cover; object-position: center; }
-
 .mastTitle {
   margin: 22px 0 0;
   font-size: clamp(40px, 5vw, 64px);
   line-height: 1.04;
+  letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
@@ -79,26 +117,65 @@
   flex-wrap: wrap;
 }
 
-/* ============================================================
-   OFFER SUMMARY — at-a-glance "what we offer" cards
-   The clarity anchor: the three offerings scannable in seconds.
-   ============================================================ */
-.offer { padding: 0 0 clamp(64px, 8vw, 104px); }
+/* Hero visual — mounted on a lit blueprint stage, not a flat box. */
+.mastVisual {
+  display: block;
+  width: 100%;
 
-.offerHead {
-  max-width: 720px;
-  margin-bottom: clamp(32px, 4vw, 48px);
+  @media (max-width: 900px) { max-width: 520px; }
 }
 
-.offerTitle { margin: 18px 0 0; text-wrap: balance; }
+.mastStage {
+  @include blueprint-stage;
+  display: block;
+  width: 100%;
+  padding: clamp(14px, 1.8vw, 26px);
+}
 
-.offerLede {
-  margin: 18px 0 0;
-  font-size: clamp(17px, 1.35vw, 20px);
+.mastPlate {
+  @include media-plate;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background:
+    radial-gradient(120% 90% at 70% 12%, var(--accent-wash), transparent 60%),
+    $color-surface;
+}
+
+.mastImg { object-fit: cover; object-position: center; }
+
+/* ============================================================
+   SHARED SECTION SCAFFOLD
+   ============================================================ */
+.section { padding: $section-pad 0; }
+
+/* Quiet tonal band — full-bleed, hairline top/bottom. */
+.sectionAlt {
+  background: $color-surface-alt;
+  border-block: 1px solid $color-border;
+}
+
+.sectionHead {
+  max-width: 720px;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.sectionTitle { margin: 18px 0 0; text-wrap: balance; }
+
+.sectionStandfirst {
+  margin: 20px 0 0;
+  font-size: clamp(18px, 1.4vw, 21px);
   line-height: 1.5;
   color: $color-text-secondary;
-  max-width: 54ch;
+  max-width: 60ch;
 }
+
+.sectionCta { margin-top: clamp(40px, 5vw, 56px); }
+
+/* ============================================================
+   OFFER SUMMARY — at-a-glance "what we offer" as lit cards
+   ============================================================ */
+.offer { padding-top: 0; padding-bottom: clamp(56px, 7vw, 96px); }
 
 .offerGrid {
   list-style: none;
@@ -114,32 +191,25 @@
 .offerCardWrap { display: flex; }
 
 .offerCard {
-  position: relative;
+  @include lit-card;
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: clamp(24px, 2.6vw, 32px);
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-rest;
   text-decoration: none;
   color: inherit;
-  transition: transform $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard,
-    border-color $dur-fast $ease-standard;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-hover;
+  &:focus-visible {
+    outline: none;
     border-color: $color-border-focus;
+    box-shadow: var(--shadow-float), 0 0 0 3px $accent-ring;
   }
-  &:focus-visible { outline: none; border-color: $color-border-focus; box-shadow: $shadow-hover; }
 }
 
 .offerNo {
-  font-family: $font-body;
-  font-size: clamp(26px, 2.4vw, 32px);
-  font-weight: 600;
+  font-family: $font-display;
+  font-size: clamp(30px, 2.8vw, 40px);
+  font-weight: 500;
   line-height: 1;
   letter-spacing: -0.02em;
   color: $color-accent;
@@ -198,12 +268,12 @@
 
 .offerDuration {
   padding: 4px 11px;
-  border: 1px solid $color-border;
+  border: 1px solid $accent-edge;
   border-radius: $radius-pill;
-  background: $color-surface-alt;
+  background: $accent-soft;
   font-size: 12.5px;
   font-weight: 500;
-  color: $color-text-secondary;
+  color: $color-accent;
   white-space: nowrap;
 }
 
@@ -216,48 +286,39 @@
   color: $color-accent;
   white-space: nowrap;
 }
+.offerCard:hover .offerJump { color: $color-accent-hover; }
 
 /* ============================================================
-   SHARED SECTION SCAFFOLD
+   ENGAGEMENTS — three detailed rows, alternating, one section
    ============================================================ */
-.section { padding: $section-pad 0; }
+.engagements { padding-top: clamp(8px, 1vw, 16px); }
 
-/* Quiet tonal band — full-bleed, hairline top/bottom. */
-.sectionAlt {
-  background: $color-surface-alt;
-  border-block: 1px solid $color-border;
+.engStack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(56px, 7vw, 104px);
+  /* contain the directional-slide armed state so it never adds horizontal scroll */
+  overflow-x: clip;
 }
 
-.sectionHead {
-  max-width: 720px;
-  margin-bottom: clamp(40px, 5vw, 64px);
-}
-
-.sectionTitle { margin: 18px 0 0; text-wrap: balance; }
-
-.sectionStandfirst {
-  margin: 20px 0 0;
-  font-size: clamp(18px, 1.4vw, 21px);
-  line-height: 1.5;
-  color: $color-text-secondary;
-  max-width: 60ch;
-}
-
-.sectionCta { margin-top: clamp(40px, 5vw, 56px); }
-
-/* ============================================================
-   ENGAGEMENT SECTION — content + secondary plate
-   ============================================================ */
-.engGrid {
+.engRow {
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-  align-items: start;
-  gap: clamp(40px, 6vw, 88px);
+  align-items: center;
+  gap: clamp(40px, 6vw, 80px);
+  scroll-margin-top: clamp(84px, 11vh, 116px);
 
   @media (max-width: 940px) {
     grid-template-columns: 1fr;
-    gap: clamp(36px, 6vw, 48px);
+    gap: clamp(32px, 6vw, 44px);
   }
+}
+
+.engReversed .engBody { order: 2; }
+.engReversed .engPlate { order: 1; }
+@media (max-width: 940px) {
+  .engReversed .engBody { order: 1; }
+  .engReversed .engPlate { order: 2; }
 }
 
 .engBody {
@@ -375,16 +436,14 @@
   color: $color-text-primary;
 }
 
-/* --- secondary plate --------------------------------------------------- */
+/* --- lit plate for the screenshot -------------------------------------- */
 .engPlate {
   min-width: 0;
   width: 100%;
-
-  @media (max-width: 940px) { order: 3; max-width: 560px; }
 }
 
 /* ============================================================
-   STATUS PILL
+   STATUS PILL — accent, text + dot (never colour alone)
    ============================================================ */
 .statusDot {
   display: inline-flex;
@@ -405,52 +464,74 @@
 }
 
 /* ============================================================
-   MODULE INDEX — hairline table, deep-links to product pages
+   MODULE INDEX — a mounted, lit table that deep-links to products
    ============================================================ */
 .moduleTable {
-  border-top: 1px solid $color-border;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background: $color-surface;
+  box-shadow: var(--shadow-lifted);
+  overflow: clip;
 }
 
 .moduleHead {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr) minmax(0, 0.5fr);
   gap: 16px;
-  padding: 12px 0;
+  padding: 13px clamp(18px, 2vw, 28px);
+  background: $color-surface-alt;
   border-bottom: 1px solid $color-border;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: $color-text-muted;
 
   @media (max-width: 600px) { display: none; }
 }
 
 .moduleRow {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr) minmax(0, 0.5fr);
   gap: 16px;
   align-items: center;
-  padding: 18px 0;
+  padding: 17px clamp(18px, 2vw, 28px);
   border-bottom: 1px solid $color-border;
   text-decoration: none;
   color: inherit;
   transition: background-color $dur-fast $ease-standard;
+
+  /* accent left edge, revealed on hover/focus */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $color-accent;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform $dur-fast $ease-out-expo;
+  }
 
   &:hover,
   &:focus-visible {
     background: $color-surface-hover;
     outline: none;
   }
-  &:focus-visible {
-    box-shadow: inset 2px 0 0 $color-accent;
-  }
+  &:hover::before,
+  &:focus-visible::before { transform: scaleY(1); }
+  &:hover .rowName { color: $color-accent; }
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr auto;
     gap: 6px 16px;
-    padding: 18px 0;
+    padding: 16px clamp(16px, 4vw, 20px);
   }
 }
+:global([role='listitem']:last-child) .moduleRow { border-bottom: 0; }
 
 .rowName {
   font-size: 16px;
@@ -458,6 +539,7 @@
   line-height: 1.3;
   color: $color-text-primary;
   min-width: 0;
+  transition: color $dur-fast $ease-standard;
 }
 
 .rowSector {
@@ -477,7 +559,7 @@
 }
 
 /* ============================================================
-   PROOF GRID — flagship modules as calm cards
+   PROOF GRID — flagship modules with a serif pull-figure
    ============================================================ */
 .proofHead { margin-top: clamp(56px, 7vw, 88px); margin-bottom: clamp(24px, 3vw, 32px); }
 
@@ -496,25 +578,19 @@
 .proofCardWrap { display: flex; }
 
 .proofCard {
+  @include lit-card;
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: clamp(22px, 2.4vw, 30px);
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-rest;
   text-decoration: none;
   color: inherit;
-  transition: transform $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard,
-    border-color $dur-fast $ease-standard;
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: $shadow-hover;
+  &:focus-visible {
+    outline: none;
     border-color: $color-border-focus;
+    box-shadow: var(--shadow-float), 0 0 0 3px $accent-ring;
   }
-  &:focus-visible { outline: none; border-color: $color-border-focus; box-shadow: $shadow-hover; }
 }
 
 .proofTop {
@@ -522,7 +598,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .proofSector {
@@ -533,7 +609,7 @@
 }
 
 .proofTitle {
-  margin: 0;
+  margin: 0 0 12px;
   font-family: $font-body;
   font-size: clamp(18px, 1.5vw, 21px);
   font-weight: 600;
@@ -542,17 +618,57 @@
 }
 
 .proofMetric {
-  margin-top: 12px;
-  font-size: 15px;
-  color: $color-text-secondary;
+  @include stat-num;
+  margin-top: auto;
+  font-size: clamp(21px, 2vw, 27px);
+  color: $color-accent;
 }
 
 /* ============================================================
-   CLOSE / CONTACT
+   CLOSE / CONTACT — lit panel
    ============================================================ */
 .close { padding: $section-pad 0; }
 
-.closeGrid {
+.closePanel {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: var(--shadow-float);
+  padding: clamp(36px, 5vw, 72px);
+}
+
+/* blueprint grid inside the panel */
+.closeGrid2 {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+  mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+}
+.closeGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(29, 78, 216, 0.12), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(29, 78, 216, 0.07), transparent 60%);
+}
+:global([data-theme='dark']) .closeGlow {
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(110, 140, 255, 0.16), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(110, 140, 255, 0.1), transparent 60%);
+}
+
+.closeInner {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   align-items: end;
@@ -611,6 +727,8 @@
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .moduleRow,
+  .moduleRow::before,
+  .rowName,
   .proofCard,
   .offerCard,
   .coordLink {

@@ -1,9 +1,11 @@
 @import '../../styles/variables';
+@import '../../styles/mixins';
 
 /* =============================================================
-   Portfolio — the work index
-   Calm, spacious, institutional. Big serif masthead, a quiet text
-   filter row, and a responsive grid of product cards on white.
+   Portfolio — the work index  ·  "Blueprint, Lit"
+   Editorial, spacious, credible. A lit serif masthead over a faint
+   drafting grid, a pill filter row with a clear active state, and a
+   grid of lit product cards with blueprint-gridded, zooming media.
    ============================================================= */
 .page { position: relative; }
 
@@ -27,11 +29,62 @@
 }
 
 /* =============================================================
-   Masthead
+   Masthead — lit serif hero over a faint drafting grid
    ============================================================= */
 .masthead {
+  position: relative;
   padding-top: clamp(104px, 12vh, 156px);
   padding-bottom: clamp(48px, 6vw, 80px);
+  overflow: hidden;
+
+  /* Faint drafting grid — the "blueprint" half of the identity. Masked so it
+     sits as a quiet field around the hero visual, never under the headline. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, $color-border 1px, transparent 1px),
+      linear-gradient(to bottom, $color-border 1px, transparent 1px);
+    background-size: 46px 46px;
+    opacity: 0.4;
+    -webkit-mask-image: radial-gradient(80% 78% at 78% 45%, #000, transparent 72%);
+    mask-image: radial-gradient(80% 78% at 78% 45%, #000, transparent 72%);
+  }
+
+  .shell { position: relative; z-index: 1; }
+}
+
+:global(html.js) .masthead::before {
+  animation: gridIn 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes gridIn {
+  from { opacity: 0; background-position: 0 -40px; }
+  to { opacity: 0.4; background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html.js) .masthead::before { animation: none; }
+}
+
+/* Soft accent aura behind the hero visual — the blue as a light source. */
+.heroGlow {
+  position: absolute;
+  top: -14%;
+  right: -6%;
+  width: min(720px, 60vw);
+  height: min(720px, 60vw);
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgba(29, 78, 216, 0.14), rgba(29, 78, 216, 0.05) 55%, transparent 72%);
+  filter: blur(8px);
+
+  @media (max-width: 900px) { top: auto; bottom: -6%; right: -22%; opacity: 0.7; }
+}
+:global([data-theme='dark']) .heroGlow {
+  background: radial-gradient(closest-side, rgba(110, 140, 255, 0.2), rgba(110, 140, 255, 0.07) 55%, transparent 72%);
 }
 
 .mastGrid {
@@ -45,17 +98,36 @@
 
 .mastheadInner { max-width: 640px; }
 
+/* Wrapper carries the scale-reveal; the plate inside carries parallax + styling. */
+.mastVisualWrap {
+  display: block;
+  width: 100%;
+
+  @media (max-width: 900px) { max-width: 460px; }
+}
+
+/* The hero illustration mounted as a lit media plate — accent wash, hairline,
+   deep soft shadow, and a faint blueprint grid so it reads lit, not flat. */
 .mastVisual {
+  @include media-plate;
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: $radius-lg;
-  border: 1px solid $color-border;
-  background: $color-surface;
-  box-shadow: $shadow-rest;
-  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 72% 12%, var(--accent-wash), transparent 62%),
+    $color-surface;
+}
 
-  @media (max-width: 900px) { max-width: 460px; }
+.mastVisualGrid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 30px 30px;
+  -webkit-mask-image: radial-gradient(80% 80% at 50% 30%, #000 25%, transparent 80%);
+  mask-image: radial-gradient(80% 80% at 50% 30%, #000 25%, transparent 80%);
 }
 
 .mastImg { object-fit: contain; padding: clamp(10px, 1.5vw, 20px); }
@@ -90,9 +162,9 @@
 
 .filterBar {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px 32px;
+  gap: 16px 32px;
   flex-wrap: wrap;
   padding-bottom: clamp(28px, 3.5vw, 44px);
   border-bottom: 1px solid $color-border;
@@ -101,72 +173,79 @@
 .filterList {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 26px;
+  gap: 10px;
   min-width: 0;
 }
 
+/* Pill filter — hairline chip on a surface, lifting on hover and igniting to a
+   filled accent state when active. */
 .filterBtn {
   display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  padding: 4px 0;
-  background: none;
-  border: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-pill;
   cursor: pointer;
-  color: $color-text-muted;
-  transition: color $dur-fast $ease-standard;
+  color: $color-text-secondary;
+  box-shadow: var(--shadow-lifted);
+  transition: color $dur-fast $ease-standard, border-color $dur-fast $ease-standard,
+    background-color $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard,
+    transform $dur-fast $ease-standard;
 
-  &:hover { color: $color-text-primary; }
+  &:hover {
+    color: $color-text-primary;
+    border-color: $color-border-focus;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-float);
+  }
 
   &:focus-visible {
     outline: 2px solid $color-accent;
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline-offset: 2px;
   }
 }
 
 .filterLabel {
-  position: relative;
   font-family: $font-body;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 500;
-  line-height: 1.3;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -3px;
-    height: 1px;
-    background: $color-accent;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform $dur-fast $ease-standard;
-  }
+  line-height: 1.2;
 }
-.filterBtn:hover .filterLabel::after { transform: scaleX(0.4); }
 
 .filterN {
-  font-size: 12px;
+  font-family: $font-mono;
+  font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: $color-text-muted;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  transition: color $dur-fast $ease-standard;
 }
 
+/* Active pill — the single accent state. Filled, ringed, lifted. */
 .filterActive {
-  color: $color-text-primary;
+  color: #fff;
+  background: $color-accent;
+  border-color: transparent;
+  box-shadow: var(--shadow-accent);
 
-  .filterLabel::after,
-  &:hover .filterLabel::after { transform: scaleX(1); }
-  .filterN { color: $color-accent; }
+  &:hover {
+    color: #fff;
+    background: $color-accent-hover;
+    border-color: transparent;
+  }
+  .filterN { color: rgba(255, 255, 255, 0.72); }
 }
 
 .filterStatus {
   margin: 0;
-  font-size: 14px;
+  font-family: $font-mono;
+  font-size: 13px;
   color: $color-text-muted;
   white-space: nowrap;
+  font-feature-settings: 'tnum' 1;
 }
 
 /* --- Grid ------------------------------------------------------------- */
@@ -184,25 +263,44 @@
 
 .cardCell { display: flex; min-width: 0; }
 
+/* Lit card — an elevated surface that lifts to a floating shadow and blooms a
+   soft accent glow under the cursor. Media zooms; the CTA advances. */
 .card {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-rest;
-  overflow: hidden;
+  border-radius: $radius-lg;
+  box-shadow: var(--shadow-lifted);
+  overflow: clip;
   text-decoration: none;
   color: inherit;
-  transition: transform $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard,
-    border-color $dur-fast $ease-standard;
+  transition: transform $dur-base $ease-out-expo, box-shadow $dur-base $ease-out-expo,
+    border-color $dur-base $ease-out-expo;
+
+  /* accent glow that blooms on hover */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: var(--glow-accent);
+    opacity: 0;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity $dur-base $ease-out-expo;
+  }
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: $shadow-hover;
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-float);
     border-color: $color-border-focus;
   }
+  &:hover::after { opacity: 1; }
 
   &:focus-visible {
     outline: 2px solid $color-accent;
@@ -210,10 +308,35 @@
   }
 }
 
+/* keep real content above the glow layer */
+.cardMedia, .cardBody { position: relative; z-index: 1; }
+
 .cardMedia {
+  position: relative;
   border-bottom: 1px solid $color-border;
-  background: $color-surface-alt;
+  background:
+    radial-gradient(120% 90% at 70% 12%, var(--accent-wash), transparent 60%),
+    $color-surface-alt;
+  overflow: hidden;
 }
+
+/* Faint blueprint grid over the media so every thumbnail feels lit + mounted. */
+.cardMediaGrid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(85% 85% at 50% 25%, #000 20%, transparent 82%);
+  mask-image: radial-gradient(85% 85% at 50% 25%, #000 20%, transparent 82%);
+}
+
+/* Media zoom on hover — applies to the plate screenshot and the illustration. */
+.cardMedia img { transition: transform $dur-slow $ease-out-expo; }
+.card:hover .cardMedia img { transform: scale(1.045); }
 
 /* On-brand isometric tile for NDA / internal builds we can't screenshot.
    The illustration is contained (never clipped) on a soft brand wash, so it
@@ -452,15 +575,50 @@
 }
 
 /* =============================================================
-   Close
+   Close — lit panel
    ============================================================= */
-.close {
-  padding: $section-pad 0;
-  background: $color-surface-alt;
-  border-top: 1px solid $color-border;
+.close { padding: $section-pad 0; }
+
+.closePanel {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: var(--shadow-float);
+  padding: clamp(36px, 5vw, 72px);
+}
+
+/* blueprint grid inside the panel */
+.closeGrid2 {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+  mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+}
+.closeGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(29, 78, 216, 0.12), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(29, 78, 216, 0.07), transparent 60%);
+}
+:global([data-theme='dark']) .closeGlow {
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(110, 140, 255, 0.16), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(110, 140, 255, 0.1), transparent 60%);
 }
 
 .closeInner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -488,15 +646,18 @@
    Reduced motion
    ============================================================= */
 @media (prefers-reduced-motion: reduce) {
-  .filterLabel::after,
+  .filterBtn,
   .cardCta svg,
   .card,
+  .cardMedia img,
   .studioCard,
   .studioImg,
   .studioCta svg {
     transition: none;
   }
+  .filterBtn:hover { transform: none; }
   .card:hover { transform: none; }
+  .card:hover .cardMedia img { transform: none; }
   .card:hover .cardCta svg { transform: none; }
   .studioCard:hover { transform: none; }
   .studioCard:hover .studioImg { transform: none; }

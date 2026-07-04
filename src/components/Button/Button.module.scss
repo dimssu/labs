@@ -1,8 +1,10 @@
 @import '../../styles/variables';
 
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   font-family: $font-body;
   font-size: 16px;
@@ -10,29 +12,60 @@
   letter-spacing: -0.01em;
   line-height: 1;
   cursor: pointer;
+  isolation: isolate;
   transition: background $dur-fast $ease-standard, color $dur-fast $ease-standard,
-    border-color $dur-fast $ease-standard, transform $dur-fast $ease-standard,
-    box-shadow $dur-fast $ease-standard;
+    border-color $dur-fast $ease-standard, box-shadow $dur-base $ease-out-expo;
 
   /* the arrow's forward nudge is driven by the motion variant, not CSS */
   .arrow { display: inline-flex; align-items: center; }
+  .label { position: relative; z-index: 1; }
 }
 
-/* Primary — accent fill, the one decisive action */
+/* Primary — accent fill + accent glow, the one decisive action */
 .primary {
-  padding: 15px 24px;
+  padding: 15px 26px;
   border-radius: $radius-sm;
   background: $color-accent;
   color: #fff;
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.16);
+  overflow: hidden;
+  box-shadow: var(--shadow-accent);
+
+  /* a soft top-edge highlight so the fill reads dimensional, not flat */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 45%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .arrow { z-index: 1; }
 
   &:hover {
     background: $color-accent-hover;
     color: #fff;
-    transform: translateY(-1px);
-    box-shadow: $shadow-hover;
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.2),
+      0 12px 28px -6px rgba(29, 78, 216, 0.44),
+      0 3px 8px -1px rgba(29, 78, 216, 0.3);
   }
-  &:active { transform: translateY(0); }
+  &:hover .sheen { transform: translateX(220%) skewX(-18deg); }
+}
+
+/* Sweeping sheen — a single specular pass on hover. */
+.sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  transform: translateX(-160%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Secondary — hairline outline, quiet */

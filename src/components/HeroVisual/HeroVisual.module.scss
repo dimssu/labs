@@ -1,0 +1,201 @@
+@import '../../styles/variables';
+
+.wrap {
+  position: relative;
+  width: 100%;
+  perspective: 1400px;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  border-radius: $radius-lg;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  box-shadow: var(--shadow-media);
+  transform-style: preserve-3d;
+  overflow: hidden;
+  will-change: transform;
+}
+
+/* blueprint drafting grid, faded at the edges */
+.grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 38px 38px;
+  -webkit-mask-image: radial-gradient(95% 95% at 50% 42%, #000 34%, transparent 78%);
+  mask-image: radial-gradient(95% 95% at 50% 42%, #000 34%, transparent 78%);
+}
+
+/* soft accent aura — the blue as a light source */
+.aura {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(60% 55% at 62% 22%, rgba(29, 78, 216, 0.14), transparent 68%),
+    radial-gradient(50% 45% at 22% 82%, rgba(29, 78, 216, 0.08), transparent 70%);
+}
+:global([data-theme='dark']) .aura {
+  background:
+    radial-gradient(60% 55% at 62% 22%, rgba(110, 140, 255, 0.2), transparent 68%),
+    radial-gradient(50% 45% at 22% 82%, rgba(110, 140, 255, 0.12), transparent 70%);
+}
+
+/* the illustration layer */
+.art {
+  position: absolute;
+  inset: 8% 7%;
+  z-index: 2;
+  transform: translateZ(28px);
+}
+.artFloat {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: heroFloat 7s ease-in-out infinite;
+}
+.img {
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 24px 40px rgba(16, 24, 40, 0.16));
+}
+
+/* AI scan sweep — a soft accent band that travels down the piece */
+.scan {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  height: 26%;
+  top: -30%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(29, 78, 216, 0.14) 45%,
+    rgba(29, 78, 216, 0.22) 50%,
+    rgba(29, 78, 216, 0.14) 55%,
+    transparent
+  );
+  filter: blur(2px);
+  mix-blend-mode: multiply;
+  animation: heroScan 5.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  pointer-events: none;
+}
+:global([data-theme='dark']) .scan { mix-blend-mode: screen; }
+
+/* blueprint registration crop-marks */
+.crop {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  z-index: 3;
+  border-color: var(--accent-edge);
+  opacity: 0;
+  animation: cropIn 0.6s $ease-out-expo forwards;
+}
+.tl { top: 18px; left: 18px; border-top: 1.5px solid; border-left: 1.5px solid; animation-delay: 0.35s; }
+.tr { top: 18px; right: 18px; border-top: 1.5px solid; border-right: 1.5px solid; animation-delay: 0.45s; }
+.bl { bottom: 18px; left: 18px; border-bottom: 1.5px solid; border-left: 1.5px solid; animation-delay: 0.55s; }
+.br { bottom: 18px; right: 18px; border-bottom: 1.5px solid; border-right: 1.5px solid; animation-delay: 0.65s; }
+
+/* floating live-status chip */
+.chip {
+  position: absolute;
+  top: 12%;
+  right: 6%;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  border-radius: $radius-pill;
+  background: color-mix(in srgb, $color-surface 82%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid $color-border;
+  box-shadow: var(--shadow-lifted);
+  transform: translateZ(56px);
+}
+.chipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-status-live;
+  box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.5);
+  animation: pulse 2.4s ease-out infinite;
+}
+.chipText {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: $color-text-primary;
+}
+
+/* quiet metric tag, lower-left */
+.tag {
+  position: absolute;
+  bottom: 12%;
+  left: 6%;
+  z-index: 4;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 8px 13px;
+  border-radius: $radius-pill;
+  background: color-mix(in srgb, $color-surface 82%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid $color-border;
+  box-shadow: var(--shadow-lifted);
+  transform: translateZ(48px);
+}
+.tagKey {
+  font-family: $font-mono;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+}
+.tagVal {
+  font-family: $font-mono;
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-accent;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes heroScan {
+  0% { top: -30%; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: 104%; opacity: 0; }
+}
+@keyframes cropIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.5); }
+  70% { box-shadow: 0 0 0 9px rgba(29, 78, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(29, 78, 216, 0); }
+}
+
+@media (max-width: 768px) {
+  .chipText { font-size: 12px; }
+  .chip, .tag { padding: 7px 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artFloat, .scan, .chipDot { animation: none; }
+  .crop { opacity: 1; animation: none; }
+  .scan { display: none; }
+}

@@ -1,4 +1,5 @@
 @import '../../styles/variables';
+@import '../../styles/mixins';
 
 .page { position: relative; }
 
@@ -36,6 +37,24 @@
   }
 
   .shell { position: relative; z-index: 1; }
+}
+
+/* Soft accent aura behind the hero visual — the blue as a light source. */
+.heroGlow {
+  position: absolute;
+  top: -12%;
+  right: -6%;
+  width: min(760px, 62vw);
+  height: min(760px, 62vw);
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgba(29, 78, 216, 0.14), rgba(29, 78, 216, 0.05) 55%, transparent 72%);
+  filter: blur(8px);
+
+  @media (max-width: 940px) { top: auto; bottom: 0; right: -20%; opacity: 0.7; }
+}
+:global([data-theme='dark']) .heroGlow {
+  background: radial-gradient(closest-side, rgba(110, 140, 255, 0.2), rgba(110, 140, 255, 0.07) 55%, transparent 72%);
 }
 
 /* Blueprint grid fades up on load — a quiet "coming to life" tied to the
@@ -114,25 +133,10 @@
 }
 
 .heroVisual {
-  display: flex;
-
-  @media (max-width: 940px) { max-width: 560px; width: 100%; }
-}
-
-.heroVisualCard {
-  position: relative;
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: $radius-lg;
-  border: 1px solid $color-border;
-  background: $color-surface;
-  box-shadow: $shadow-rest;
-  overflow: hidden;
-}
 
-.heroVisualImg {
-  object-fit: contain;
-  padding: clamp(2px, 0.5vw, 8px);
+  @media (max-width: 940px) { max-width: 560px; }
 }
 
 /* ============================================================
@@ -153,15 +157,15 @@
 }
 
 .proofCell {
+  @include lit-card;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-rest;
   padding: clamp(24px, 2.4vw, 34px);
+
+  /* accent top-edge — a lit rule that reads as "measured, verified" */
+  &::before { background: linear-gradient(160deg, rgba(255,255,255,0.7), transparent 40%); }
 }
 
 .proofMedia {
@@ -174,17 +178,14 @@
 .proofImg { object-fit: contain; }
 
 .proofValue {
-  font-family: $font-body;
-  font-size: clamp(44px, 5vw, 64px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: $color-text-primary;
+  @include stat-num;
+  font-size: clamp(48px, 5.4vw, 68px);
 }
 
 .proofLabel {
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 17px;
+  font-weight: 500;
   color: $color-text-primary;
 }
 
@@ -246,19 +247,20 @@
   height: 100%;
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-rest;
+  border-radius: $radius-lg;
+  box-shadow: var(--shadow-lifted);
   color: $color-text-primary;
   overflow: hidden;
-  transition: transform $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard,
-    border-color $dur-fast $ease-standard;
+  transition: transform $dur-base $ease-out-expo, box-shadow $dur-base $ease-out-expo,
+    border-color $dur-base $ease-out-expo;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: $shadow-hover;
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-float);
     border-color: $color-border-focus;
   }
   &:hover .engMore { color: $color-accent-hover; }
+  &:hover .engImg { transform: scale(1.045); }
 }
 
 .engMedia {
@@ -266,12 +268,30 @@
   display: block;
   width: 100%;
   aspect-ratio: 3 / 2;
-  background: $color-surface-alt;
+  background:
+    radial-gradient(120% 90% at 70% 15%, var(--accent-wash), transparent 60%),
+    $color-surface-alt;
   border-bottom: 1px solid $color-border;
   overflow: hidden;
 }
 
-.engImg { object-fit: cover; object-position: center; }
+.engMediaGrid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(80% 80% at 50% 30%, #000 30%, transparent 80%);
+  mask-image: radial-gradient(80% 80% at 50% 30%, #000 30%, transparent 80%);
+}
+
+.engImg {
+  object-fit: cover;
+  object-position: center;
+  transition: transform $dur-slow $ease-out-expo;
+}
 
 .engBody {
   display: flex;
@@ -312,7 +332,13 @@
   @media (max-width: 520px) { grid-template-columns: 1fr; }
 }
 
-.indCard { display: flex; flex-direction: column; }
+.indCard {
+  display: flex;
+  flex-direction: column;
+  &:hover .indMedia { border-color: $color-border-focus; box-shadow: var(--shadow-lifted); }
+  &:hover .indImg { transform: scale(1.05); }
+  &:hover .indName { color: $color-accent; }
+}
 
 .indMedia {
   position: relative;
@@ -321,12 +347,15 @@
   aspect-ratio: 4 / 3;
   border-radius: $radius-md;
   border: 1px solid $color-border;
-  background: $color-surface;
+  background:
+    radial-gradient(120% 90% at 70% 15%, var(--accent-wash), transparent 60%),
+    $color-surface;
   overflow: hidden;
   margin-bottom: 18px;
+  transition: border-color $dur-base $ease-out-expo, box-shadow $dur-base $ease-out-expo;
 }
 
-.indImg { object-fit: cover; object-position: center; }
+.indImg { object-fit: cover; object-position: center; transition: transform $dur-slow $ease-out-expo; }
 
 .indName { margin: 0 0 6px; font-size: clamp(17px, 1.4vw, 19px); }
 
@@ -367,8 +396,17 @@
 .workMeta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 16px;
+}
+
+.workIndex {
+  font-family: $font-mono;
+  font-size: 13px;
+  font-weight: 500;
+  color: $color-accent;
+  padding-right: 12px;
+  border-right: 1px solid $color-border;
 }
 
 .workIndustry {
@@ -645,11 +683,50 @@
 .cadenceText { margin: 0; color: $color-text-secondary; font-size: 15px; line-height: 1.5; }
 
 /* ============================================================
-   CLOSE / CONTACT
+   CLOSE / CONTACT — lit panel
    ============================================================ */
 .close { padding: $section-pad 0; }
 
-.closeGrid {
+.closePanel {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: var(--shadow-float);
+  padding: clamp(36px, 5vw, 72px);
+}
+
+/* blueprint grid inside the panel */
+.closeGrid2 {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+  mask-image: radial-gradient(90% 120% at 15% 0%, #000 20%, transparent 70%);
+}
+.closeGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(29, 78, 216, 0.12), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(29, 78, 216, 0.07), transparent 60%);
+}
+:global([data-theme='dark']) .closeGlow {
+  background:
+    radial-gradient(60% 90% at 100% 100%, rgba(110, 140, 255, 0.16), transparent 62%),
+    radial-gradient(50% 70% at 0% 0%, rgba(110, 140, 255, 0.1), transparent 60%);
+}
+
+.closeInner {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   align-items: end;

@@ -1,8 +1,8 @@
 'use client';
 
-import { type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import Reveal from '../../components/Reveal';
+import Parallax from '../../components/Parallax';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Check } from 'lucide-react';
@@ -147,9 +147,8 @@ const PROOF_GRID: Proof[] = [
   { title: 'Brief Forge', sector: 'Legal', metric: '14+ fields drafted', slug: 'brief-forge' },
 ];
 
-/* --- Motion ------------------------------------------------------------- */
+/* --- Small pieces ------------------------------------------------------- */
 
-/** Soft, once-only entrance. Renders fully visible under reduced motion. */
 /* Small "Live" status pill — text conveys status, not colour alone. */
 function LivePill() {
   return (
@@ -167,10 +166,34 @@ function DataSheet({ rows }: { rows: SheetRow[] }) {
       {rows.map((row) => (
         <div key={row.label} className={styles.sheetRow}>
           <dt className={styles.sheetKey}>{row.label}</dt>
-          <dd className={styles.sheetVal}>{row.value}</dd>
+          <dd className={cx(styles.sheetVal, 'tnum')}>{row.value}</dd>
         </div>
       ))}
     </dl>
+  );
+}
+
+/* Reusable section head — Eyebrow + serif h2 + optional standfirst, each
+   revealed with a small stagger. Mirrors Home's SectionHead exactly. */
+function SectionHead({
+  eyebrow,
+  title,
+  standfirst,
+  id,
+}: {
+  eyebrow: string;
+  title: string;
+  standfirst?: string;
+  id: string;
+}) {
+  return (
+    <header className={styles.sectionHead}>
+      <Reveal><Eyebrow>{eyebrow}</Eyebrow></Reveal>
+      <Reveal delay={0.06}><h2 id={id} className={styles.sectionTitle}>{title}</h2></Reveal>
+      {standfirst && (
+        <Reveal delay={0.12}><p className={styles.sectionStandfirst}>{standfirst}</p></Reveal>
+      )}
+    </header>
   );
 }
 
@@ -179,33 +202,47 @@ function DataSheet({ rows }: { rows: SheetRow[] }) {
 function Masthead() {
   return (
     <section className={styles.masthead} aria-labelledby="services-title">
+      <span className={styles.heroGlow} aria-hidden="true" />
       <div className={styles.shell}>
         <div className={styles.mastGrid}>
           <div className={styles.mastText}>
-            <Eyebrow>What we do</Eyebrow>
-            <h1 id="services-title" className={styles.mastTitle}>
-              Three engagements, one senior team.
-            </h1>
-            <p className={styles.mastLede}>
-              Pick the engagement that matches the moment — a full end-to-end build,
-              a hardened module dropped into your stack, or fractional leadership.
-              The same senior team is behind all three.
-            </p>
-            <div className={styles.mastActions}>
-              <Button href="/contact-us" variant="primary">Start a build</Button>
-              <Button href="/portfolio" variant="text">See the work</Button>
-            </div>
+            <Reveal delay={0.02}>
+              <Eyebrow>What we do</Eyebrow>
+            </Reveal>
+            <Reveal variant="blur" delay={0.08}>
+              <h1 id="services-title" className={styles.mastTitle}>
+                Three engagements, one senior team.
+              </h1>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <p className={styles.mastLede}>
+                Pick the engagement that matches the moment — a full end-to-end build,
+                a hardened module dropped into your stack, or fractional leadership.
+                The same senior team is behind all three.
+              </p>
+            </Reveal>
+            <Reveal delay={0.24}>
+              <div className={styles.mastActions}>
+                <Button href="/contact-us" variant="primary">Start a build</Button>
+                <Button href="/portfolio" variant="secondary" magnetic={false}>See the work</Button>
+              </div>
+            </Reveal>
           </div>
-          <div className={styles.mastVisual}>
-            <Image
-              src="/media/services.webp"
-              alt="A senior team assembling one production system from design, engineering, and AI workstreams"
-              fill
-              priority
-              sizes="(max-width: 900px) 92vw, 460px"
-              className={styles.mastImg}
-            />
-          </div>
+
+          <Reveal className={styles.mastVisual} variant="scale" delay={0.14}>
+            <Parallax amount={16} className={styles.mastStage}>
+              <div className={styles.mastPlate}>
+                <Image
+                  src="/media/services.webp"
+                  alt="A senior team assembling one production system from design, engineering, and AI workstreams"
+                  fill
+                  priority
+                  sizes="(max-width: 900px) 92vw, 460px"
+                  className={styles.mastImg}
+                />
+              </div>
+            </Parallax>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -218,17 +255,16 @@ function OfferSummary() {
   return (
     <section className={styles.offer} aria-labelledby="offer-title">
       <div className={styles.shell}>
-        <header className={styles.offerHead}>
-          <Eyebrow>What we offer</Eyebrow>
-          <h2 id="offer-title" className={styles.offerTitle}>Pick the one that fits</h2>
-          <p className={styles.offerLede}>
-            A quick overview of the three — each links to its full detail below.
-          </p>
-        </header>
+        <SectionHead
+          id="offer-title"
+          eyebrow="What we offer"
+          title="Pick the one that fits"
+          standfirst="A quick overview of the three — each links to its full detail below."
+        />
 
         <ol className={styles.offerGrid}>
           {ENGAGEMENTS.map((e, i) => (
-            <Reveal as="li" key={e.anchor} className={styles.offerCardWrap} delay={i * 0.1}>
+            <Reveal as="li" key={e.anchor} className={styles.offerCardWrap} delay={i * 0.08}>
               <MotionA
                 href={`#${e.anchor}`}
                 className={styles.offerCard}
@@ -261,50 +297,64 @@ function OfferSummary() {
   );
 }
 
-function EngagementSection({ engagement, tone }: { engagement: Engagement; tone: 'base' | 'alt' }) {
+/* The three detailed engagements, stacked as alternating editorial rows inside
+   one section so the rhythm stays tight. Each row keeps its own anchor id +
+   scroll-margin so the #custom / #products / #fractional-cto deep links still land. */
+function EngagementRow({ engagement, index }: { engagement: Engagement; index: number }) {
+  const reversed = index % 2 === 1;
   return (
-    <section
+    <article
       id={engagement.anchor}
-      className={cx(styles.section, tone === 'alt' && styles.sectionAlt)}
+      className={cx(styles.engRow, reversed && styles.engReversed)}
       aria-labelledby={`eng-${engagement.anchor}`}
     >
+      <Reveal className={styles.engBody} variant={reversed ? 'right' : 'left'}>
+        <Eyebrow>{engagement.tag}</Eyebrow>
+        <h2 id={`eng-${engagement.anchor}`} className={styles.engTitle}>
+          {engagement.title}
+        </h2>
+        <p className={styles.engTagline}>{engagement.tagline}</p>
+
+        <ul className={styles.tickList}>
+          {engagement.bullets.map((b) => (
+            <li key={b} className={styles.tickItem}>
+              <span className={styles.tickMark} aria-hidden="true">
+                <Check size={15} strokeWidth={2.25} />
+              </span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className={styles.deliver}>
+          <span className={styles.deliverKey}>What you get</span>
+          <p className={styles.deliverVal}>{engagement.whatYouGet}</p>
+        </div>
+
+        <DataSheet rows={engagement.sheet} />
+      </Reveal>
+
+      <Parallax amount={reversed ? 18 : -18} className={styles.engPlate}>
+        <ScreenshotFrame
+          src={engagement.plate.src}
+          alt={engagement.plate.alt}
+          aspect="16 / 10"
+          reveal={false}
+          sizes="(max-width: 1024px) 92vw, 520px"
+        />
+      </Parallax>
+    </article>
+  );
+}
+
+function Engagements() {
+  return (
+    <section className={cx(styles.section, styles.engagements)} aria-label="How each engagement works">
       <div className={styles.shell}>
-        <div className={styles.engGrid}>
-          <Reveal className={styles.engBody}>
-            <Eyebrow>{engagement.tag}</Eyebrow>
-            <h2 id={`eng-${engagement.anchor}`} className={styles.engTitle}>
-              {engagement.title}
-            </h2>
-            <p className={styles.engTagline}>{engagement.tagline}</p>
-
-            <ul className={styles.tickList}>
-              {engagement.bullets.map((b) => (
-                <li key={b} className={styles.tickItem}>
-                  <span className={styles.tickMark} aria-hidden="true">
-                    <Check size={15} strokeWidth={2.25} />
-                  </span>
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className={styles.deliver}>
-              <span className={styles.deliverKey}>What you get</span>
-              <p className={styles.deliverVal}>{engagement.whatYouGet}</p>
-            </div>
-
-            <DataSheet rows={engagement.sheet} />
-          </Reveal>
-
-          <div className={styles.engPlate}>
-            <ScreenshotFrame
-              src={engagement.plate.src}
-              alt={engagement.plate.alt}
-              aspect="16 / 10"
-              reveal={false}
-              sizes="(max-width: 1024px) 92vw, 520px"
-            />
-          </div>
+        <div className={styles.engStack}>
+          {ENGAGEMENTS.map((e, i) => (
+            <EngagementRow key={e.anchor} engagement={e} index={i} />
+          ))}
         </div>
       </div>
     </section>
@@ -315,49 +365,47 @@ function Modules() {
   return (
     <section className={cx(styles.section, styles.sectionAlt)} aria-labelledby="modules-title">
       <div className={styles.shell}>
-        <header className={styles.sectionHead}>
-          <Eyebrow>Deployable modules</Eyebrow>
-          <h2 id="modules-title" className={styles.sectionTitle}>
-            Ten modules already live in production
-          </h2>
-          <p className={styles.sectionStandfirst}>
-            Each of these is a product we&apos;ve shipped and hardened across clients,
-            packaged as a deployable module — drop any one into your stack. Open one to see how it works.
-          </p>
-        </header>
+        <SectionHead
+          id="modules-title"
+          eyebrow="Deployable modules"
+          title="Ten modules already live in production"
+          standfirst="Each of these is a product we've shipped and hardened across clients, packaged as a deployable module — drop any one into your stack. Open one to see how it works."
+        />
 
-        <div className={styles.moduleTable} role="list">
+        <Reveal className={styles.moduleTable} style={{ display: 'block' }}>
           <div className={styles.moduleHead} aria-hidden="true">
             <span>Module</span>
             <span>Sector</span>
             <span className={styles.colStatus}>Status</span>
           </div>
-          {MODULE_INDEX.map((row) => (
-            <div key={row.slug} role="listitem">
-              <Link href={`/product/${row.slug}`} className={styles.moduleRow}>
-                <span className={styles.rowName}>{row.module}</span>
-                <span className={styles.rowSector}>{row.sector}</span>
-                <span className={styles.colStatus}>
-                  <LivePill />
-                </span>
-              </Link>
-            </div>
-          ))}
-        </div>
+          <div role="list">
+            {MODULE_INDEX.map((row) => (
+              <div key={row.slug} role="listitem">
+                <Link href={`/product/${row.slug}`} className={styles.moduleRow}>
+                  <span className={styles.rowName}>{row.module}</span>
+                  <span className={styles.rowSector}>{row.sector}</span>
+                  <span className={styles.colStatus}>
+                    <LivePill />
+                  </span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </Reveal>
 
         <div className={styles.proofHead}>
-          <Eyebrow>Flagship results</Eyebrow>
+          <Reveal><Eyebrow>Flagship results</Eyebrow></Reveal>
         </div>
         <ul className={styles.proofGrid}>
           {PROOF_GRID.map((p, i) => (
-            <Reveal as="li" key={p.slug} className={styles.proofCardWrap} delay={i * 0.05}>
+            <Reveal as="li" key={p.slug} className={styles.proofCardWrap} delay={i * 0.06}>
               <Link href={`/product/${p.slug}`} className={styles.proofCard}>
                 <div className={styles.proofTop}>
                   <span className={styles.proofSector}>{p.sector}</span>
                   <LivePill />
                 </div>
                 <h3 className={styles.proofTitle}>{p.title}</h3>
-                <span className={styles.proofMetric}>{p.metric}</span>
+                <span className={cx(styles.proofMetric, 'tnum')}>{p.metric}</span>
               </Link>
             </Reveal>
           ))}
@@ -375,46 +423,50 @@ function Close() {
   return (
     <section className={styles.close} aria-labelledby="close-title">
       <div className={styles.shell}>
-        <div className={styles.closeGrid}>
-          <div className={styles.closeMain}>
-            <Eyebrow>Start here</Eyebrow>
-            <h2 id="close-title" className={styles.closeTitle}>Not sure which one fits?</h2>
-            <p className={styles.closeLede}>
-              Tell us what you are building. A senior builder reads it and replies,
-              usually within one business day.
-            </p>
-            <Button href="/contact-us" variant="primary">Start a build</Button>
-          </div>
+        <Reveal variant="scale" className={styles.closePanel}>
+          <span className={styles.closeGrid2} aria-hidden="true" />
+          <span className={styles.closeGlow} aria-hidden="true" />
+          <div className={styles.closeInner}>
+            <div className={styles.closeMain}>
+              <Eyebrow>Start here</Eyebrow>
+              <h2 id="close-title" className={styles.closeTitle}>Not sure which one fits?</h2>
+              <p className={styles.closeLede}>
+                Tell us what you are building. A senior builder reads it and replies,
+                usually within one business day.
+              </p>
+              <Button href="/contact-us" variant="primary">Start a build</Button>
+            </div>
 
-          <dl className={styles.closeCoords}>
-            {[
-              {
-                k: 'Director',
-                v: (
-                  <a href="mailto:aryan@vruoom.com" className={styles.coordLink}>
-                    aryan@vruoom.com
-                  </a>
-                ),
-              },
-              {
-                k: 'CTO',
-                v: (
-                  <a href="mailto:priyanshu@vruoom.com" className={styles.coordLink}>
-                    priyanshu@vruoom.com
-                  </a>
-                ),
-              },
-              { k: 'Studio', v: 'India, working globally' },
-              { k: 'Response', v: 'Within one business day' },
-              { k: 'Parent', v: 'Vruoom' },
-            ].map((row) => (
-              <div key={row.k} className={styles.coordRow}>
-                <dt className={styles.coordKey}>{row.k}</dt>
-                <dd className={styles.coordVal}>{row.v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+            <dl className={styles.closeCoords}>
+              {[
+                {
+                  k: 'Director',
+                  v: (
+                    <a href="mailto:aryan@vruoom.com" className={styles.coordLink}>
+                      aryan@vruoom.com
+                    </a>
+                  ),
+                },
+                {
+                  k: 'CTO',
+                  v: (
+                    <a href="mailto:priyanshu@vruoom.com" className={styles.coordLink}>
+                      priyanshu@vruoom.com
+                    </a>
+                  ),
+                },
+                { k: 'Studio', v: 'India, working globally' },
+                { k: 'Response', v: 'Within one business day' },
+                { k: 'Parent', v: 'Vruoom' },
+              ].map((row) => (
+                <div key={row.k} className={styles.coordRow}>
+                  <dt className={styles.coordKey}>{row.k}</dt>
+                  <dd className={styles.coordVal}>{row.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -427,9 +479,7 @@ export default function Services() {
       <main>
         <Masthead />
         <OfferSummary />
-        {ENGAGEMENTS.map((e, i) => (
-          <EngagementSection key={e.anchor} engagement={e} tone={i % 2 === 1 ? 'alt' : 'base'} />
-        ))}
+        <Engagements />
         <Modules />
         <Close />
       </main>
