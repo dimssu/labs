@@ -1,116 +1,93 @@
 @import '../../styles/variables';
-@import '../../styles/mixins';
 
-.accordionContainer {
-  background: rgba(255, 255, 255, 0.015);
-  border: 1px solid rgba(255, 255, 255, 0.05); /* Ghost border */
-  border-radius: $border-radius-lg;
-  margin-bottom: $spacing-md;
-  overflow: hidden;
-  transition: all $transition-default;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  &.open {
-    background: rgba(20, 20, 20, 0.8);
-    border-color: rgba($color-accent, 0.25);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
+/* Datasheet row — hairline separated, no box, no radius. */
+.row {
+  border-bottom: 1px solid $color-border;
 }
 
-.accordionHeader {
+.trigger {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-lg $spacing-xl;
+  column-gap: clamp(20px, 3vw, 32px);
+  padding: clamp(20px, 2.4vw, 28px) 0;
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: all $transition-fast;
 
-  @media (max-width: 480px) {
-    padding: $spacing-md $spacing-md;
-    gap: $spacing-sm;
-  }
-  
-  &:hover {
-    .question {
-      color: $color-accent;
-    }
-    .iconContainer {
-      color: $color-accent;
-    }
-  }
-
-  &.open {
-    .question {
-      color: $color-text-primary;
-    }
-    .iconContainer {
-      color: $color-accent;
-      transform: rotate(180deg);
-      background: rgba($color-accent, 0.1);
-      border-color: rgba($color-accent, 0.2);
-    }
-  }
+  &:hover .question { color: $color-accent; }
+  &:hover .toggle { color: $color-accent; }
 }
 
 .question {
-  flex: 1;
-  font-size: 1.15rem;
+  font-family: $font-body;
+  font-size: clamp(17px, 1.4vw, 19px);
   font-weight: 500;
-  color: $color-text-primary;
-  margin: 0;
-  padding-right: $spacing-xl;
-  transition: color $transition-fast;
+  letter-spacing: -0.01em;
   line-height: 1.4;
+  color: $color-text-primary;
+  transition: color $dur-fast $ease-standard;
+}
 
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    padding-right: $spacing-md;
-  }
+/* CSS +/- glyph. Container turns 90deg on open (no bounce); the horizontal
+   stroke fades, resolving the plus into a minus. Accent only when active. */
+.toggle {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: $color-text-muted;
+  transition: transform $dur-base $ease-out-expo, color $dur-fast $ease-standard;
 
-  @media (max-width: 480px) {
-    font-size: 0.95rem;
-    padding-right: 0;
+  .open & {
+    transform: rotate(90deg);
+    color: $color-accent;
   }
 }
 
-.iconContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-text-secondary;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid transparent;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+.toggleBar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transform: translateY(-50%);
+  transition: opacity $dur-base $ease-out-expo;
 }
 
-.accordionContent {
-  padding: 0 $spacing-xl $spacing-lg;
+.toggleBarV {
+  transform: translateY(-50%) rotate(90deg);
+}
 
-  @media (max-width: 480px) {
-    padding: 0 $spacing-md $spacing-md;
-  }
+.toggleBarH {
+  .open & { opacity: 0; }
+}
+
+.answerWrap {
+  padding: 0 0 clamp(20px, 2.4vw, 28px);
 }
 
 .answer {
-  font-size: 1.05rem;
-  line-height: 1.7;
+  font-family: $font-body;
+  font-size: 17px;
+  line-height: 1.6;
   color: $color-text-secondary;
+  max-width: 66ch;
   margin: 0;
 
   @media (max-width: 480px) {
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggleBar,
+  .question {
+    transition: none;
   }
 }

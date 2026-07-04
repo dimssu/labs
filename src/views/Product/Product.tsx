@@ -1,340 +1,292 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Check, ArrowUpRight, Activity, Tag, Users, TrendingUp, Calendar, Clock } from 'lucide-react';
+import { type ReactNode } from 'react';
+import Reveal from '../../components/Reveal';
+import styles from './Product.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import styles from './Product.module.scss';
+import Button from '../../components/Button';
+import Eyebrow from '../../components/Eyebrow';
+import ScreenshotFrame from '../../components/ScreenshotFrame';
 import { productsData } from '../../data/products';
 
 interface ProductProps {
   productId: string;
 }
 
+const cx = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(' ');
+
+/* --- Motion ------------------------------------------------------------- */
+
+/** Soft, once-only entrance. Renders fully visible under reduced motion. */
+/* --- Shared section head ------------------------------------------------ */
+
+function SectionHead({
+  eyebrow,
+  title,
+  standfirst,
+  id,
+}: {
+  eyebrow: string;
+  title: string;
+  standfirst?: string;
+  id?: string;
+}) {
+  return (
+    <header className={styles.sectionHead}>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 id={id} className={styles.sectionTitle}>{title}</h2>
+      {standfirst && <p className={styles.sectionStandfirst}>{standfirst}</p>}
+    </header>
+  );
+}
+
+/* --- Page --------------------------------------------------------------- */
+
 export default function Product({ productId }: ProductProps) {
   const product = productsData[productId];
+  if (!product) return null;
 
-  if (!product) {
-    return null;
-  }
+  const statusLabel = product.status === 'live' ? 'Live' : 'Prototype';
+  const category = product.categories.join(' · ');
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.65 } }
-  };
+  const hasImage = Boolean(product.coverImage);
+  const hasMetrics = Boolean(product.metrics && product.metrics.length > 0);
+  const hasHighlights = Boolean(product.highlights && product.highlights.length > 0);
+  const hasFeatures = Boolean(product.features && product.features.length > 0);
+  const hasOutcomes = Boolean(product.outcomes && product.outcomes.length > 0);
+  const hasEngagement = Boolean(product.engagement);
 
-  const stagger = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
+  // Additional screenshots for the gallery — drop any that repeat the hero cover
+  // so the same shot never appears twice on the page.
+  const galleryItems = (product.gallery ?? []).filter(
+    (g) => !product.coverImage || g.src !== product.coverImage.src,
+  );
+  const hasGallery = galleryItems.length > 0;
 
-  // Dynamic section numbering — only count sections that will actually render.
-  const sectionList: { key: string; title: string }[] = [{ key: 'overview', title: 'Overview' }];
-  if (product.highlights && product.highlights.length > 0) sectionList.push({ key: 'highlights', title: 'Highlights' });
-  if (product.gallery && product.gallery.length > 0) sectionList.push({ key: 'gallery', title: 'Gallery' });
-  if (product.outcomes && product.outcomes.length > 0) sectionList.push({ key: 'outcomes', title: 'Outcomes' });
-  if (product.techStack && product.techStack.length > 0) sectionList.push({ key: 'techStack', title: 'Tech Stack' });
-  if (product.features && product.features.length > 0) sectionList.push({ key: 'features', title: 'Features' });
-  const sectionNum = (key: string) => {
-    const idx = sectionList.findIndex(s => s.key === key);
-    return idx === -1 ? '' : String(idx + 1).padStart(2, '0');
-  };
+  // Close-section datasheet: prefer the real engagement record; otherwise fall
+  // back to the product's own coordinates. No invented values.
+  const coords = product.engagement
+    ? [
+        { k: 'Duration', v: product.engagement.duration },
+        { k: 'Scope', v: product.engagement.scope },
+        { k: 'Team', v: product.engagement.team },
+      ]
+    : [
+        { k: 'Client', v: product.client },
+        { k: 'Category', v: product.categories.join(', ') },
+        { k: 'Status', v: statusLabel },
+      ];
 
   return (
-    <div className={styles.pageWrapper}>
+    <div className={styles.page}>
       <Header />
+      <main>
 
-      <main className={styles.mainContent}>
+        {/* ── Masthead ──────────────────────────────────────── */}
+        <section className={styles.hero} aria-labelledby="product-title">
+          <div className={styles.shell}>
+            <div className={styles.heroText}>
+              <Eyebrow>{category}</Eyebrow>
+              <h1 id="product-title" className={styles.heroTitle}>{product.title}</h1>
+              <p className={styles.heroLede}>{product.subtitle}</p>
 
-        {/* ── Hero ─────────────────────────────── */}
-        <section className={`${styles.heroSection} ${product.coverImage ? styles.heroWithImage : ''}`}>
-          {product.coverImage && (
-            <div className={styles.heroBackdrop} aria-hidden="true">
-              <Image
-                src={product.coverImage.src}
-                alt=""
-                fill
-                sizes="100vw"
-                className={styles.heroBackdropImage}
-                priority
-              />
-              <div className={styles.heroBackdropFade} />
-            </div>
-          )}
-          <div className={styles.heroGlow} />
-          <div className="container">
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={stagger}
-              className={styles.heroInner}
-            >
-              {/* Back link */}
-              <motion.div variants={fadeUp}>
-                <Link href="/portfolio" className={styles.backLink}>
-                  <ArrowLeft size={15} />
-                  Back to Portfolio
-                </Link>
-              </motion.div>
-
-              {/* Status + categories */}
-              <motion.div variants={fadeUp} className={styles.heroBadges}>
-                <span className={`${styles.statusBadge} ${product.status === 'live' ? styles.live : styles.prototype}`}>
-                  {product.status === 'live' && <Activity size={11} className={styles.blink} />}
-                  {product.status === 'live' ? 'Shipped' : product.status}
+              <div className={styles.heroMeta}>
+                <span className={styles.statusPill}>
+                  <span className={styles.statusDotMark} aria-hidden="true" />
+                  {statusLabel}
                 </span>
-                {product.categories.map(c => (
-                  <span key={c} className={styles.categoryBadge}>
-                    <Tag size={11} />
-                    {c}
-                  </span>
-                ))}
-              </motion.div>
+                <span className={styles.heroClient}>For {product.client}</span>
+              </div>
 
-              <motion.span variants={fadeUp} className={styles.monoLabel}>{'// product'}</motion.span>
-              <motion.h1 variants={fadeUp} className={styles.pageTitle}>{product.title}</motion.h1>
-              <motion.p variants={fadeUp} className={styles.pageSubtitle}>{product.subtitle}</motion.p>
+              <div className={styles.heroActions}>
+                <Button href="/contact-us" variant="primary">Start a build</Button>
+                <Button href="/portfolio" variant="text">Back to all work</Button>
+              </div>
+            </div>
 
-              {/* Client */}
-              <motion.div variants={fadeUp} className={styles.clientRow}>
-                <Users size={14} className={styles.clientIcon} />
-                <span className={styles.clientLabel}>Client:</span>
-                <span className={styles.clientName}>{product.client}</span>
-              </motion.div>
-
-              {/* Engagement strip */}
-              {product.engagement && (
-                <motion.div variants={fadeUp} className={styles.engagementStrip}>
-                  <div className={styles.engagementItem}>
-                    <span className={styles.engagementLabel}><Clock size={11} /> Duration</span>
-                    <span className={styles.engagementValue}>{product.engagement.duration}</span>
-                  </div>
-                  <div className={styles.engagementItem}>
-                    <span className={styles.engagementLabel}><Calendar size={11} /> Scope</span>
-                    <span className={styles.engagementValue}>{product.engagement.scope}</span>
-                  </div>
-                  <div className={styles.engagementItem}>
-                    <span className={styles.engagementLabel}><Users size={11} /> Team</span>
-                    <span className={styles.engagementValue}>{product.engagement.team}</span>
-                  </div>
-                </motion.div>
-              )}
-
-              {product.coverImage?.caption && (
-                <motion.p variants={fadeUp} className={styles.heroCaption}>
-                  <span className={styles.captionMark}>{'//'}</span> {product.coverImage.caption}
-                </motion.p>
-              )}
-            </motion.div>
+            {hasImage ? (
+              <div className={styles.heroShot}>
+                <ScreenshotFrame
+                  src={product.coverImage!.src}
+                  alt={product.coverImage!.alt}
+                  aspect="16 / 10"
+                  reveal={false}
+                  priority
+                  sizes="(max-width: 1024px) 92vw, 1180px"
+                />
+                {product.coverImage!.caption && (
+                  <p className={styles.heroShotCaption}>{product.coverImage!.caption}</p>
+                )}
+              </div>
+            ) : (
+              /* SLOT: hero product screenshot (no cover image on record yet) */
+              null
+            )}
           </div>
         </section>
 
-        {/* ── Metrics Bar ──────────────────────── */}
-        {product.metrics && product.metrics.length > 0 && (
-          <div className={styles.metricsBar}>
-            <div className="container">
-              <div className={styles.metricsGrid}>
+        {/* ── Metrics datasheet ─────────────────────────────── */}
+        {hasMetrics && (
+          <section className={styles.metrics} aria-label="Results in production">
+            <div className={styles.shell}>
+              <div className={styles.metricsRow}>
                 {product.metrics.map((m, i) => (
-                  <div key={i} className={styles.metricItem}>
-                    <span className={styles.metricValue}>{m.value}</span>
+                  <div key={i} className={styles.metricCell}>
+                    <span className={cx(styles.metricValue, 'tnum')}>{m.value}</span>
                     <span className={styles.metricLabel}>{m.label}</span>
                   </div>
                 ))}
               </div>
+              <p className={styles.metricsNote}>
+                Measured on this product&apos;s own deployment for {product.client}.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ── Overview (+ highlights) ───────────────────────── */}
+        <section className={styles.section} aria-labelledby="overview-title">
+          <div className={styles.shell}>
+            <SectionHead
+              id="overview-title"
+              eyebrow="Overview"
+              title="What it does"
+              standfirst={product.overview}
+            />
+
+            {hasHighlights && (
+              <ul className={styles.highlights}>
+                {product.highlights!.map((h, i) => (
+                  <Reveal as="li" key={i} className={styles.highlightItem} delay={i * 0.06}>
+                    <span className={styles.highlightTick} aria-hidden="true" />
+                    <span className={styles.highlightText}>{h}</span>
+                  </Reveal>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+
+        {/* ── Capabilities: features + stack ────────────────── */}
+        {hasFeatures && (
+          <section className={styles.bandSection} aria-labelledby="capabilities-title">
+            <div className={styles.shell}>
+              <SectionHead
+                id="capabilities-title"
+                eyebrow="Capabilities"
+                title="Features and stack"
+                standfirst="What ships in the product, and the stack it runs on."
+              />
+              <div className={styles.capGrid}>
+                <ul className={styles.featureList}>
+                  {product.features.map((f, i) => (
+                    <Reveal as="li" key={i} className={styles.featureItem} delay={i * 0.04}>
+                      <span className={styles.featureTick} aria-hidden="true" />
+                      <span className={styles.featureText}>{f}</span>
+                    </Reveal>
+                  ))}
+                </ul>
+
+                <aside className={styles.stack} aria-label="Tech stack">
+                  <p className={styles.stackLabel}>Tech stack</p>
+                  <div className={styles.tagRow}>
+                    {product.techStack.map((t, i) => (
+                      <span key={i} className={styles.tag}>{t}</span>
+                    ))}
+                  </div>
+                </aside>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Gallery ───────────────────────────────────────── */}
+        {hasGallery && (
+          <section className={styles.section} aria-labelledby="gallery-title">
+            <div className={styles.shell}>
+              <SectionHead
+                id="gallery-title"
+                eyebrow="Inside the product"
+                title="A closer look"
+              />
+              <div className={styles.gallery}>
+                {galleryItems.map((g, i) => (
+                  <Reveal key={i} className={styles.galleryItem} delay={i * 0.05}>
+                    <ScreenshotFrame
+                      src={g.src}
+                      alt={g.alt}
+                      aspect="16 / 10"
+                      reveal={false}
+                      sizes="(max-width: 1024px) 92vw, 1040px"
+                    />
+                    {g.caption && <p className={styles.galleryCaption}>{g.caption}</p>}
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Outcomes ──────────────────────────────────────── */}
+        {hasOutcomes && (
+          <section className={styles.bandSection} aria-labelledby="outcomes-title">
+            <div className={styles.shell}>
+              <SectionHead
+                id="outcomes-title"
+                eyebrow="Outcomes"
+                title="Results in production"
+              />
+              <ul className={styles.outcomes}>
+                {product.outcomes!.map((o, i) => (
+                  <Reveal as="li" key={i} className={styles.outcomeItem} delay={i * 0.06}>
+                    <span className={styles.outcomeTick} aria-hidden="true" />
+                    <span className={styles.outcomeText}>{o}</span>
+                  </Reveal>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {/* ── Close ─────────────────────────────────────────── */}
+        <section className={styles.close} aria-labelledby="close-title">
+          <div className={styles.shell}>
+            <div className={styles.closeGrid}>
+              <div className={styles.closeMain}>
+                <Eyebrow>Start here</Eyebrow>
+                <h2 id="close-title" className={styles.closeTitle}>Building something in this space?</h2>
+                <p className={styles.closeLede}>
+                  A short call is enough for us to understand your situation and tell you
+                  whether we are the right team. If we are, a usable version follows inside
+                  the first two weeks.
+                </p>
+                <div className={styles.closeActions}>
+                  <Button href="/contact-us" variant="primary">Start a build</Button>
+                  <Button href="/portfolio" variant="text">See more work</Button>
+                </div>
+              </div>
+
+              <dl className={styles.closeCoords}>
+                {coords.map((row) => (
+                  <div key={row.k} className={styles.coordRow}>
+                    <dt className={styles.coordKey}>{row.k}</dt>
+                    <dd className={styles.coordVal}>{row.v}</dd>
+                  </div>
+                ))}
+                {hasEngagement && (
+                  <div className={styles.coordRow}>
+                    <dt className={styles.coordKey}>Status</dt>
+                    <dd className={styles.coordVal}>{statusLabel}</dd>
+                  </div>
+                )}
+              </dl>
             </div>
           </div>
-        )}
-
-        {/* ── 01 Overview ─────────────────────── */}
-        <section className={`container ${styles.contentSection}`}>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            variants={fadeUp}
-            className={styles.twoCol}
-          >
-            <div className={styles.stickyLabel}>
-              <span className={styles.sectionNumber}>{sectionNum('overview')}</span>
-              <h2 className={styles.sectionTitle}>Overview</h2>
-            </div>
-            <div>
-              <p className={styles.bodyText}>{product.overview}</p>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── Highlights ──────────────────────── */}
-        {product.highlights && product.highlights.length > 0 && (
-          <section className={`container ${styles.contentSection}`}>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              variants={stagger}
-              className={styles.twoCol}
-            >
-              <div className={styles.stickyLabel}>
-                <span className={styles.sectionNumber}>{sectionNum('highlights')}</span>
-                <h2 className={styles.sectionTitle}>Highlights</h2>
-              </div>
-              <ul className={styles.highlightsList}>
-                {product.highlights.map((h, i) => (
-                  <motion.li key={i} variants={fadeUp} className={styles.highlightItem}>
-                    <span className={styles.highlightDot} aria-hidden="true" />
-                    <span>{h}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          </section>
-        )}
-
-        {/* ── Gallery ─────────────────────────── */}
-        {product.gallery && product.gallery.length > 0 && (
-          <section className={`container ${styles.contentSection}`}>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              variants={stagger}
-              className={styles.twoCol}
-            >
-              <div className={styles.stickyLabel}>
-                <span className={styles.sectionNumber}>{sectionNum('gallery')}</span>
-                <h2 className={styles.sectionTitle}>Gallery</h2>
-              </div>
-              <div className={styles.gallery}>
-                {product.gallery.map((g, i) => (
-                  <motion.figure key={i} variants={fadeUp} className={styles.galleryItem}>
-                    <div className={styles.galleryImageWrap}>
-                      <Image
-                        src={g.src}
-                        alt={g.alt}
-                        fill
-                        sizes="(max-width: 900px) 100vw, 720px"
-                        className={styles.galleryImage}
-                      />
-                    </div>
-                    <figcaption className={styles.galleryCaption}>
-                      <span className={styles.galleryCaptionMark}>{'//'}</span> {g.caption}
-                    </figcaption>
-                  </motion.figure>
-                ))}
-              </div>
-            </motion.div>
-          </section>
-        )}
-
-        {/* ── Outcomes ────────────────────────── */}
-        {product.outcomes && product.outcomes.length > 0 && (
-          <section className={`container ${styles.contentSection}`}>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              variants={stagger}
-              className={styles.twoCol}
-            >
-              <div className={styles.stickyLabel}>
-                <span className={styles.sectionNumber}>{sectionNum('outcomes')}</span>
-                <h2 className={styles.sectionTitle}>Outcomes</h2>
-              </div>
-              <ul className={styles.outcomesList}>
-                {product.outcomes.map((o, i) => (
-                  <motion.li key={i} variants={fadeUp} className={styles.outcomeItem}>
-                    <div className={styles.outcomeIcon}>
-                      <TrendingUp size={14} />
-                    </div>
-                    <span>{o}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          </section>
-        )}
-
-        {/* ── Tech Stack ──────────────────────── */}
-        {product.techStack && product.techStack.length > 0 && (
-          <section className={`container ${styles.contentSection}`}>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-60px' }}
-              variants={fadeUp}
-              className={styles.twoCol}
-            >
-              <div className={styles.stickyLabel}>
-                <span className={styles.sectionNumber}>{sectionNum('techStack')}</span>
-                <h2 className={styles.sectionTitle}>Tech Stack</h2>
-              </div>
-              <div className={styles.techGrid}>
-                {product.techStack.map((tech, i) => (
-                  <span key={i} className={styles.techChip}>{tech}</span>
-                ))}
-              </div>
-            </motion.div>
-          </section>
-        )}
-
-        {/* ── Features ────────────────────────── */}
-        <section className={`container ${styles.contentSection}`}>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            variants={stagger}
-            className={styles.twoCol}
-          >
-            <div className={styles.stickyLabel}>
-              <span className={styles.sectionNumber}>{sectionNum('features')}</span>
-              <h2 className={styles.sectionTitle}>Features</h2>
-            </div>
-            <ul className={styles.featuresList}>
-              {product.features.map((f, i) => (
-                <motion.li key={i} variants={fadeUp} className={styles.featureItem}>
-                  <div className={styles.checkIcon}>
-                    <Check size={14} />
-                  </div>
-                  <span>{f}</span>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-        </section>
-
-        {/* ── CTA ──────────────────────────────── */}
-        <section className={`container ${styles.ctaSection}`}>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            variants={fadeUp}
-            className={styles.ctaBox}
-          >
-            <div className={styles.ctaGlow} aria-hidden="true" />
-            <p className={styles.ctaEyebrow}>{'// next'}</p>
-            <h2 className={styles.ctaTitle}>Building something in this space?</h2>
-            <p className={styles.ctaSubtitle}>
-              A 30-minute call is enough for us to understand your situation and tell you whether we&apos;re the right team. Usable version in the first two weeks if we are.
-            </p>
-            <div className={styles.ctaActions}>
-              <Link href="/contact-us" className={styles.ctaLink}>
-                Start the conversation
-                <ArrowUpRight size={16} />
-              </Link>
-              <Link href="/portfolio" className={styles.ctaSecondary}>
-                See more shipped work
-                <ArrowUpRight size={14} />
-              </Link>
-            </div>
-          </motion.div>
         </section>
 
       </main>
-
       <Footer />
     </div>
   );

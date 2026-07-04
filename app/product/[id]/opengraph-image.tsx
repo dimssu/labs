@@ -22,7 +22,7 @@ export default async function ProductOgImage({ params }: Props) {
     'AI-native product studio building custom AI solutions and production software.';
   const categories = product?.categories?.join(' · ') ?? 'AI · Engineering';
   const status = product?.status === 'live' ? 'Live in production' : 'Prototype';
-  const statusColor = product?.status === 'live' ? '#4ade80' : '#fbbf24';
+  const statusColor = product?.status === 'live' ? '#16A34A' : '#B45309';
 
   return new ImageResponse(
     (
@@ -34,10 +34,10 @@ export default async function ProductOgImage({ params }: Props) {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '80px',
-          backgroundColor: '#0a0a0a',
+          backgroundColor: '#FBFBFC',
           backgroundImage:
-            'radial-gradient(900px 500px at 80% 0%, #1e1b4b 0%, #0a0a0a 60%)',
-          color: '#ffffff',
+            'radial-gradient(900px 500px at 82% 0%, rgba(37,99,235,0.08) 0%, rgba(251,251,252,0) 58%)',
+          color: '#0E1116',
           fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
       >
@@ -52,9 +52,9 @@ export default async function ProductOgImage({ params }: Props) {
                 letterSpacing: -2,
               }}
             >
-              <span style={{ color: '#3b82f6' }}>{'{'}</span>
-              <span style={{ color: '#ffffff' }}>bs</span>
-              <span style={{ color: '#3b82f6' }}>{'}'}</span>
+              <span style={{ color: '#2563EB' }}>{'{'}</span>
+              <span style={{ color: '#0E1116' }}>bs</span>
+              <span style={{ color: '#2563EB' }}>{'}'}</span>
             </div>
             <div style={{ display: 'flex', fontSize: 26, fontWeight: 600 }}>BuildspaceLabs</div>
           </div>
@@ -65,8 +65,8 @@ export default async function ProductOgImage({ params }: Props) {
               borderRadius: 999,
               fontSize: 18,
               color: statusColor,
-              backgroundColor: 'rgba(255,255,255,0.06)',
-              border: '1px solid rgba(255,255,255,0.12)',
+              backgroundColor: 'rgba(15,18,26,0.04)',
+              border: '1px solid rgba(15,18,26,0.10)',
             }}
           >
             {status}
@@ -78,7 +78,7 @@ export default async function ProductOgImage({ params }: Props) {
             style={{
               display: 'flex',
               fontSize: 26,
-              color: '#a78bfa',
+              color: '#2563EB',
               textTransform: 'uppercase',
               letterSpacing: 3,
             }}
@@ -101,7 +101,7 @@ export default async function ProductOgImage({ params }: Props) {
             style={{
               display: 'flex',
               fontSize: 28,
-              color: '#d4d4d8',
+              color: '#565D6B',
               lineHeight: 1.35,
               maxWidth: 1040,
             }}
@@ -110,7 +110,7 @@ export default async function ProductOgImage({ params }: Props) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 22, color: '#71717a', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 22, color: '#8A909E', width: '100%' }}>
           <div style={{ display: 'flex' }}>buildspacelabs.com/product/{id}</div>
           <div style={{ display: 'flex' }}>AI-Native Engineering</div>
         </div>

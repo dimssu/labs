@@ -1,120 +1,115 @@
 @import '../../styles/variables';
 
+/* The Plate — a mounted print. Sharp corners, one hairline, one lifted shadow. */
 .frame {
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid $color-border;
-  border-radius: 14px;
+  margin: 0;
   background: $color-surface;
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.35);
-  overflow: hidden;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-rest;
   isolation: isolate;
+  transition: transform $dur-base $ease-out-expo,
+              box-shadow $dur-base $ease-out-expo,
+              border-color $dur-base $ease-out-expo;
 
-  /* Hairline top highlight — the light-catch of a real bezel. */
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    pointer-events: none;
-    z-index: 3;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-hover;
+    border-color: $color-border-focus;
   }
 }
 
-/* Fill mode: the frame takes its height from the consumer's flex context
-   (e.g. flex: 1 inside a fixed-height bento tile) rather than a hard 100%,
-   so it can share the tile with a caption. On mobile the shot falls back to
-   an intrinsic aspect ratio (see .shotFill) so it never collapses. */
+/* Fill mode: height comes from the consumer's flex context. */
 .frameFill {
   min-height: 0;
 }
 
-/* Flush inside a parent card: the card supplies the border/radius/clip, so the
-   frame drops its own so it doesn't read as a nested card. */
+/* Flush inside a parent: the parent supplies chrome, so drop border/shadow. */
 .frameSeamless {
   border: none;
   border-radius: 0;
   box-shadow: none;
 
-  &::before { display: none; }
-}
-
-.titlebar {
-  position: relative;
-  flex-shrink: 0;
-  height: 36px;
-  background: #18181b;
-  border-bottom: 1px solid $color-border;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-
-  @media (max-width: 480px) {
-    height: 30px;
+  &:hover {
+    transform: none;
   }
 }
 
-/* Right-side "menu" affordance so the titlebar reads as a real window, not a
-   half-drawn mock with an empty right third. Monochrome, matches the dots. */
-.menu {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 3px;
-
-  i {
-    width: 14px;
-    height: 1.5px;
-    border-radius: 1px;
-    background: #3f3f46;
-    opacity: 0.5;
-  }
-
-  @media (max-width: 480px) {
-    i { width: 11px; }
-  }
-}
-
-.dots {
-  display: inline-flex;
-  gap: 8px;
-
-  i {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #3f3f46;
-    opacity: 0.5;
-
-    @media (max-width: 480px) {
-      width: 8px;
-      height: 8px;
-    }
-  }
-}
-
-.urlPill {
+/* --- Crop-marks: four cobalt L's registering the plate corners. ---------- */
+.cropMarks {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: $font-mono;
-  font-size: 0.72rem;
-  letter-spacing: 0.01em;
-  color: #52525b;
-  white-space: nowrap;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
 
-  @media (max-width: 480px) {
-    font-size: 0.62rem;
+.crop {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    background: var(--crop);
+    transition: transform $dur-base $ease-out-expo;
+  }
+
+  /* horizontal arm */
+  &::before {
+    height: 1px;
+    width: 10px;
+    transform: scaleX(0);
+  }
+
+  /* vertical arm */
+  &::after {
+    width: 1px;
+    height: 10px;
+    transform: scaleY(0);
   }
 }
 
+.cropTl {
+  top: -6px;
+  left: -6px;
+  &::before { top: 0; left: 0; transform-origin: left center; }
+  &::after { top: 0; left: 0; transform-origin: center top; }
+}
+.cropTr {
+  top: -6px;
+  right: -6px;
+  &::before { top: 0; right: 0; transform-origin: right center; }
+  &::after { top: 0; right: 0; transform-origin: center top; }
+}
+.cropBl {
+  bottom: -6px;
+  left: -6px;
+  &::before { bottom: 0; left: 0; transform-origin: left center; }
+  &::after { bottom: 0; left: 0; transform-origin: center bottom; }
+}
+.cropBr {
+  bottom: -6px;
+  right: -6px;
+  &::before { bottom: 0; right: 0; transform-origin: right center; }
+  &::after { bottom: 0; right: 0; transform-origin: center bottom; }
+}
+
+/* --- Image area ---------------------------------------------------------- */
 .shot {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
   background: $color-surface;
+  overflow: hidden;
+
+  /* S1 register: the shot wipes in behind a left-to-right hairline. */
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path $dur-slow $ease-out-expo;
 }
 
 .shotFill {
@@ -122,7 +117,7 @@
   min-height: 0;
   aspect-ratio: auto;
 
-  @media (max-width: 1024px) {
+  @media (max-width: $bp-tablet) {
     flex: none;
     aspect-ratio: 16 / 10;
   }
@@ -142,4 +137,86 @@
   background: linear-gradient(to bottom, transparent, $color-background);
   z-index: 2;
   pointer-events: none;
+}
+
+/* --- Caption bar --------------------------------------------------------- */
+.caption {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border-top: 1px solid $color-border;
+  overflow: hidden;
+}
+
+.captionText {
+  display: inline-block;
+  font-family: $font-mono;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  white-space: nowrap;
+
+  /* Steps-in: a hairline sweep across the caption, reading as typesetting. */
+  clip-path: inset(0 100% 0 0);
+}
+
+/* --- Revealed state ------------------------------------------------------ */
+.revealed {
+  .shot {
+    clip-path: inset(0);
+  }
+
+  .crop::before {
+    transform: scaleX(1);
+    transition-delay: 60ms;
+  }
+  .crop::after {
+    transform: scaleY(1);
+    transition-delay: 120ms;
+  }
+
+  .captionText {
+    animation: captionStep $dur-base steps(24, end) 320ms forwards;
+  }
+}
+
+@keyframes captionStep {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+
+/* Static / reduced-motion: compose instantly, no wipe, no draw. */
+.isStatic {
+  .shot { transition: none; clip-path: inset(0); }
+  .crop::before { transition: none; transform: scaleX(1); }
+  .crop::after { transition: none; transform: scaleY(1); }
+  .captionText { animation: none; clip-path: inset(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .shot,
+  .crop::before,
+  .crop::after {
+    transition: none !important;
+  }
+  .shot { clip-path: inset(0); }
+  .crop::before { transform: scaleX(1); }
+  .crop::after { transform: scaleY(1); }
+  .captionText { animation: none; clip-path: inset(0); }
+  .frame:hover { transform: none; }
+}
+
+/* Mobile: let the mono caption wrap instead of truncating on narrow plates. */
+@media (max-width: 560px) {
+  .caption { padding: 9px 12px; }
+  .captionText {
+    white-space: normal;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+  }
 }

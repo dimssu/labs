@@ -1,0 +1,23 @@
+@import '../../styles/variables';
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  color: $color-text-muted;
+  margin: 0;
+}
+
+.tick {
+  width: 18px;
+  height: 1.5px;
+  background: $color-accent;
+  border-radius: 2px;
+}
+
+.accent { color: $color-accent; }

@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `${SITE_URL}/product/${id}`;
 
   return {
-    title: `${product.title} — ${categoriesStr}`,
+    title: `${product.title}, ${categoriesStr}`,
     description: `${product.subtitle} Tech stack: ${techStackStr}. Built by BuildspaceLabs for ${product.client}.`,
     alternates: { canonical: `/product/${id}` },
     openGraph: {

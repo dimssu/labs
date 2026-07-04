@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Silence the dev overlay indicator for clean demos (valid boolean in Next 15.2+).
+  devIndicators: false,
   sassOptions: {
     // Silence Sass @import deprecation warnings — existing module SCSS files
     // still use @import for variables/mixins. Migrating them to @use is a

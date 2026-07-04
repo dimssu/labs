@@ -1,174 +1,205 @@
 @import './variables';
 
+/* ============================================================
+   BuildspaceLabs — "Blueprint & Whitespace" design system.
+   Cool near-white, deep royal-blue as the single accent, a
+   contemporary serif (Source Serif 4) for statement headlines
+   over Geist Sans for everything functional. Structure comes
+   from whitespace, tonal bands, and 1px hairlines — never from
+   heavy rules or brutalist plates. Legacy --color-* / --radius-*
+   names are kept and remapped so existing views migrate cleanly.
+   ============================================================ */
+
 :root {
-  /* Default Dark Mode Theme */
-  --color-background: #09090b;
-  --color-surface: #121214;
-  --color-surface-hover: #18181b; 
-  --color-border: #27272a;
-  --color-border-focus: #3f3f46;
+  /* Surfaces — cool, faintly institutional */
+  --color-background:    #FBFBFC;  /* page — faintly cool near-white */
+  --color-surface:       #FFFFFF;  /* elevated cards, media panels */
+  --color-surface-alt:   #F5F6F8;  /* quiet alternating section bands */
+  --color-surface-2:     #F5F6F8;  /* legacy alias -> alt band */
+  --color-surface-hover: #F2F4F7;
 
-  --color-text-primary: #FAFAFA;
-  --color-text-secondary: #A1A1AA;
-  --color-text-muted: #71717A;
+  /* Ink */
+  --color-ink:            #101828;  /* near-black, faint navy undertone (~15.8:1) */
+  --color-text-primary:   #101828;
+  --color-text-secondary: #475467;  /* body / ledes (~7.5:1) */
+  --color-text-muted:     #667085;  /* meta / eyebrows (~4.9:1), never < 13px */
 
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
-  --color-badge-bg: rgba(59, 130, 246, 0.15);
-  --color-badge-text: #60a5fa;
-  --color-status-live: #6bcb77; /* semantic "shipped / in production" status */
+  /* Accent — one deep royal blue, THE only hue (<10% of any view) */
+  --color-accent:            #1D4ED8;
+  --color-accent-hover:      #1A44BE;
+  --color-accent-emphasis:   #1D4ED8;
+  --color-accent-solid:      #1D4ED8;  /* primary button FILL = accent */
+  --color-accent-solid-hover:#1A44BE;
+  --accent-soft:  rgba(29, 78, 216, 0.06);
+  --accent-line:  rgba(29, 78, 216, 0.22);
 
-  --color-header-bg: rgba(9, 9, 11, 0.85); /* Transparent dark for sticky navbar */
+  /* Rules & borders — hairlines do the separation work */
+  --color-border:       #E4E7EC;
+  --color-border-focus: #C6CAD2;
+  --rule-strong:        #D0D5DD;                 /* legacy: soft hairline, not ink */
+  --grid-line:          rgba(16, 24, 40, 0.04);
+  --crop:               #1D4ED8;                 /* legacy accent tick */
+
+  /* Badges / status */
+  --color-badge-bg:   transparent;
+  --color-badge-text: #101828;
+  --color-status-live: #1D4ED8;
+  --color-status-live-bg: rgba(29, 78, 216, 0.08);
+
+  --color-header-bg: rgba(251, 251, 252, 0.72);
+
+  /* Radii — restrained modern scale (retires 0/2px brutalism) */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --radius-plate:   16px;  /* legacy -> media radius */
+  --radius-control: 10px;  /* legacy -> button radius */
+
+  /* Elevation — near-invisible, cool-tinted */
+  --shadow-rest:  0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-hover: 0 8px 24px -8px rgba(16, 24, 40, 0.10);
+  --shadow-hero:  0 16px 40px -20px rgba(16, 24, 40, 0.12);
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-sm: var(--shadow-rest);
+  --shadow-md: var(--shadow-hover);
+  --shadow-lg: var(--shadow-hero);
+  --shadow-plate: var(--shadow-hero);   /* legacy */
+  --shadow-panel: var(--shadow-hover);  /* legacy */
+  --shadow-focus: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent);
+
+  /* Layout rhythm */
+  --content-max: 1180px;
+  --section-pad: clamp(88px, 10vw, 132px);
+  --gutter: clamp(24px, 5vw, 80px);
+
+  /* Motion */
+  --ease-register: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 150ms;
+  --dur-fast: 200ms;
+  --dur-base: 350ms;
+  --dur-draw: 500ms;
+  --dur-reveal: 550ms;
+
+  color-scheme: light;
 }
 
-[data-theme='light'] {
-  /* Light Mode Theme */
-  --color-background: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #F1F5F9;
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-focus: rgba(0, 0, 0, 0.15);
+[data-theme='dark'] {
+  --color-background:    #0B0D12;
+  --color-surface:       #14171F;
+  --color-surface-alt:   #10131A;
+  --color-surface-2:     #10131A;
+  --color-surface-hover: #1A1E27;
 
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
+  --color-ink:            #ECEFF4;
+  --color-text-primary:   #ECEFF4;
+  --color-text-secondary: #A9B2C2;
+  --color-text-muted:     #7C8598;
 
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
-  --color-badge-bg: rgba(59, 130, 246, 0.1);
-  --color-badge-text: #2563eb;
-  --color-status-live: #6bcb77;
+  --color-accent:            #6E8CFF;
+  --color-accent-hover:      #90A6FF;
+  --color-accent-emphasis:   #6E8CFF;
+  --color-accent-solid:      #6E8CFF;
+  --color-accent-solid-hover:#90A6FF;
+  --accent-soft:  rgba(110, 140, 255, 0.10);
+  --accent-line:  rgba(110, 140, 255, 0.30);
 
-  --color-header-bg: rgba(248, 250, 252, 0.85); /* Transparent light for sticky navbar */
+  --color-border:       rgba(255, 255, 255, 0.10);
+  --color-border-focus: rgba(255, 255, 255, 0.22);
+  --rule-strong:        rgba(255, 255, 255, 0.16);
+  --grid-line:          rgba(255, 255, 255, 0.05);
+  --crop:               #6E8CFF;
+
+  --color-badge-text: #ECEFF4;
+  --color-status-live: #6E8CFF;
+  --color-status-live-bg: rgba(110, 140, 255, 0.12);
+
+  --color-header-bg: rgba(11, 13, 18, 0.72);
+
+  --shadow-rest:  0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 10px 28px -12px rgba(0, 0, 0, 0.55);
+  --shadow-hero:  0 16px 44px -20px rgba(0, 0, 0, 0.6);
+  --shadow-focus: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-accent);
+
+  color-scheme: dark;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
-  /* `clip` (instead of `hidden`) prevents horizontal scroll WITHOUT
-     turning html/body into a scroll container — required so that
-     `position: sticky` keeps working on descendant sections. */
+  /* clip (not hidden) so position:sticky descendants keep working */
   overflow-x: clip;
   width: 100%;
   max-width: 100%;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
-  font-family: $font-primary;
+  font-family: $font-body;
+  font-size: 18px;
   background-color: $color-background;
   color: $color-text-primary;
   line-height: 1.6;
+  letter-spacing: -0.003em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  @media (max-width: 768px) { font-size: 17px; }
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* Statement headlines — Source Serif 4, left-flush, sentence case. */
+h1, h2 {
+  font-family: $font-display;
   color: $color-text-primary;
-  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.018em;
+  line-height: 1.08;
+}
+
+/* Functional headings — Geist Sans. */
+h3, h4, h5, h6 {
+  font-family: $font-body;
+  color: $color-text-primary;
   font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 
-h1 {
-  font-size: 3rem;
-  letter-spacing: -0.02em;
+h1 { font-size: clamp(46px, 6vw, 82px); line-height: 1.03; letter-spacing: -0.02em; }
+h2 { font-size: clamp(32px, 4vw, 52px); line-height: 1.08; letter-spacing: -0.015em; }
+h3 { font-size: clamp(20px, 2vw, 26px); }
 
-  @media (max-width: 768px) {
-    font-size: 2.25rem;
-  }
+p { color: $color-text-secondary; }
 
-  @media (max-width: 480px) {
-    font-size: 1.85rem;
-  }
-}
+a { color: inherit; text-decoration: none; transition: color $dur-fast $ease-standard; }
 
-h2 {
-  font-size: 1.75rem;
-  margin-bottom: $spacing-md;
+ul { list-style: none; }
 
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
+img { max-width: 100%; }
 
-  @media (max-width: 480px) {
-    font-size: 1.3rem;
-  }
-}
+/* Tabular figures helper (used by proof numbers, kept for compatibility). */
+.tnum, [data-mono] { font-feature-settings: 'tnum' 1, 'zero' 1; }
 
-h3 {
-  font-size: 1.25rem;
-
-  @media (max-width: 480px) {
-    font-size: 1.1rem;
-  }
-}
-
-p {
-  color: $color-text-secondary;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-  transition: color $transition-fast;
-  
-  &:hover {
-    color: $color-text-primary;
-  }
-}
-
-ul {
-  list-style: none;
-}
-
-img {
-  max-width: 100%;
-  border-radius: $border-radius-md;
-}
+::selection { background: rgba(29, 78, 216, 0.14); color: var(--color-text-primary); }
 
 .container {
-  max-width: 1200px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0 $spacing-lg;
-
-  @media (max-width: 768px) {
-    padding: 0 $spacing-md;
-  }
-
-  @media (max-width: 480px) {
-    padding: 0 $spacing-md;
-  }
+  padding: 0 var(--gutter);
 }
 
 .section {
-  padding: $spacing-xxxl 0;
-
-  @media (max-width: 768px) {
-    padding: $spacing-xxl 0;
-  }
-
-  @media (max-width: 480px) {
-    padding: $spacing-xl 0;
-  }
+  padding: var(--section-pad) 0;
 }
 
-.text-center {
-  text-align: center;
-}
+.text-center { text-align: center; }
 
-/* =============================================
-   Reduced motion — respect user OS preference.
-   Disables decorative scroll-driven animations,
-   parallax drifts, and entrance transitions.
-   ============================================= */
+/* Respect OS reduced-motion — kill decorative scroll/parallax/entrances. */
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -177,12 +208,9 @@ img {
   }
 }
 
-/* =============================================
-   Global focus-visible — accessible defaults
-   for any element that doesn't define its own.
-   ============================================= */
+/* Accessible focus — 2px accent ring on every interactive element. */
 :focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 3px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
   border-radius: 4px;
 }

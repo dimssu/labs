@@ -1,299 +1,402 @@
 'use client';
 
-import { useState } from 'react';
-import type { SyntheticEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, MessageCircle, ArrowRight, ArrowUpRight, Check } from 'lucide-react';
+import {
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react';
+import Reveal from '../../components/Reveal';
+import Image from 'next/image';
+import { ArrowRight, Check } from 'lucide-react';
 import styles from './Contact.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Eyebrow from '../../components/Eyebrow';
+
+/* Real leadership contacts used across the site. Do not invent addresses. */
+const DIRECTOR_EMAIL = 'aryan@vruoom.com'; // Director
+const STUDIO_EMAIL = 'priyanshu@vruoom.com'; // CTO — also the form-error fallback address
 
 type ServiceKey = 'custom' | 'modules' | 'fractional_cto' | 'other';
 
-const serviceOptions: { value: ServiceKey; letter: string; label: string }[] = [
-  { value: 'custom', letter: 'A', label: 'Custom build' },
-  { value: 'modules', letter: 'B', label: 'Productised modules' },
-  { value: 'fractional_cto', letter: 'C', label: 'Fractional CTO' },
-  { value: 'other', letter: '·', label: 'Not sure yet' },
+/* Engagement radiogroup — labels map EXACTLY to the API service keys. */
+const ENGAGEMENTS: { value: ServiceKey; label: string }[] = [
+  { value: 'custom', label: 'Custom build' },
+  { value: 'modules', label: 'Productised modules' },
+  { value: 'fractional_cto', label: 'Fractional CTO' },
+  { value: 'other', label: 'Not sure yet' },
 ];
 
+/* Left-column coordinates datasheet. */
+const COORDS: { key: string; value: ReactNode }[] = [
+  {
+    key: 'Director',
+    value: (
+      <a href={`mailto:${DIRECTOR_EMAIL}`} className={styles.coordLink}>
+        {DIRECTOR_EMAIL}
+      </a>
+    ),
+  },
+  {
+    key: 'CTO',
+    value: (
+      <a href={`mailto:${STUDIO_EMAIL}`} className={styles.coordLink}>
+        {STUDIO_EMAIL}
+      </a>
+    ),
+  },
+  { key: 'Studio', value: 'India, working globally' },
+  { key: 'Response', value: 'Within one business day' },
+  { key: 'Parent', value: 'Vruoom' },
+];
+
+type FormState = { name: string; email: string; message: string };
+type FieldKey = keyof FormState;
+type Errors = Partial<Record<FieldKey | 'service', string>>;
+type Status = 'idle' | 'submitting' | 'error';
+
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+/* A stable-ish reference for the confirmation register. */
+function makeRef() {
+  const ref = Date.now().toString(36).toUpperCase().slice(-5);
+  return `BL-${ref}`;
+}
+
+/* UTC timestamp. */
+function stamp() {
+  return `${new Date().toISOString().replace('T', ' ').slice(0, 16)} UTC`;
+}
+
+/* Soft, once-only entrance. Renders fully visible under reduced motion. */
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    service: '' as ServiceKey | '',
-    message: '',
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [form, setForm] = useState<FormState>({ name: '', email: '', message: '' });
+  const [service, setService] = useState<ServiceKey | ''>('');
+  const [errors, setErrors] = useState<Errors>({});
+  const [status, setStatus] = useState<Status>('idle');
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [receipt, setReceipt] = useState<{ ref: string; at: string } | null>(null);
 
-  const handleSubmit = async (e: SyntheticEvent) => {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+  const serviceRef = useRef<HTMLDivElement>(null);
+
+  const errId = useMemo(
+    () => ({
+      name: 'contact-name-error',
+      email: 'contact-email-error',
+      message: 'contact-message-error',
+      service: 'contact-service-error',
+    }),
+    []
+  );
+
+  const setField = (key: FieldKey, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
+  };
+
+  const pickService = (value: ServiceKey) => {
+    setService(value);
+    if (errors.service) setErrors((prev) => ({ ...prev, service: undefined }));
+  };
+
+  const validate = (): Errors => {
+    const next: Errors = {};
+    if (!form.name.trim()) next.name = 'Enter your name.';
+    if (!form.email.trim()) next.email = 'Enter an email.';
+    else if (!isEmail(form.email)) next.email = 'That email does not look right.';
+    if (!form.message.trim()) next.message = 'Tell us what you are building.';
+    else if (form.message.trim().length < 10) next.message = 'A sentence or two, please.';
+    if (!service) next.service = 'Pick an engagement type.';
+    return next;
+  };
+
+  const focusFirst = (next: Errors) => {
+    if (next.name) nameRef.current?.focus();
+    else if (next.email) emailRef.current?.focus();
+    else if (next.message) messageRef.current?.focus();
+    else if (next.service) serviceRef.current?.focus();
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.service) return;
-    setIsSubmitting(true);
+    if (status === 'submitting') return;
+
+    const next = validate();
+    if (Object.keys(next).length > 0) {
+      setErrors(next);
+      focusFirst(next);
+      return;
+    }
+
+    setStatus('submitting');
     setSubmitError(null);
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          service,
+          message: form.message,
+        }),
       });
-      const data: { ok: boolean; error?: string } = await res.json().catch(() => ({ ok: false }));
+      const data: { ok?: boolean; error?: string } = await res
+        .json()
+        .catch(() => ({ ok: false }));
 
       if (!res.ok || !data.ok) {
-        setSubmitError(data.error ?? 'Something went wrong. Please email us directly.');
+        setStatus('error');
+        setSubmitError(data.error ?? 'Something went wrong on our end.');
         return;
       }
 
-      setShowSuccess(true);
-      setFormData({ name: '', email: '', service: '', message: '' });
-      setTimeout(() => setShowSuccess(false), 5000);
+      setReceipt({ ref: makeRef(), at: stamp() });
+      setStatus('idle');
+      setForm({ name: '', email: '', message: '' });
+      setService('');
+      setErrors({});
     } catch {
-      setSubmitError('Network error. Please email us directly.');
-    } finally {
-      setIsSubmitting(false);
+      setStatus('error');
+      setSubmitError('Network error. Your message did not go through.');
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const pickService = (svc: ServiceKey) => setFormData((prev) => ({ ...prev, service: svc }));
-
-  const fadeIn = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.65 } },
-  };
-
-  const stagger = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
   return (
-    <div className={styles.pageWrapper}>
+    <div className={styles.page}>
       <Header />
-      <div className={styles.glowBackground} aria-hidden="true" />
-
-      <main className={styles.mainContent}>
-        <section className={`container ${styles.contactSection}`}>
-          <div className={styles.grid}>
-            {/* Left column — narrative + channel chooser */}
-            <motion.div
-              className={styles.infoCol}
-              initial="hidden"
-              animate="visible"
-              variants={stagger}
-            >
-              <motion.span variants={fadeIn} className={styles.eyebrow}>
-                {'// contact'}
-              </motion.span>
-              <motion.h1 variants={fadeIn} className={styles.pageTitle}>
-                Tell us what<br />
-                <span className={styles.gradientText}>you&apos;re building.</span>
-              </motion.h1>
-              <motion.p variants={fadeIn} className={styles.pageSubtitle}>
-                A few sentences is enough. Pick the channel you prefer below — or send the form and we&apos;ll come back within a working day.
-              </motion.p>
-
-              <motion.div variants={fadeIn} className={styles.responsePill}>
-                <span className={styles.responseDot} aria-hidden="true" />
-                Usually answers within a working day
-              </motion.div>
-
-              <motion.div variants={fadeIn} className={styles.channelStack}>
-                <a
-                  href="mailto:priyanshu@vruoom.com"
-                  className={styles.channelCard}
-                  data-channel="email"
-                >
-                  <div className={styles.channelMeta}>
-                    <span className={styles.channelLabel}>Email</span>
-                    <ArrowUpRight size={16} className={styles.channelArrow} />
-                  </div>
-                  <span className={styles.channelValue}>priyanshu@vruoom.com</span>
-                  <span className={styles.channelHint}>Best for project briefs and async</span>
-                </a>
-
-                <a
-                  href="https://wa.me/918340711366"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.channelCard}
-                  data-channel="whatsapp"
-                >
-                  <div className={styles.channelMeta}>
-                    <span className={styles.channelLabel}>WhatsApp</span>
-                    <ArrowUpRight size={16} className={styles.channelArrow} />
-                  </div>
-                  <span className={styles.channelValue}>+91 834 071 1366</span>
-                  <span className={styles.channelHint}>Quick questions, fastest reply</span>
-                </a>
-
-                <a
-                  href="#contact-form"
-                  className={styles.channelCard}
-                  data-channel="form"
-                >
-                  <div className={styles.channelMeta}>
-                    <span className={styles.channelLabel}>Form</span>
-                    <ArrowRight size={16} className={styles.channelArrow} />
-                  </div>
-                  <span className={styles.channelValue}>Send us details</span>
-                  <span className={styles.channelHint}>Picks up the right person internally</span>
-                </a>
-              </motion.div>
-            </motion.div>
-
-            {/* Right column — conversational form */}
-            <motion.form
-              id="contact-form"
-              className={styles.form}
-              onSubmit={handleSubmit}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15 }}
-            >
-              <div className={styles.formIntro}>
-                <span className={styles.formStep}>01</span>
-                <h2 className={styles.formHeading}>In a few sentences, what are you building?</h2>
-                <p className={styles.formCaption}>
-                  Plain English is fine — context, problem, deadline if there is one.
-                </p>
-              </div>
-
-              <textarea
-                id="message"
-                name="message"
-                rows={6}
-                placeholder="We&rsquo;re a Series A health-tech and we want to add an AI scribe to our existing EHR…"
-                required
-                value={formData.message}
-                onChange={handleChange}
-                className={styles.textarea}
-              />
-
-              <div className={styles.formStepGroup}>
-                <span className={styles.formStep}>02</span>
-                <h3 className={styles.formSubheading}>Which engagement is closest?</h3>
-              </div>
-
-              <div className={styles.servicePicker} role="radiogroup" aria-label="Engagement type">
-                {serviceOptions.map((opt) => {
-                  const checked = formData.service === opt.value;
-                  return (
-                    <button
-                      type="button"
-                      key={opt.value}
-                      role="radio"
-                      aria-checked={checked}
-                      className={`${styles.serviceChip} ${checked ? styles.serviceChipActive : ''}`}
-                      onClick={() => pickService(opt.value)}
-                    >
-                      <span className={styles.serviceLetter}>{opt.letter}</span>
-                      <span>{opt.label}</span>
-                      {checked && <Check size={14} className={styles.serviceCheck} aria-hidden="true" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className={styles.formStepGroup}>
-                <span className={styles.formStep}>03</span>
-                <h3 className={styles.formSubheading}>Where should we reply?</h3>
-              </div>
-
-              <div className={styles.identityGrid}>
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>Name</span>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Pratik"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label className={styles.field}>
-                  <span className={styles.fieldLabel}>Email</span>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="you@company.com"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className={`${styles.submitBtn} ${isSubmitting ? styles.loading : ''}`}
-                disabled={isSubmitting || !formData.service}
-              >
-                {isSubmitting ? 'Sending…' : (
-                  <>Send it over <ArrowRight size={16} /></>
-                )}
-              </button>
-
-              {submitError && (
-                <div className={styles.formError} role="alert">
-                  {submitError} — <a href="mailto:priyanshu@vruoom.com">email priyanshu@vruoom.com</a> instead.
-                </div>
-              )}
-
-              <p className={styles.formFootnote}>
-                Your details are read by the team. No CRM auto-blast, no drip sequence.
+      <main className={styles.main}>
+        <section className={styles.section} aria-labelledby="contact-title">
+          <div className={styles.shell}>
+            {/* Masthead */}
+            <Reveal className={styles.masthead}>
+              <Eyebrow>New enquiry</Eyebrow>
+              <h1 id="contact-title" className={styles.title}>
+                Start a build.
+              </h1>
+              <p className={styles.lede}>
+                A senior builder replies, usually within a day. No SDRs, no
+                discovery-call gauntlet.
               </p>
-            </motion.form>
+            </Reveal>
+
+            {/* Two-column body */}
+            <div className={styles.split}>
+              {/* Left — narrative + coordinates */}
+              <Reveal className={styles.info}>
+                <p className={styles.narrative}>
+                  Send the shape of what you are trying to ship — a product, a
+                  drop-in module, or a technical call you are weighing. Every
+                  enquiry is read by a senior builder and answered directly.
+                </p>
+
+                <dl className={styles.coords}>
+                  {COORDS.map((row) => (
+                    <div key={row.key} className={styles.coordRow}>
+                      <dt className={styles.coordKey}>{row.key}</dt>
+                      <dd className={styles.coordVal}>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className={styles.infoVisual}>
+                  <Image
+                    src="/media/contact.webp"
+                    alt="Send the shape of what you want to build and a senior builder ships it"
+                    fill
+                    sizes="(max-width: 900px) 92vw, 420px"
+                    className={styles.infoImg}
+                  />
+                </div>
+              </Reveal>
+
+              {/* Right — the form */}
+              <Reveal className={styles.formCol} delay={0.08}>
+                {/* aria-live region announces the in-place confirmation */}
+                <div aria-live="polite" className={styles.liveRegion}>
+                  {receipt && (
+                    <div className={styles.receipt} role="status">
+                      <span className={styles.receiptMark} aria-hidden="true">
+                        <Check size={20} strokeWidth={2.5} />
+                      </span>
+                      <h2 className={styles.receiptHead}>Message received</h2>
+                      <p className={styles.receiptBody}>
+                        Logged and routed to a senior builder. Expect a reply
+                        within one business day.
+                      </p>
+                      <dl className={styles.receiptMeta}>
+                        <div className={styles.receiptMetaRow}>
+                          <dt>Reference</dt>
+                          <dd>{receipt.ref}</dd>
+                        </div>
+                        <div className={styles.receiptMetaRow}>
+                          <dt>Logged</dt>
+                          <dd>{receipt.at}</dd>
+                        </div>
+                      </dl>
+                      <button
+                        type="button"
+                        className={styles.sendAnother}
+                        onClick={() => setReceipt(null)}
+                      >
+                        Send another
+                        <ArrowRight size={16} aria-hidden="true" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {!receipt && (
+                  <form className={styles.form} onSubmit={handleSubmit} noValidate>
+                    <div className={styles.fieldRow}>
+                      <label
+                        className={styles.field}
+                        data-error={errors.name ? 'true' : undefined}
+                      >
+                        <span className={styles.fieldLabel}>Name</span>
+                        <input
+                          ref={nameRef}
+                          type="text"
+                          name="name"
+                          autoComplete="name"
+                          className={styles.input}
+                          value={form.name}
+                          onChange={(e) => setField('name', e.target.value)}
+                          aria-invalid={errors.name ? 'true' : undefined}
+                          aria-describedby={errors.name ? errId.name : undefined}
+                        />
+                        {errors.name && (
+                          <span id={errId.name} className={styles.fieldError}>
+                            <span aria-hidden="true">! </span>
+                            {errors.name}
+                          </span>
+                        )}
+                      </label>
+
+                      <label
+                        className={styles.field}
+                        data-error={errors.email ? 'true' : undefined}
+                      >
+                        <span className={styles.fieldLabel}>Email</span>
+                        <input
+                          ref={emailRef}
+                          type="email"
+                          name="email"
+                          autoComplete="email"
+                          inputMode="email"
+                          className={styles.input}
+                          value={form.email}
+                          onChange={(e) => setField('email', e.target.value)}
+                          aria-invalid={errors.email ? 'true' : undefined}
+                          aria-describedby={errors.email ? errId.email : undefined}
+                        />
+                        {errors.email && (
+                          <span id={errId.email} className={styles.fieldError}>
+                            <span aria-hidden="true">! </span>
+                            {errors.email}
+                          </span>
+                        )}
+                      </label>
+                    </div>
+
+                    <label
+                      className={`${styles.field} ${styles.fieldWide}`}
+                      data-error={errors.message ? 'true' : undefined}
+                    >
+                      <span className={styles.fieldLabel}>What are you building?</span>
+                      <textarea
+                        ref={messageRef}
+                        name="message"
+                        rows={5}
+                        className={`${styles.input} ${styles.textarea}`}
+                        value={form.message}
+                        onChange={(e) => setField('message', e.target.value)}
+                        aria-invalid={errors.message ? 'true' : undefined}
+                        aria-describedby={errors.message ? errId.message : undefined}
+                      />
+                      {errors.message && (
+                        <span id={errId.message} className={styles.fieldError}>
+                          <span aria-hidden="true">! </span>
+                          {errors.message}
+                        </span>
+                      )}
+                    </label>
+
+                    <div
+                      className={styles.segmentField}
+                      data-error={errors.service ? 'true' : undefined}
+                    >
+                      <span className={styles.fieldLabel} id="engagement-label">
+                        Engagement type
+                      </span>
+                      <div
+                        ref={serviceRef}
+                        className={styles.segments}
+                        role="radiogroup"
+                        aria-labelledby="engagement-label"
+                        aria-describedby={errors.service ? errId.service : undefined}
+                        tabIndex={-1}
+                      >
+                        {ENGAGEMENTS.map((opt) => {
+                          const active = service === opt.value;
+                          return (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              role="radio"
+                              aria-checked={active}
+                              className={styles.segment}
+                              data-active={active ? 'true' : undefined}
+                              onClick={() => pickService(opt.value)}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {errors.service && (
+                        <span id={errId.service} className={styles.fieldError}>
+                          <span aria-hidden="true">! </span>
+                          {errors.service}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className={styles.actions}>
+                      <button
+                        type="submit"
+                        className={styles.submitBtn}
+                        disabled={status === 'submitting'}
+                      >
+                        <span>{status === 'submitting' ? 'Sending' : 'Send'}</span>
+                        <ArrowRight size={18} aria-hidden="true" className={styles.submitArrow} />
+                      </button>
+                    </div>
+
+                    {submitError && (
+                      <p className={styles.submitError} role="alert">
+                        <span aria-hidden="true">! </span>
+                        {submitError} Email us at{' '}
+                        <a href={`mailto:${STUDIO_EMAIL}`} className={styles.errorLink}>
+                          {STUDIO_EMAIL}
+                        </a>
+                        .
+                      </p>
+                    )}
+                  </form>
+                )}
+              </Reveal>
+            </div>
           </div>
         </section>
       </main>
-
       <Footer />
-
-      <AnimatePresence>
-        {showSuccess && (
-          <motion.div
-            className={styles.modalOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowSuccess(false)}
-            role="dialog"
-            aria-modal="true"
-          >
-            <motion.div
-              className={styles.modalContent}
-              initial={{ scale: 0.94, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.94, opacity: 0, y: 20 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className={styles.modalIcon} aria-hidden="true">
-                <MessageCircle size={22} />
-              </div>
-              <h2 className={styles.modalTitle}>Got it.</h2>
-              <p className={styles.modalText}>
-                We&apos;ll come back within a working day. If it&apos;s urgent, the WhatsApp number on the previous panel is fastest.
-              </p>
-              <button className={styles.modalBtn} onClick={() => setShowSuccess(false)}>
-                Close
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

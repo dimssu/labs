@@ -2,37 +2,36 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion, useScroll, useSpring } from 'framer-motion';
 import styles from './Header.module.scss';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Logo from '../Logo';
 
+const navLinks = [
+  { name: 'Work', path: '/portfolio' },
+  { name: 'Services', path: '/our-services' },
+  { name: 'FAQ', path: '/faq' },
+  { name: 'Contact', path: '/contact-us' },
+];
+
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Reading-progress bar — driven off native scroll, spring-smoothed. Replaces
-  // the old per-scroll setState (which forced a reflow on every scroll event).
-  const { scrollYProgress } = useScroll();
-  const progressScaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 40, mass: 0.3 });
-
-  const navLinks = [
-    { name: 'Services', path: '/our-services' },
-    { name: 'Portfolio', path: '/portfolio' },
-    { name: 'FAQ', path: '/faq' },
-    { name: 'Contact', path: '/contact-us' }
-  ];
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('app-theme');
+    const initial = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light';
+    setTheme(initial);
+    document.documentElement.setAttribute('data-theme', initial);
+  }, []);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('app-theme') as 'dark' | 'light';
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -43,31 +42,30 @@ export default function Header() {
   };
 
   return (
-    <header className={styles.header}>
-      <motion.div
-        className={styles.scrollProgressBar}
-        style={{ scaleX: progressScaleX }}
-        aria-hidden="true"
-      />
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={`container ${styles.headerContainer}`}>
-        <Link href="/" className={styles.logoLink} aria-label="Home">
+        {/* LEFT: mark + wordmark */}
+        <Link href="/" className={styles.logoLink} aria-label="BuildspaceLabs home">
           <Logo />
+          <span className={styles.wordmark}>BuildspaceLabs</span>
         </Link>
 
-        {/* Navigation & Utilities */}
-        <div className={styles.rightSection}>
-          <nav className={styles.navDesktop}>
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.path}
-                className={`${styles.navLink} ${pathname === link.path ? styles.active : ''}`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
+        {/* CENTER: primary navigation */}
+        <nav className={styles.navDesktop} aria-label="Primary">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.path}
+              aria-current={pathname === link.path ? 'page' : undefined}
+              className={`${styles.navLink} ${pathname === link.path ? styles.active : ''}`}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
 
+        {/* RIGHT: utility cluster */}
+        <div className={styles.rightSection}>
           <button
             className={styles.themeToggleBtn}
             onClick={toggleTheme}
@@ -75,6 +73,11 @@ export default function Header() {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+
+          <Link href="/contact-us" className={styles.ctaLink}>
+            <span>Start a build</span>
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
 
           <button
             className={styles.mobileMenuBtn}
@@ -87,19 +90,30 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile navigation */}
       {isMobileMenuOpen && (
         <div className={styles.mobileMenu}>
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.path}
-              className={`${styles.mobileNavLink} ${pathname === link.path ? styles.active : ''}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.name}
-            </Link>
-          ))}
+          <nav className={styles.mobileNav} aria-label="Primary mobile">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.path}
+                aria-current={pathname === link.path ? 'page' : undefined}
+                className={`${styles.mobileNavLink} ${pathname === link.path ? styles.active : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+          <Link
+            href="/contact-us"
+            className={styles.mobileCta}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <span>Start a build</span>
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
         </div>
       )}
     </header>

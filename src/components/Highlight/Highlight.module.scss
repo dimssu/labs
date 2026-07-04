@@ -1,0 +1,21 @@
+@import '../../styles/variables';
+
+/* A soft royal-blue underline that draws in beneath an important phrase when it
+   scrolls into view. Works across line-wraps (box-decoration-break: clone). */
+.hl {
+  background-image: linear-gradient($color-accent, $color-accent);
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 0% 0.1em;
+  transition: background-size 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-bottom: 0.02em;
+  color: inherit;
+}
+
+.on { background-size: 100% 0.1em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hl { transition: none; }
+}

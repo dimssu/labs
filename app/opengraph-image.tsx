@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'BuildspaceLabs — India\'s First AI-Native Product Studio';
+export const alt = 'BuildspaceLabs, India\'s First AI-Native Product Studio';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -16,10 +16,10 @@ export default async function OpengraphImage() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '80px',
-          backgroundColor: '#0a0a0a',
+          backgroundColor: '#FBFBFC',
           backgroundImage:
-            'radial-gradient(1000px 600px at 20% 10%, #1a1a2e 0%, #0a0a0a 60%)',
-          color: '#ffffff',
+            'radial-gradient(1100px 650px at 18% 8%, rgba(37,99,235,0.08) 0%, rgba(251,251,252,0) 58%)',
+          color: '#0E1116',
           fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
       >
@@ -33,9 +33,9 @@ export default async function OpengraphImage() {
               letterSpacing: -2,
             }}
           >
-            <span style={{ color: '#3b82f6' }}>{'{'}</span>
-            <span style={{ color: '#ffffff' }}>bs</span>
-            <span style={{ color: '#3b82f6' }}>{'}'}</span>
+            <span style={{ color: '#2563EB' }}>{'{'}</span>
+            <span style={{ color: '#0E1116' }}>bs</span>
+            <span style={{ color: '#2563EB' }}>{'}'}</span>
           </div>
           <div style={{ display: 'flex', fontSize: 32, fontWeight: 600, letterSpacing: -0.5 }}>
             BuildspaceLabs
@@ -59,7 +59,7 @@ export default async function OpengraphImage() {
             style={{
               display: 'flex',
               fontSize: 30,
-              color: '#a1a1aa',
+              color: '#565D6B',
               lineHeight: 1.3,
               maxWidth: 900,
             }}
@@ -74,7 +74,7 @@ export default async function OpengraphImage() {
             justifyContent: 'space-between',
             alignItems: 'center',
             fontSize: 22,
-            color: '#71717a',
+            color: '#8A909E',
             width: '100%',
           }}
         >

@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus } from 'lucide-react';
+'use client';
+
+import { useId, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import styles from './Accordion.module.scss';
 
 interface AccordionProps {
@@ -8,37 +9,53 @@ interface AccordionProps {
   answer: string;
 }
 
+/**
+ * Accordion — a calm datasheet row. Hairline-separated, no box: the question is
+ * the trigger button, with a +/- affordance that resolves to a minus on open
+ * (the one accent touch). The answer measures + animates its own height;
+ * reduced motion composes it instantly and always renders it visible.
+ */
 export default function Accordion({ question, answer }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const reduce = useReducedMotion();
+  const uid = useId();
+  const panelId = `${uid}-panel`;
+  const triggerId = `${uid}-trigger`;
 
   return (
-    <div className={`${styles.accordionContainer} ${isOpen ? styles.open : ''}`}>
-      <button 
-        className={`${styles.accordionHeader} ${isOpen ? styles.open : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
+    <div className={`${styles.row} ${isOpen ? styles.open : ''}`}>
+      <button
+        id={triggerId}
+        type="button"
+        className={styles.trigger}
+        onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
-        <h3 className={styles.question}>{question}</h3>
-        <span className={styles.iconContainer}>
-          {isOpen ? <Minus size={20} /> : <Plus size={20} />}
+        <span className={styles.question}>{question}</span>
+        <span className={styles.toggle} aria-hidden="true">
+          <span className={`${styles.toggleBar} ${styles.toggleBarH}`} />
+          <span className={`${styles.toggleBar} ${styles.toggleBarV}`} />
         </span>
       </button>
 
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            key="content"
-            initial="collapsed"
-            animate="open"
-            exit="collapsed"
-            variants={{
-              open: { opacity: 1, height: "auto" },
-              collapsed: { opacity: 0, height: 0 }
-            }}
-            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+            key="panel"
+            id={panelId}
+            role="region"
+            aria-labelledby={triggerId}
+            initial={reduce ? false : { height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+            transition={
+              reduce ? { duration: 0 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1] }
+            }
+            style={{ overflow: 'hidden' }}
           >
-            <div className={styles.accordionContent}>
-              <div className={styles.answer}>{answer}</div>
+            <div className={styles.answerWrap}>
+              <p className={styles.answer}>{answer}</p>
             </div>
           </motion.div>
         )}

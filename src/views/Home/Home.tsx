@@ -1,474 +1,532 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring, useReducedMotion, type MotionValue } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+import Reveal from '../../components/Reveal';
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import Image from 'next/image';
 import styles from './Home.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import ScreenshotFrame from '../../components/ScreenshotFrame/ScreenshotFrame';
+import Button from '../../components/Button';
+import Eyebrow from '../../components/Eyebrow';
+import ScreenshotFrame from '../../components/ScreenshotFrame';
+import CountUp from '../../components/CountUp';
+import Highlight from '../../components/Highlight';
+import { ArrowRightMotion } from '../../components/motion-icons';
 
-const SHIPPED_PROJECTS = [
-  'Sanad', 'Focuscare', 'Charge Pulse', 'DSV Fleet', 'Factory OS',
-  'Grospace', 'Brief Forge', 'Reply Rail', 'Sales Call Coach',
-  'Inbox Zero', 'Support Pulse', 'Patient Front Desk', 'Investor Update Drafter',
+const MotionLink = motion.create(Link);
+
+const cx = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(' ');
+
+/* --- Content ------------------------------------------------------------ */
+
+const PROOF = [
+  {
+    end: 80, suffix: '%', label: 'less documentation time', source: 'AI Clinical Notes, healthcare',
+    img: '/media/docs.webp', alt: 'Documentation time falling — a stack of clinical notes with a downward arrow',
+  },
+  {
+    end: 60, suffix: '%', label: 'fewer support tickets', source: 'Charge Pulse, EV logistics',
+    img: '/media/tickets.webp', alt: 'Fewer support tickets — a shrinking stack of ticket cards with a downward arrow',
+  },
+  {
+    end: 4, suffix: '', label: 'industries in production', source: 'Healthcare, logistics, real estate, sales',
+    img: '/media/products.webp', alt: 'Products running in production across four industries',
+  },
 ];
 
-const Marquee = () => {
-  const reduce = useReducedMotion();
-  // Two copies for seamless loop. Each item is a real shipped project.
-  const items = [...SHIPPED_PROJECTS, ...SHIPPED_PROJECTS];
+const ENGAGEMENTS = [
+  {
+    img: '/media/eng-custom.webp',
+    alt: 'A blueprint wireframe built end-to-end into a finished, live product',
+    title: 'Custom software, built end-to-end',
+    desc: 'We scope, design, and ship the whole product — first prototype to production — with a senior team that owns delivery.',
+    href: '/our-services#custom',
+  },
+  {
+    img: '/media/eng-modules.webp',
+    alt: 'A production-ready AI module snapping into a running system',
+    title: 'Production-ready AI modules',
+    desc: 'Drop-in extraction, triage, drafting, and agents, engineered to hold up against real inputs instead of demo data.',
+    href: '/our-services#products',
+  },
+  {
+    img: '/media/eng-partner.webp',
+    alt: 'Senior technical leadership as a load-bearing pillar steering the roadmap',
+    title: 'Fractional CTO and product partner',
+    desc: 'Senior technical leadership on call for architecture, hiring, and roadmap while you build the team in-house.',
+    href: '/our-services#fractional-cto',
+  },
+];
 
-  return (
-    <div className={styles.marqueeContainer}>
-      <span className={styles.marqueeLabel} aria-hidden="true">Recently shipped /</span>
-      <motion.div
-        className={styles.marqueeContent}
-        animate={reduce ? undefined : { x: [0, '-50%'] }}
-        transition={reduce ? undefined : { repeat: Infinity, duration: 45, ease: 'linear' }}
-      >
-        {items.map((name, i) => (
-          <span key={i} className={styles.marqueeItem}>
-            <span className={styles.marqueeDot} aria-hidden="true" />
-            {name}
-          </span>
-        ))}
-      </motion.div>
-    </div>
-  );
-};
-
-/* Static, editorial hero — no video, no scroll-pin. The entrance is driven by
-   CSS keyframes (see Home.module.scss), so the copy is always visible even if
-   JS never runs, and honours prefers-reduced-motion. No rAF dependency. */
-const Hero = () => {
-  return (
-    <section className={styles.heroSection}>
-      <div className={styles.heroGrid} aria-hidden="true" />
-      <div className={styles.heroGlow} aria-hidden="true" />
-      <div className={styles.heroContent}>
-        <p className={styles.heroEyebrow}>
-          India&apos;s AI-native product studio
-        </p>
-        <h1 className={styles.heroQuote}>
-          We build AI products that <span className={styles.gradientText}>actually ship.</span>
-        </h1>
-        <p className={styles.heroSubtext}>
-          Not pilots. Not slide decks. Production systems your team uses on Monday morning — designed, engineered, and shipped end-to-end by senior AI builders.
-        </p>
-        <div className={styles.heroActions}>
-          <Link href="/contact-us" className={styles.heroPrimary}>
-            Start a project
-            <ArrowRight size={16} />
-          </Link>
-          <Link href="/portfolio" className={styles.heroSecondary}>
-            See what we&apos;ve shipped
-            <ArrowUpRight size={14} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-/* Flagship product plate — the hero's visual payoff. A single framed real
-   product screenshot floating in negative space with one restrained floor-glow. */
-const FlagshipPlate = () => (
-  <section className={styles.flagshipSection}>
-    <div className={styles.flagshipGlow} aria-hidden="true" />
-    <div className={styles.flagshipInner}>
-      <ScreenshotFrame
-        src="/projects/charge-pulse/hero.png"
-        alt="ChargePulse — live EV charging network map with nearby-station availability panel"
-        routeLabel="network-map"
-        aspect="16 / 10"
-        bottomFade
-        priority
-        sizes="(max-width: 768px) 100vw, 1040px"
-      />
-    </div>
-  </section>
-);
+const INDUSTRIES = [
+  { img: '/media/ind-healthcare.webp', name: 'Healthcare', line: 'Clinical documentation, patient intake, and front-desk automation.' },
+  { img: '/media/ind-logistics.webp', name: 'Logistics & mobility', line: 'Fleet, routing, and operational tooling that runs at the edge.' },
+  { img: '/media/ind-realestate.webp', name: 'Real estate', line: 'Lease abstraction and obligation tracking from raw documents.' },
+  { img: '/media/ind-sales.webp', name: 'Sales & support', line: 'Call scoring, ticket triage, and drafted, cited replies.' },
+];
 
 type Work = {
-  id: string; src: string; route: string; name: string; blurb: string; tag: string; alt: string; feature?: boolean;
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  industry: string;
+  outcome: string;
 };
 
-const SELECTED_WORK: Work[] = [
+const WORK: Work[] = [
   {
-    id: 'sanad', src: '/projects/sanad/dashboard.png', route: 'clinical-notes',
-    name: 'Sanad', blurb: 'Citation-linked SOAP notes, written in the room.', tag: 'Healthcare',
-    alt: 'Sanad Clinical Notes — clinician dashboard with encounters, drafts awaiting review and average note time', feature: true,
+    id: 'sanad',
+    src: '/projects/sanad/dashboard.png',
+    alt: 'AI Clinical Notes clinician dashboard with encounters and drafts awaiting review',
+    title: 'AI Clinical Notes',
+    industry: 'Healthcare',
+    outcome:
+      'Clinical notes are written during the visit, every line cited back to the conversation — cutting documentation time by 80%.',
   },
   {
-    id: 'grospace', src: '/projects/grospace/dashboard.png', route: 'deal-pipeline',
-    name: 'Grospace', blurb: 'AI lease extraction + deal pipeline for commercial real estate.', tag: 'Real Estate',
-    alt: 'Grospace — commercial real-estate deal pipeline across sourcing, LOI, diligence and closed stages',
+    id: 'grospace',
+    src: '/projects/grospace/hero.png',
+    alt: 'AI Lease Management extraction split-pane with confidence-scored fields cited to the source clause',
+    title: 'AI Lease Management',
+    industry: 'Real estate',
+    outcome:
+      'Lease PDFs become structured, obligation-tracked portfolios in minutes instead of days, each field cited to its clause.',
   },
   {
-    id: 'sales-call-coach', src: '/projects/sales-call-coach/dashboard.png', route: 'rep-scorecard',
-    name: 'CallCoach', blurb: 'AI-scored rep scorecards and coaching clips.', tag: 'Sales',
-    alt: 'CallCoach — sales rep scorecard with performance trend chart and team benchmarks',
+    id: 'sales-call-coach',
+    src: '/projects/sales-call-coach/dashboard.png',
+    alt: 'Sales Call Coach rep scorecard with twelve-week performance trend lines and team benchmarks',
+    title: 'Sales Call Coach',
+    industry: 'Sales',
+    outcome:
+      'Every sales call is scored and flagged, with coaching clips queued for each rep, each week — no manual review.',
+  },
+  {
+    id: 'support-pulse',
+    src: '/projects/support-pulse/dashboard.png',
+    alt: 'Support Pulse per-agent scorecard with trend lines across first response and resolution',
+    title: 'Support Pulse',
+    industry: 'SaaS support',
+    outcome:
+      'Every support ticket is triaged into urgency lanes with a drafted, cited reply waiting for the agent.',
   },
 ];
 
-const BentoTile = ({ item, index }: { item: Work; index: number }) => {
-  const reduce = useReducedMotion();
+const OPERATE = [
+  {
+    key: 'Regulated data',
+    text: 'HIPAA and BAA-ready architecture with FHIR R4 interoperability, built for teams that carry compliance obligations.',
+  },
+  {
+    key: 'Deployment & residency',
+    text: 'Deploy on your cloud, on-premise, or at the edge. Your data stays in your environment, in your chosen region.',
+  },
+  {
+    key: 'Agreements',
+    text: 'A data-processing agreement is available on request, with terms that fit your procurement and security review.',
+  },
+];
+
+const CADENCE = [
+  { step: '01', title: 'Prototype early', text: 'Something running in your hands early on — a working prototype, not a deck.' },
+  { step: '02', title: 'Production-hardened over weeks', text: 'We harden it against real inputs, real load, and real edge cases.' },
+  { step: '03', title: 'We stay through iteration', text: 'Monitoring, hardening, and handover — not a Figma file and goodbye.' },
+];
+
+/* --- Sections ----------------------------------------------------------- */
+
+function Hero() {
   return (
-    <motion.div
-      className={`${styles.bentoTile} ${item.feature ? styles.bentoFeature : ''}`}
-      initial={reduce ? false : { opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-10% 0px' }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: reduce ? 0 : index * 0.08 }}
-    >
-      <Link href={`/product/${item.id}`} className={styles.bentoLink}>
-        <ScreenshotFrame
-          src={item.src}
-          alt={item.alt}
-          routeLabel={item.route}
-          fill={item.feature}
-          aspect={item.feature ? undefined : '16 / 10'}
-          sizes={item.feature ? '(max-width: 1024px) 100vw, 620px' : '(max-width: 1024px) 100vw, 400px'}
-          className={styles.bentoFrame}
+    <section className={styles.hero} aria-labelledby="hero-title">
+      <div className={styles.shell}>
+        <div className={styles.heroGrid}>
+          <div className={styles.heroText}>
+            <Reveal delay={0.02}>
+              <Eyebrow>AI-native product studio · a Vruoom company</Eyebrow>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <h1 id="hero-title" className={styles.heroTitle}>
+                We design and ship production AI products.
+              </h1>
+            </Reveal>
+            <Reveal delay={0.18}>
+              <p className={styles.heroLede}>
+                A <Highlight>senior-only team</Highlight> — no junior pool — owns your
+                build from first prototype to production. AI sits at the core of what
+                we ship, not pasted on at the end.
+              </p>
+            </Reveal>
+            <Reveal delay={0.26}>
+              <div className={styles.heroActions}>
+                <Button href="/contact-us" variant="primary">Start a build</Button>
+                <Button href="/portfolio" variant="secondary">See the work</Button>
+              </div>
+            </Reveal>
+            <Reveal delay={0.34}>
+              <p className={styles.heroTrust}>
+                We prototype early and harden toward production over the weeks that follow.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal className={styles.heroVisual} variant="scale" delay={0.14}>
+            <div className={styles.heroVisualCard}>
+              <Image
+                src="/media/hero.webp"
+                alt="Design, engineering, and AI inputs assembled upward into one elevated, live production system"
+                fill
+                priority
+                sizes="(max-width: 940px) 92vw, 480px"
+                className={styles.heroVisualImg}
+              />
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProofStrip() {
+  return (
+    <section className={styles.proof} aria-label="Results in production">
+      <div className={styles.shell}>
+        <div className={styles.proofRow}>
+          {PROOF.map((p, i) => (
+            <Reveal key={p.label} className={styles.proofCell} delay={i * 0.1}>
+              <span className={styles.proofMedia}>
+                <Image src={p.img} alt={p.alt} fill sizes="96px" className={styles.proofImg} />
+              </span>
+              <CountUp end={p.end} suffix={p.suffix} className={cx(styles.proofValue, 'tnum')} />
+              <span className={styles.proofLabel}>{p.label}</span>
+              <span className={styles.proofSource}>{p.source}</span>
+            </Reveal>
+          ))}
+        </div>
+        <div className={styles.proofFoot}>
+          <p className={styles.proofIndustries}>
+            Trusted by teams across healthcare, logistics, real estate, and sales.
+          </p>
+          <p className={styles.proofNote}>Outcomes measured on live deployments.</p>
+          {/* SLOT: real client logos */}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SectionHead({
+  eyebrow,
+  title,
+  standfirst,
+  id,
+}: {
+  eyebrow: string;
+  title: string;
+  standfirst?: string;
+  id: string;
+}) {
+  return (
+    <header className={styles.sectionHead}>
+      <Reveal><Eyebrow>{eyebrow}</Eyebrow></Reveal>
+      <Reveal delay={0.06}><h2 id={id} className={styles.sectionTitle}>{title}</h2></Reveal>
+      {standfirst && <Reveal delay={0.12}><p className={styles.sectionStandfirst}>{standfirst}</p></Reveal>}
+    </header>
+  );
+}
+
+function Engagements() {
+  return (
+    <section className={styles.section} aria-labelledby="do-title">
+      <div className={styles.shell}>
+        <SectionHead
+          id="do-title"
+          eyebrow="What we do"
+          title="Three ways to bring in a senior team"
+          standfirst="From a full end-to-end build to fractional leadership — the same senior team behind all three."
         />
-        <div className={styles.bentoCaption}>
-          <div className={styles.bentoCaptionText}>
-            <h3 className={styles.bentoName}>{item.name}</h3>
-            <p className={styles.bentoBlurb}>{item.blurb}</p>
-          </div>
-          <div className={styles.bentoMeta}>
-            <span className={styles.bentoStatus}>
-              <span className={styles.bentoDot} aria-hidden="true" />
-              Shipped
+        <ul className={styles.engGrid}>
+          {ENGAGEMENTS.map((e, i) => (
+            <Reveal as="li" key={e.title} delay={i * 0.1}>
+              <MotionLink href={e.href} className={styles.engCard} initial="idle" whileHover="active">
+                <span className={styles.engMedia}>
+                  <Image
+                    src={e.img}
+                    alt={e.alt}
+                    fill
+                    sizes="(max-width: 900px) 92vw, 380px"
+                    className={styles.engImg}
+                  />
+                </span>
+                <span className={styles.engBody}>
+                  <h3 className={styles.engTitle}>{e.title}</h3>
+                  <p className={styles.engDesc}>{e.desc}</p>
+                  <span className={styles.engMore}>
+                    How it works
+                    <ArrowRightMotion size={15} />
+                  </span>
+                </span>
+              </MotionLink>
+            </Reveal>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function Industries() {
+  return (
+    <section className={cx(styles.section, styles.industriesSection)} aria-labelledby="ind-title">
+      <div className={styles.shell}>
+        <SectionHead
+          id="ind-title"
+          eyebrow="Where we work"
+          title="Built for the industries we know"
+          standfirst="Shipped across regulated and operational domains — we speak your problem before we build."
+        />
+        <ul className={styles.indGrid}>
+          {INDUSTRIES.map((ind, i) => (
+            <Reveal as="li" key={ind.name} className={styles.indCard} delay={i * 0.1}>
+              <span className={styles.indMedia}>
+                <Image src={ind.img} alt={ind.name} fill sizes="(max-width: 900px) 92vw, 300px" className={styles.indImg} />
+              </span>
+              <h3 className={styles.indName}>{ind.name}</h3>
+              <p className={styles.indLine}>{ind.line}</p>
+            </Reveal>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function WorkRow({ item, index }: { item: Work; index: number }) {
+  const reversed = index % 2 === 1;
+  return (
+    <Reveal
+      className={cx(styles.workRow, reversed && styles.workReversed)}
+      variant={reversed ? 'right' : 'left'}
+    >
+      <Link href={`/product/${item.id}`} className={styles.workLink} aria-label={`${item.title}, view project`}>
+        <div className={styles.workText}>
+          <div className={styles.workMeta}>
+            <span className={styles.workIndustry}>{item.industry}</span>
+            <span className={styles.statusDot}>
+              <span className={styles.dot} aria-hidden="true" />
+              Live
             </span>
-            <span className={styles.bentoTag}>{item.tag}</span>
           </div>
+          <h3 className={styles.workTitle}>{item.title}</h3>
+          <p className={styles.workOutcome}>{item.outcome}</p>
+          <span className={styles.workCta}>
+            View project
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4 8h8M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </div>
+        <div className={styles.workShot}>
+          <ScreenshotFrame
+            src={item.src}
+            alt={item.alt}
+            aspect="16 / 10"
+            reveal={false}
+            sizes="(max-width: 1024px) 92vw, 560px"
+          />
         </div>
       </Link>
-    </motion.div>
+    </Reveal>
   );
-};
+}
 
-const SelectedWork = () => (
-  <section className={styles.selectedSection}>
-    <div className={styles.selectedInner}>
-      <div className={styles.selectedHeader}>
-        <div>
-          <span className={styles.selectedEyebrow}>Selected work</span>
-          <h2 className={styles.selectedTitle}>Shipped, not slideware.</h2>
-        </div>
-        <Link href="/portfolio" className={styles.selectedLink}>
-          View all work
-          <ArrowUpRight size={14} />
-        </Link>
-      </div>
-      <div className={styles.bentoGrid}>
-        {SELECTED_WORK.map((item, i) => (
-          <BentoTile key={item.id} item={item} index={i} />
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const ScrubWord = ({ word, progress, start, end }: { word: string; progress: MotionValue<number>; start: number; end: number; }) => {
-  const reduce = useReducedMotion();
-  const opacity = useTransform(progress, [start, end], [0.12, 1]);
-  const y = useTransform(progress, [start, end], [16, 0]);
+function SelectedWork() {
   return (
-    <motion.span className={styles.introWord} style={reduce ? undefined : { opacity, y }}>
-      {word}
-    </motion.span>
-  );
-};
-
-const IntroSection = () => {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-
-  const heading = "India's first AI-native Product Studio & Engineering Lab.";
-  const words = heading.split(' ');
-  const wordsStart = 0.18;
-  const wordsEnd = 0.58;
-
-  const subtextOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
-  const subtextY = useTransform(scrollYProgress, [0.55, 0.75], [40, 0]);
-
-  return (
-    <section ref={ref} className={styles.introSection}>
-      <div className={styles.introContent}>
-        <h2 className={styles.introHeading}>
-          {words.map((w, i) => {
-            const t0 = wordsStart + (i / words.length) * (wordsEnd - wordsStart);
-            const t1 = wordsStart + ((i + 1) / words.length) * (wordsEnd - wordsStart);
-            return <ScrubWord key={i} word={w} progress={scrollYProgress} start={t0} end={t1} />;
-          })}
-        </h2>
-        <motion.p style={reduce ? undefined : { opacity: subtextOpacity, y: subtextY }} className={styles.introSubtext}>
-          BuildspaceLabs pairs deep AI expertise with rapid product development to ship production-ready software you can be proud of — not a vendor, but the technical team behind the build.
-        </motion.p>
-      </div>
-    </section>
-  );
-};
-
-type ValueProp = { number: string; title: string; desc: string };
-
-const ValueCard = ({ prop }: { prop: ValueProp }) => {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'start center'],
-  });
-  const opacity = useTransform(scrollYProgress, [0, 1], [0.2, 1]);
-  const y = useTransform(scrollYProgress, [0, 1], [70, 0]);
-  // Big-number parallax — drifts in faster than the card body, creating depth.
-  const numberY = useTransform(scrollYProgress, [0, 1], [140, 0]);
-  const numberOpacity = useTransform(scrollYProgress, [0, 1], [0, 0.18]);
-
-  return (
-    <motion.article ref={ref} className={styles.valueCard} style={reduce ? undefined : { opacity, y }}>
-      <motion.span className={styles.valueNumber} style={reduce ? undefined : { y: numberY, opacity: numberOpacity }}>
-        {prop.number}
-      </motion.span>
-      <div className={styles.valueCardBody}>
-        <h3 className={styles.valueTitle}>{prop.title}</h3>
-        <p className={styles.valueDesc}>{prop.desc}</p>
-      </div>
-    </motion.article>
-  );
-};
-
-const ValuePropsSection = ({ valueProps }: { valueProps: ValueProp[] }) => {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-  const titleY = useTransform(scrollYProgress, [0, 1], [60, -60]);
-  const eyebrowY = useTransform(scrollYProgress, [0, 1], [40, -40]);
-  const subtitleY = useTransform(scrollYProgress, [0, 1], [30, -30]);
-
-  return (
-    <section ref={ref} className={styles.valuePropsSection}>
-      <div className={styles.valuePropsSplit}>
-        <div className={styles.valuePropsStickyLeft}>
-          <motion.span style={reduce ? undefined : { y: eyebrowY }} className={styles.valueSectionEyebrow}>Why teams pick us</motion.span>
-          <motion.h2 style={reduce ? undefined : { y: titleY }} className={styles.valuePropsTitle}>
-            Four reasons<br />people sign with us.
-          </motion.h2>
-          <motion.p style={reduce ? undefined : { y: subtitleY }} className={styles.valueSectionSubtext}>
-            Plain talk — what makes the work different when BuildspaceLabs is the team behind it.
-          </motion.p>
-        </div>
-
-        <div className={styles.valuePropsStack}>
-          {valueProps.map((prop) => (
-            <ValueCard key={prop.number} prop={prop} />
+    <section className={cx(styles.section, styles.workSection)} aria-labelledby="work-title">
+      <div className={styles.shell}>
+        <SectionHead
+          id="work-title"
+          eyebrow="Selected work"
+          title="Real products, in production"
+          standfirst="A selection of the products we've designed, built, and shipped for real teams."
+        />
+        <div className={styles.workStack}>
+          {WORK.map((item, i) => (
+            <WorkRow key={item.id} item={item} index={i} />
           ))}
         </div>
+        {/* SLOT: one deep case study */}
+        <div className={styles.sectionCta}>
+          <Button href="/portfolio" variant="text">See the full portfolio</Button>
+        </div>
       </div>
     </section>
   );
-};
+}
 
-const CTASection = () => {
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'center center'],
-  });
-  const headingY = useTransform(scrollYProgress, [0, 1], [60, 0]);
-  const headingOpacity = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
-  const subtextY = useTransform(scrollYProgress, [0, 1], [40, 0]);
-  const subtextOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const buttonsY = useTransform(scrollYProgress, [0, 1], [30, 0]);
-  const buttonsOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
+/* Specialist-studio spotlight — advertises Atelier, our travel & tourism studio.
+   The screenshot is a live capture of the real site; the number is its own proof. */
+function TravelStudio() {
   return (
-    <section ref={ref} className={styles.ctaSection}>
-      <div className={styles.ctaGrid} aria-hidden="true" />
-      <div className={styles.ctaInner}>
-        <motion.h2 className={styles.ctaHeading} style={reduce ? undefined : { y: headingY, opacity: headingOpacity }}>
-          Ready when you are.
-        </motion.h2>
-        <motion.p className={styles.ctaSubtext} style={reduce ? undefined : { y: subtextY, opacity: subtextOpacity }}>
-          If you want the cheapest agency, we&apos;re not it. If you want a senior team that ships AI products your users actually pick up — that&apos;s exactly what we do.
-        </motion.p>
-        <motion.div className={styles.ctaActions} style={reduce ? undefined : { y: buttonsY, opacity: buttonsOpacity }}>
-          <Link href="/contact-us" className={styles.ctaPrimary}>
-            Start a project
-            <ArrowRight size={16} />
-          </Link>
-          <Link href="/portfolio" className={styles.ctaSecondary}>
-            Browse the work
-            <ArrowUpRight size={14} />
-          </Link>
-        </motion.div>
+    <section className={styles.studio} aria-labelledby="studio-title">
+      <div className={styles.shell}>
+        <Reveal>
+          <a
+            className={styles.studioCard}
+            href="https://atelier-travel-studio.buildspacelabs.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.studioText}>
+              <Eyebrow>Specialist studio</Eyebrow>
+              <h2 id="studio-title" className={styles.studioTitle}>
+                A dedicated studio for travel &amp; tourism
+              </h2>
+              <p className={styles.studioLede}>
+                Atelier is our specialist studio for travel and tourism brands —
+                cinematic websites engineered for speed and direct bookings.
+              </p>
+              <ul className={styles.studioStats}>
+                <li>
+                  <CountUp end={29} className={cx(styles.studioStatN, 'tnum')} />
+                  <span className={styles.studioStatL}>brands transformed</span>
+                </li>
+                <li>
+                  <CountUp end={21} suffix="+" className={cx(styles.studioStatN, 'tnum')} />
+                  <span className={styles.studioStatL}>regions of India</span>
+                </li>
+                <li>
+                  <CountUp end={100} suffix="%" className={cx(styles.studioStatN, 'tnum')} />
+                  <span className={styles.studioStatL}>hand-built</span>
+                </li>
+              </ul>
+              <span className={styles.studioCta}>
+                Visit Atelier Travel Studio
+                <ArrowUpRight size={17} strokeWidth={2} aria-hidden="true" />
+              </span>
+            </div>
+            <div className={styles.studioShot}>
+              <span className={styles.studioShotFrame}>
+                <Image
+                  src="/media/atelier-travel.webp"
+                  alt="Atelier Travel Studio — a cinematic travel-agency website designed and built by BuildspaceLabs"
+                  fill
+                  sizes="(max-width: 940px) 92vw, 560px"
+                  className={styles.studioImg}
+                />
+              </span>
+            </div>
+          </a>
+        </Reveal>
       </div>
     </section>
   );
-};
+}
 
-const HorizontalScrollCarousel = () => {
-  const targetRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  // travel = horizontal distance the track must move so the last card aligns
-  // to the right edge of the viewport. We measure the actual track scrollWidth
-  // and viewport width at runtime so the math is responsive and correct.
-  const [travel, setTravel] = useState(0);
-  const [enabled, setEnabled] = useState(true);
-  const reduce = useReducedMotion();
-
-  useEffect(() => {
-    const measure = () => {
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      // Reduced motion → degrade the pinned horizontal scroll to a static stack.
-      const off = isMobile || reduce;
-      setEnabled(!off);
-      if (off) {
-        setTravel(0);
-        return;
-      }
-      const track = trackRef.current;
-      if (!track) return;
-      // scrollWidth includes overflow content; subtract viewport for distance.
-      const next = Math.max(0, track.scrollWidth - window.innerWidth);
-      setTravel(next);
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [reduce]);
-
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ['start start', 'end end'],
-  });
-
-  // Linear x in pixels; spring-smoothed to absorb scroll jitter without lagging.
-  const xRaw = useTransform(scrollYProgress, [0, 1], [0, -travel]);
-  const x = useSpring(xRaw, { stiffness: 220, damping: 40, mass: 0.4 });
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
-
-  const industries = [
-    { title: 'Government', tag: 'Public Sector', projects: ['Boss OS', 'Weather Prediction', 'AI-Native Digital Tutor'] },
-    { title: 'Defence', tag: 'Mission Critical', projects: ['VAJRA', 'KAVACH', 'SAGAR'] },
-    { title: 'Logistics', tag: 'Operations', projects: ['Fleet Management', 'Charge Pulse', 'Supply Chain Ops'] },
-    { title: 'Real Estate', tag: 'PropTech', projects: ['Lease Management', 'Real Estate Fund', 'Real Estate MIS'] },
-    { title: 'Healthcare', tag: 'MedTech', projects: ['Clinical Notes', 'Focuscare', 'Patient Analytics'] },
-    { title: 'Hardware & IoT', tag: 'Embedded Systems', projects: ['PCB Design', 'Embedded Firmware', 'Sensor Networks'] },
-  ];
-
-  // Section height = one viewport (for the pin) + the actual horizontal travel.
-  // Result: 1px of vertical scroll = 1px of horizontal motion, which is the
-  // single most important property for the pin to feel like horizontal scroll.
-  // We always set the inline height (uses 0 when disabled / pre-measure) to
-  // keep the rendered prop shape stable across renders — React 19 + framer
-  // are happier when motion props don't appear and disappear.
-  const sectionStyle: React.CSSProperties = enabled
-    ? { height: `calc(100vh + ${travel}px)` }
-    : { height: 'auto' };
-
+function Operate() {
   return (
-    <section ref={targetRef} className={`${styles.scrollCarouselContainer} ${!enabled ? styles.staticStack : ''}`} style={sectionStyle}>
-      <div className={styles.stickyContent}>
-        <div className={styles.carouselHeader}>
-          <span className={styles.carouselEyebrow}>Our Expertise</span>
-          <h2 className={styles.carouselSectionTitle}>Industries we&apos;ve <br /><em>transformed</em></h2>
-          <div className={styles.scrollProgressTrack}>
-            <motion.div className={styles.scrollProgressBar} style={{ width: progressWidth }} />
+    <section className={styles.operate} aria-labelledby="operate-title">
+      <div className={styles.shell}>
+        <div className={styles.operateIntro}>
+          <SectionHead
+            id="operate-title"
+            eyebrow="How we operate"
+            title="Built for regulated, real-world data"
+            standfirst="How we build for teams that carry compliance, security, and uptime obligations."
+          />
+          <div className={styles.operateVisual}>
+            <Image
+              src="/media/operate-infra.webp"
+              alt="Protected data at the center of a shield, deployable across cloud, on-premise, and edge"
+              fill
+              sizes="(max-width: 900px) 92vw, 460px"
+              className={styles.operateImg}
+            />
           </div>
         </div>
+        <div className={styles.operateGrid}>
+          <dl className={styles.operateList}>
+            {OPERATE.map((row) => (
+              <Reveal key={row.key}>
+                <div className={styles.operateItem}>
+                  <dt className={styles.operateKey}>{row.key}</dt>
+                  <dd className={styles.operateText}>{row.text}</dd>
+                </div>
+              </Reveal>
+            ))}
+            {/* SLOT: certifications (SOC 2 / ISO) when available */}
+          </dl>
 
-        <motion.div ref={trackRef} style={{ x }} className={styles.horizontalScroll}>
-          {/* Leading spacer so the first card lands flush with section padding */}
-          <div className={styles.carouselSpacer} aria-hidden="true" />
-          {industries.map((ind) => (
-            <div key={ind.title} className={styles.industryCard}>
-              <div className={styles.cardTop}>
-                <span className={styles.cardTag}>{ind.tag}</span>
-              </div>
-              <h3 className={styles.industryTitle}>{ind.title}</h3>
-              <div className={styles.cardDivider} />
-              <ul className={styles.projectList}>
-                {ind.projects.map((proj) => (
-                  <li key={proj} className={styles.projectItem}>
-                    <ArrowRight size={14} className={styles.projectArrow} />
-                    {proj}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </motion.div>
+          <ol className={styles.cadence} aria-label="How an engagement runs">
+            {CADENCE.map((c) => (
+              <Reveal as="li" key={c.step} className={styles.cadenceStep}>
+                <span className={cx(styles.cadenceNo, 'tnum')} aria-hidden="true">{c.step}</span>
+                <div>
+                  <h3 className={styles.cadenceTitle}>{c.title}</h3>
+                  <p className={styles.cadenceText}>{c.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
-  )
+  );
+}
+
+function Close() {
+  return (
+    <section className={styles.close} aria-labelledby="close-title">
+      <div className={styles.shell}>
+        <div className={styles.closeGrid}>
+          <div className={styles.closeMain}>
+            <Eyebrow>Start here</Eyebrow>
+            <h2 id="close-title" className={styles.closeTitle}>Have something to build?</h2>
+            <p className={styles.closeLede}>
+              Tell us what you are trying to ship. A senior builder reads it and
+              replies within one business day.
+            </p>
+            <Button href="/contact-us" variant="primary">Start a build</Button>
+          </div>
+
+          <dl className={styles.closeCoords}>
+            {[
+              { k: 'Director', v: <a href="mailto:aryan@vruoom.com" className={styles.coordLink}>aryan@vruoom.com</a> },
+              { k: 'CTO', v: <a href="mailto:priyanshu@vruoom.com" className={styles.coordLink}>priyanshu@vruoom.com</a> },
+              { k: 'Studio', v: 'India, working with teams worldwide' },
+              { k: 'Response', v: 'Within one business day' },
+              { k: 'Entity', v: 'BuildspaceLabs, a Vruoom company' },
+            ].map((row) => (
+              <div key={row.k} className={styles.coordRow}>
+                <dt className={styles.coordKey}>{row.k}</dt>
+                <dd className={styles.coordVal}>{row.v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function Home() {
-  const valueProps = [
-    {
-      number: '01',
-      title: 'AI-native by default',
-      desc: "Generative AI sits at the core of how we design products — not pasted on at the end. Every architectural decision is shaped by what models can and can't do.",
-    },
-    {
-      number: '02',
-      title: 'Senior people in the room',
-      desc: 'You work directly with engineers and product designers who have shipped before. No proxy layer of project managers, no junior pool delivering the work.',
-    },
-    {
-      number: '03',
-      title: 'We stay until it ships',
-      desc: "Most agencies hand over a Figma file and disappear. We treat the engagement as a build partnership — through production, into iteration, and across handover.",
-    },
-    {
-      number: '04',
-      title: 'Fast, without the shortcuts',
-      desc: "Working prototypes in days, production systems in weeks. Velocity comes from sharp scope and small senior teams — not from cutting corners on the parts that matter.",
-    },
-  ];
-
   return (
-    <div className={styles.pageWrapper}>
+    <div className={styles.page}>
       <Header />
-
-      <main className={styles.mainContent}>
-        {/* Marquee Ticker */}
-        <Marquee />
-
-        {/* Hero — static editorial */}
+      <main>
         <Hero />
-
-        {/* Flagship product plate — the hero's visual payoff */}
-        <FlagshipPlate />
-
-        {/* Selected work — framed real-screenshot bento */}
+        <ProofStrip />
+        <Engagements />
+        <Industries />
         <SelectedWork />
-
-        {/* Intro — scroll-scrubbed word reveal */}
-        <IntroSection />
-
-        {/* Horizontal Scrolling Industries Array */}
-        <HorizontalScrollCarousel />
-
-        {/* Value Props — Why Us */}
-        <ValuePropsSection valueProps={valueProps} />
-
-        {/* CTA — scroll-driven scale + lift */}
-        <CTASection />
-
+        <TravelStudio />
+        <Operate />
+        <Close />
       </main>
       <Footer />
     </div>

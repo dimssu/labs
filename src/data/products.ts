@@ -10,13 +10,13 @@ export interface Product {
   techStack: string[];
   metrics: { label: string; value: string }[];
   coverImage?: { src: string; alt: string; caption: string };
-  /** 3 punchy bullets — the standout / magic-moments. Distinct from `features` (functional). */
+  /** 3 punchy bullets, the standout / magic-moments. Distinct from `features` (functional). */
   highlights?: string[];
-  /** Multi-image visual proof. 1–3 captioned screenshots shown as a gallery section. */
+  /** Multi-image visual proof. 1-3 captioned screenshots shown as a gallery section. */
   gallery?: { src: string; alt: string; caption: string }[];
   /** Optional short narrative on engagement context (timeline, scope, role). Renders as a small block in the hero strip. */
   engagement?: { duration: string; scope: string; team: string };
-  /** Optional concrete client outcomes — stronger framing than `metrics` chips, rendered as a bullet list. */
+  /** Optional concrete client outcomes, stronger framing than `metrics` chips, rendered as a bullet list. */
   outcomes?: string[];
 }
 
@@ -28,13 +28,13 @@ export const productsData: Record<string, Product> = {
     client: "Private Hospital (NDA)",
     categories: ["Healthcare AI"],
     status: "live",
-    overview: "An AI medical scribe built for busy clinicians. It listens to consultations in real time, understands medical context, and generates ready-to-use clinical documentation — so doctors can focus on patients instead of paperwork.",
+    overview: "An AI medical scribe built for busy clinicians. It listens to consultations in real time, understands medical context, and generates ready-to-use clinical documentation, so doctors can focus on patients instead of paperwork.",
     features: [
       "Hands-free note-taking during patient consultations",
       "Structured clinical notes generated in seconds",
       "Works across specialties and languages",
       "Secure and compliant by design",
-      "Seamless integration with existing hospital workflows"
+      "Integrates with existing hospital workflows"
     ],
     techStack: ["Python", "Next.js", "OpenAI Whisper", "GPT-4", "PostgreSQL"],
     metrics: [
@@ -43,8 +43,8 @@ export const productsData: Record<string, Product> = {
     ],
     coverImage: {
       src: "/projects/sanad/landing.png",
-      alt: "Clinical Notes — landing page with citation-linked SOAP draft preview",
-      caption: "Clinical documentation that writes itself — every sentence cited to the conversation"
+      alt: "Clinical Notes, landing page with citation-linked SOAP draft preview",
+      caption: "Clinical documentation that writes itself, every sentence cited to the conversation"
     }
   ,
     highlights: [
@@ -56,12 +56,12 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/sanad/landing.png",
         alt: "Sanad landing page with citation-linked SOAP draft preview",
-        caption: "Landing — citation-linked SOAP draft preview"
+        caption: "Landing, citation-linked SOAP draft preview"
       },
       {
         src: "/projects/sanad/dashboard.png",
         alt: "Sanad clinical dashboard for Mara",
-        caption: "Dashboard — encounters, drafts, schedule"
+        caption: "Dashboard, encounters, drafts, schedule"
       },
     ],
     engagement: {
@@ -140,7 +140,7 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/charge-pulse/hero.png",
       alt: "ChargePulse map view with pulsing station markers across the SF Bay Area",
-      caption: "Live availability across 13 Bay Area stations — pulsing markers show active charging"
+      caption: "Live availability across 13 Bay Area stations, pulsing markers show active charging"
     }
   ,
     highlights: [
@@ -152,17 +152,17 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/charge-pulse/hero.png",
         alt: "Charge Pulse map view with pulsing station markers",
-        caption: "Map view — live availability across the Bay Area"
+        caption: "Map view, live availability across the Bay Area"
       },
       {
         src: "/projects/charge-pulse/dashboard.png",
         alt: "Trip planner with charging stops along the route",
-        caption: "Trip planner — charge stops, ETA, pre-conditioning"
+        caption: "Trip planner, charge stops, ETA, pre-conditioning"
       },
       {
         src: "/projects/charge-pulse/detail.png",
         alt: "Station detail with chargers, amenities, and recent activity",
-        caption: "Station detail — chargers, amenities, recent activity"
+        caption: "Station detail, chargers, amenities, recent activity"
       },
     ],
     engagement: {
@@ -199,7 +199,7 @@ export const productsData: Record<string, Product> = {
   "open-vision-ppe": {
     id: "open-vision-ppe",
     title: "Open Vision PPE Monitoring",
-    subtitle: "Boundary surveillance, PPE compliance monitoring, and intrusion detection via real-time video analytics. Runs fully on-premise — no cloud required.",
+    subtitle: "Boundary surveillance, PPE compliance monitoring, and intrusion detection via real-time video analytics. Runs fully on-premise, no cloud required.",
     client: "Industrial Safety Client",
     categories: ["Safety & Compliance"],
     status: "live",
@@ -221,7 +221,7 @@ export const productsData: Record<string, Product> = {
   "factory-os": {
     id: "factory-os",
     title: "Factory OS",
-    subtitle: "Production planning and task management for Adidas, Nike, Reebok — replacing Excel with automated milestone planning, SOP gate enforcement, and real-time visibility.",
+    subtitle: "Production planning and task management for Adidas, Nike, Reebok, replacing Excel with automated milestone planning, SOP gate enforcement, and real-time visibility.",
     client: "Apparel Manufacturing (Adidas, Nike, Reebok)",
     categories: ["Manufacturing"],
     status: "live",
@@ -243,7 +243,7 @@ export const productsData: Record<string, Product> = {
   "grospace": {
     id: "grospace",
     title: "AI Lease Management",
-    subtitle: "AI-powered commercial real estate lease management for multi-brand operators — automates lease data extraction, obligation tracking, and portfolio intelligence.",
+    subtitle: "AI-powered commercial real estate lease management for multi-brand operators, automates lease data extraction, obligation tracking, and portfolio intelligence.",
     client: "GroSpace Global",
     categories: ["Real Estate", "AI Extraction"],
     status: "live",
@@ -264,7 +264,7 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/grospace/hero.png",
       alt: "Grospace lease extraction split-pane with confidence-scored clause extraction",
-      caption: "Every clause cited to its source — 16 extracted fields with confidence scores"
+      caption: "Every clause cited to its source, 16 extracted fields with confidence scores"
     }
   ,
     highlights: [
@@ -276,27 +276,27 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/grospace/hero.png",
         alt: "Lease extraction split-pane with confidence-scored fields",
-        caption: "Extraction — every clause cited to its source"
+        caption: "Extraction, every clause cited to its source"
       },
       {
         src: "/projects/grospace/dashboard.png",
         alt: "Deal Kanban board across four stages",
-        caption: "Pipeline — deals across Sourcing, LOI, Diligence, Closed"
+        caption: "Pipeline, deals across Sourcing, LOI, Diligence, Closed"
       },
       {
         src: "/projects/grospace/detail.png",
         alt: "AI portfolio chat with inline bar chart",
-        caption: "Portfolio chat — natural-language queries with citations"
+        caption: "Portfolio chat, natural-language queries with citations"
       },
     ],
     engagement: {
       duration: "16 weeks",
-      scope: "Full-stack platform — FastAPI backend + Next.js frontend",
+      scope: "Full-stack platform, FastAPI backend + Next.js frontend",
       team: "1 PM + 3 engineers + 1 designer"
     },
     outcomes: [
       "Lease processing time cut from days to minutes per document",
-      "Single source of truth across 50–500+ retail outlets",
+      "Single source of truth across 50 to 500+ retail outlets",
       "Active rollout across multi-brand portfolios",
     ]
   },
@@ -347,11 +347,11 @@ export const productsData: Record<string, Product> = {
   "investor-update-drafter": {
     id: "investor-update-drafter",
     title: "Investor Update Drafter",
-    subtitle: "AI-drafted monthly investor updates that write themselves from your live metrics — tone toggles, send history, one-click delivery.",
+    subtitle: "AI-drafted monthly investor updates that write themselves from your live metrics, tone toggles, send history, one-click delivery.",
     client: "Venture-backed startup (NDA)",
     categories: ["Founder Tools"],
     status: "live",
-    overview: "Pulls live metrics from your stack and drafts a ready-to-send investor update every month. Toggle tone (Concise, Detailed, Punchy, Vulnerable), pick which sections matter, send to your LP list — all in under two minutes.",
+    overview: "Pulls live metrics from your stack and drafts a ready-to-send investor update every month. Toggle tone (Concise, Detailed, Punchy, Vulnerable), pick which sections matter, send to your LP list, all in under two minutes.",
     features: [
       "Auto-drafted monthly updates from live metrics",
       "Tone presets: Concise, Detailed, Punchy, Vulnerable",
@@ -367,29 +367,29 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/investor-update-drafter/hero.png",
       alt: "Metrics dashboard with sparklines and a draft this month's update CTA",
-      caption: "Six metrics, six sparklines, one button — draft starts from the dashboard"
+      caption: "Six metrics, six sparklines, one button, draft starts from the dashboard"
     }
   ,
     highlights: [
       "Auto-drafted from live metrics in under 2 minutes",
-      "Tone presets — Concise, Detailed, Punchy, Vulnerable",
+      "Tone presets, Concise, Detailed, Punchy, Vulnerable",
       "Send history with open rates and reply tracking",
     ],
     gallery: [
       {
         src: "/projects/investor-update-drafter/hero.png",
         alt: "Metrics dashboard with sparklines and CTA",
-        caption: "Dashboard — six metrics, sparklines, draft-this-month CTA"
+        caption: "Dashboard, six metrics, sparklines, draft-this-month CTA"
       },
       {
         src: "/projects/investor-update-drafter/dashboard.png",
         alt: "Drafted update with tone toggles in the right rail",
-        caption: "Draft view — tone presets, section toggles, recipient list"
+        caption: "Draft view, tone presets, section toggles, recipient list"
       },
       {
         src: "/projects/investor-update-drafter/detail.png",
         alt: "Send history table with detail panel",
-        caption: "History — past updates with open rates and replies"
+        caption: "History, past updates with open rates and replies"
       },
     ],
     engagement: {
@@ -406,11 +406,11 @@ export const productsData: Record<string, Product> = {
   "sales-call-coach": {
     id: "sales-call-coach",
     title: "Sales Call Coach",
-    subtitle: "Gong-style call review with AI-flagged moments, transcripts, and rep scorecards — coaching at the speed of sales.",
+    subtitle: "Gong-style call review with AI-flagged moments, transcripts, and rep scorecards, coaching at the speed of sales.",
     client: "B2B SaaS revenue team (NDA)",
     categories: ["Sales AI"],
     status: "live",
-    overview: "Records every sales call, transcribes it, and flags key moments — discovery questions that landed, objections raised, talk-ratio drift. Reps get scorecards and 5 coaching clips per week so they actually improve.",
+    overview: "Records every sales call, transcribes it, and flags key moments, discovery questions that landed, objections raised, talk-ratio drift. Reps get scorecards and 5 coaching clips per week so they actually improve.",
     features: [
       "Auto-transcribed calls with speaker diarization",
       "AI annotations: discovery hits, objections, filler words, talkovers",
@@ -430,7 +430,7 @@ export const productsData: Record<string, Product> = {
     }
   ,
     highlights: [
-      "Auto-flagged moments — discovery hits, objections, filler words, talkovers",
+      "Auto-flagged moments, discovery hits, objections, filler words, talkovers",
       "Per-rep scorecards with 12-week trend lines and 5 coaching clips per week",
       "Talk ratio, sentiment, and call score on every call",
     ],
@@ -438,17 +438,17 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/sales-call-coach/hero.png",
         alt: "Call queue with talk ratios, sentiment, and AI scores",
-        caption: "Queue — every call scored and ready for review"
+        caption: "Queue, every call scored and ready for review"
       },
       {
         src: "/projects/sales-call-coach/dashboard.png",
         alt: "Rep scorecard with 12-week trend lines",
-        caption: "Scorecard — 12-week trends per rep"
+        caption: "Scorecard, 12-week trends per rep"
       },
       {
         src: "/projects/sales-call-coach/detail.png",
         alt: "Transcript with inline AI annotations",
-        caption: "Transcript — AI-flagged moments with summary rail"
+        caption: "Transcript, AI-flagged moments with summary rail"
       },
     ],
     engagement: {
@@ -465,7 +465,7 @@ export const productsData: Record<string, Product> = {
   "inbox-zero": {
     id: "inbox-zero",
     title: "Inbox Zero",
-    subtitle: "AI email triage that gets you to inbox zero by lunch — smart lanes, drafted replies, and a daily debrief.",
+    subtitle: "AI email triage that gets you to inbox zero by lunch, smart lanes, drafted replies, and a daily debrief.",
     client: "Productivity SaaS team (NDA)",
     categories: ["Productivity AI"],
     status: "live",
@@ -489,7 +489,7 @@ export const productsData: Record<string, Product> = {
     }
   ,
     highlights: [
-      "AI lanes — To-do, Awaiting reply, FYI, Newsletter, Promotional",
+      "AI lanes, To-do, Awaiting reply, FYI, Newsletter, Promotional",
       "One-click drafted replies with tone presets and inline citations",
       "Daily debrief with sent/received/drafted trends and auto-handled audit",
     ],
@@ -497,17 +497,17 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/inbox-zero/hero.png",
         alt: "Three-pane smart inbox with AI lanes",
-        caption: "Smart inbox — five lanes with suggested actions"
+        caption: "Smart inbox, five lanes with suggested actions"
       },
       {
         src: "/projects/inbox-zero/dashboard.png",
         alt: "Daily debrief with trends and auto-handled list",
-        caption: "Debrief — what got handled, what needs your eye"
+        caption: "Debrief, what got handled, what needs your eye"
       },
       {
         src: "/projects/inbox-zero/detail.png",
         alt: "Email thread with drafted reply and citations",
-        caption: "Thread — drafted reply with 'why this reply' citations"
+        caption: "Thread, drafted reply with 'why this reply' citations"
       },
     ],
     engagement: {
@@ -524,7 +524,7 @@ export const productsData: Record<string, Product> = {
   "support-pulse": {
     id: "support-pulse",
     title: "Support Pulse",
-    subtitle: "AI ticket triage and drafted replies for SaaS support teams — cut first response time and stop SLA leaks.",
+    subtitle: "AI ticket triage and drafted replies for SaaS support teams, cut first response time and stop SLA leaks.",
     client: "B2B SaaS support team (NDA)",
     categories: ["SaaS Tools"],
     status: "live",
@@ -544,7 +544,7 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/support-pulse/hero.png",
       alt: "Support Pulse triage inbox with 28 tickets across 5 AI-classified urgency lanes",
-      caption: "Five lanes, drafted replies, scorecards — every ticket has a next step"
+      caption: "Five lanes, drafted replies, scorecards, every ticket has a next step"
     }
   ,
     highlights: [
@@ -556,17 +556,17 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/support-pulse/hero.png",
         alt: "Triage inbox with 28 tickets across five AI lanes",
-        caption: "Triage inbox — five lanes with SLA-at-risk surfacing"
+        caption: "Triage inbox, five lanes with SLA-at-risk surfacing"
       },
       {
         src: "/projects/support-pulse/dashboard.png",
         alt: "Per-agent scorecard with 12-week trend lines",
-        caption: "Team scorecard — 12-week trends per agent"
+        caption: "Team scorecard, 12-week trends per agent"
       },
       {
         src: "/projects/support-pulse/detail.png",
         alt: "Ticket detail with cited drafted reply",
-        caption: "Ticket detail — drafted reply with KB citations"
+        caption: "Ticket detail, drafted reply with KB citations"
       },
     ],
     engagement: {
@@ -583,11 +583,11 @@ export const productsData: Record<string, Product> = {
   "brief-forge": {
     id: "brief-forge",
     title: "Brief Forge",
-    subtitle: "Contract review AI for solo lawyers and small firms — extract, score, and redline contracts in minutes.",
+    subtitle: "Contract review AI for solo lawyers and small firms, extract, score, and redline contracts in minutes.",
     client: "Boutique law firm (NDA)",
     categories: ["Legal Tech"],
     status: "live",
-    overview: "Drop in a contract; the AI extracts 14+ structured fields with confidence scores, scores every clause for risk vs market standard, and proposes redlines with rationale — so a 4-hour review becomes a 30-minute one.",
+    overview: "Drop in a contract; the AI extracts 14+ structured fields with confidence scores, scores every clause for risk vs market standard, and proposes redlines with rationale, so a 4-hour review becomes a 30-minute one.",
     features: [
       "14+ structured field extraction with confidence rings and source citations",
       "Clause-by-clause risk grid with market-standard comparisons",
@@ -603,29 +603,29 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/brief-forge/hero.png",
       alt: "Contract extraction split-pane with 14+ confidence-scored fields and click-to-source",
-      caption: "Every field cited to its source clause — confidence rings flag what to verify"
+      caption: "Every field cited to its source clause, confidence rings flag what to verify"
     }
   ,
     highlights: [
       "14+ structured field extraction with confidence rings and source citations",
-      "Clause risk grid — Unusual / Market / Favorable to client",
+      "Clause risk grid, Unusual / Market / Favorable to client",
       "AI-suggested redlines with rationale and approve/reject UI",
     ],
     gallery: [
       {
         src: "/projects/brief-forge/hero.png",
         alt: "Contract extraction split-pane with confidence-scored fields",
-        caption: "Extraction — fields cited to their source clause"
+        caption: "Extraction, fields cited to their source clause"
       },
       {
         src: "/projects/brief-forge/dashboard.png",
         alt: "Clause-by-clause risk grid",
-        caption: "Risk grid — Unusual / Market / Favorable per clause"
+        caption: "Risk grid, Unusual / Market / Favorable per clause"
       },
       {
         src: "/projects/brief-forge/detail.png",
         alt: "Redline view with inline diffs and approve/reject",
-        caption: "Redlines — AI-suggested edits with rationale"
+        caption: "Redlines, AI-suggested edits with rationale"
       },
     ],
     engagement: {
@@ -642,11 +642,11 @@ export const productsData: Record<string, Product> = {
   "patient-front-desk": {
     id: "patient-front-desk",
     title: "Patient Front Desk",
-    subtitle: "AI receptionist for clinics — auto intake, smart scheduling, and insurance verification before the patient walks in.",
+    subtitle: "AI receptionist for clinics, auto intake, smart scheduling, and insurance verification before the patient walks in.",
     client: "Multi-clinic healthcare group (NDA)",
     categories: ["Healthcare AI", "Operations"],
     status: "live",
-    overview: "Pre-fills patient intake forms from prior charts and insurance databases, suggests scheduling slots based on visit type and provider availability, and runs eligibility checks overnight — so the front desk handles exceptions instead of paperwork.",
+    overview: "Pre-fills patient intake forms from prior charts and insurance databases, suggests scheduling slots based on visit type and provider availability, and runs eligibility checks overnight, so the front desk handles exceptions instead of paperwork.",
     features: [
       "Auto-filled intake with confidence rings and 'verified by patient' badges",
       "Today's waiting room dashboard with status and SLA-at-risk surfacing",
@@ -662,7 +662,7 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/patient-front-desk/hero.png",
       alt: "Today's waiting room with 18 appointments, AI-handled stats, and exception queue",
-      caption: "AI handled 14 of 18 today — front desk only touches exceptions"
+      caption: "AI handled 14 of 18 today, front desk only touches exceptions"
     }
   ,
     highlights: [
@@ -674,17 +674,17 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/patient-front-desk/hero.png",
         alt: "Today's waiting room dashboard with appointments and exceptions",
-        caption: "Waiting room — 18 appointments, AI-handled stats, exceptions"
+        caption: "Waiting room, 18 appointments, AI-handled stats, exceptions"
       },
       {
         src: "/projects/patient-front-desk/dashboard.png",
         alt: "Calendar with provider columns and scheduling queues",
-        caption: "Calendar — providers, scheduling, insurance queue"
+        caption: "Calendar, providers, scheduling, insurance queue"
       },
       {
         src: "/projects/patient-front-desk/detail.png",
         alt: "Patient detail with auto-filled intake and confidence rings",
-        caption: "Patient detail — auto-filled intake with AI summary"
+        caption: "Patient detail, auto-filled intake with AI summary"
       },
     ],
     engagement: {
@@ -693,7 +693,7 @@ export const productsData: Record<string, Product> = {
       team: "1 PM + 2 engineers + 1 designer"
     },
     outcomes: [
-      "Front-desk time per patient cut by ~70% — paperwork done before they arrive",
+      "Front-desk time per patient cut by ~70%, paperwork done before they arrive",
       "Insurance denials caught the day before, not at check-in",
       "78% of intake handled fully autonomously",
     ]
@@ -701,11 +701,11 @@ export const productsData: Record<string, Product> = {
   "reply-rail": {
     id: "reply-rail",
     title: "Reply Rail",
-    subtitle: "AI-drafted Google, Yelp, and Facebook review responses for local businesses — one queue, one click.",
+    subtitle: "AI-drafted Google, Yelp, and Facebook review responses for local businesses, one queue, one click.",
     client: "Multi-location F&B chain (NDA)",
     categories: ["Local Business AI"],
     status: "live",
-    overview: "Pulls reviews from Google, Yelp, and Facebook into a single queue, drafts a tone-matched reply for every one, and tracks sentiment trends across locations — so a small business owner stays at under-24h response time without writing a word.",
+    overview: "Pulls reviews from Google, Yelp, and Facebook into a single queue, drafts a tone-matched reply for every one, and tracks sentiment trends across locations, so a small business owner stays at under-24h response time without writing a word.",
     features: [
       "Unified inbox with AI urgency lanes (Urgent / Reply soon / Auto-thanked / Quiet)",
       "Drafted replies with three tone presets and platform character limits",
@@ -721,11 +721,11 @@ export const productsData: Record<string, Product> = {
     coverImage: {
       src: "/projects/reply-rail/hero.png",
       alt: "Three-platform reviews inbox with 25+ reviews across four AI urgency lanes",
-      caption: "Google, Yelp, and Facebook in one inbox — drafted replies for every one"
+      caption: "Google, Yelp, and Facebook in one inbox, drafted replies for every one"
     }
   ,
     highlights: [
-      "Unified inbox — Google, Yelp, and Facebook reviews in one queue",
+      "Unified inbox, Google, Yelp, and Facebook reviews in one queue",
       "Drafted replies with three tones and platform-aware character limits",
       "Themes panel with AI-extracted topics and sentiment-colored bars",
     ],
@@ -733,17 +733,17 @@ export const productsData: Record<string, Product> = {
       {
         src: "/projects/reply-rail/hero.png",
         alt: "Three-platform reviews inbox with AI urgency lanes",
-        caption: "Inbox — Google, Yelp, Facebook with urgency lanes"
+        caption: "Inbox, Google, Yelp, Facebook with urgency lanes"
       },
       {
         src: "/projects/reply-rail/dashboard.png",
         alt: "Sentiment dashboard with platform ratings and themes",
-        caption: "Sentiment — platform ratings, themes, 12-week trends"
+        caption: "Sentiment, platform ratings, themes, 12-week trends"
       },
       {
         src: "/projects/reply-rail/detail.png",
         alt: "Review detail with drafted reply and tone selector",
-        caption: "Review detail — drafted reply with three tone presets"
+        caption: "Review detail, drafted reply with three tone presets"
       },
     ],
     engagement: {

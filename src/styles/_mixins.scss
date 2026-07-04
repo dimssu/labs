@@ -1,48 +1,44 @@
 @import './variables';
 
+/* Plate: a mounted print — sharp corners, hairline rule, one soft shadow. */
 @mixin card-base {
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: $border-radius-lg;
+  border-radius: $radius-control;
   padding: $spacing-xl;
-  transition: all $transition-default;
-  
+  box-shadow: var(--shadow-sm);
+  transition: transform $dur-base $ease-out-expo,
+              box-shadow $dur-base $ease-out-expo,
+              border-color $dur-base $ease-out-expo;
+
   &:hover {
     border-color: $color-border-focus;
-    background: $color-surface-hover;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-plate);
   }
 }
 
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+@mixin flex-center { display: flex; align-items: center; justify-content: center; }
+@mixin flex-between { display: flex; align-items: center; justify-content: space-between; }
 
-@mixin flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
+/* Chip: monospace, uppercase, hairline outline, no fill, tabular figures. */
 @mixin badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
-  background: $color-badge-bg;
-  color: $color-badge-text;
-  font-size: 0.75rem;
+  padding: 3px 8px;
+  background: transparent;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-control;
+  font-family: $font-mono;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  font-size: 12.5px;
   font-weight: 500;
-  border-radius: $border-radius-sm;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
+/* No gradients in this system — kept as a no-op solid so legacy imports resolve. */
 @mixin text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, #FFFFFF 0%, #A1A1AA 100%);
+  color: $color-text-primary;
 }

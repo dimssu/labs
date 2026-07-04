@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'BuildspaceLabs — India\'s First AI-Native Product Studio',
+    name: 'BuildspaceLabs, India\'s First AI-Native Product Studio',
     short_name: 'BuildspaceLabs',
     description:
       'AI-native product studio and engineering lab. Custom AI solutions, intelligent automation, and production-ready software.',

@@ -45,7 +45,7 @@ export default function AILab() {
       type: "Technical Report",
       year: "2026",
       title: "AgentGuard: Deadlock Prevention for Multi-AI-Agent Systems via Extended Banker’s Algorithm",
-      description: "A C++17 library that extends Dijkstra’s Banker’s Algorithm for LLM agent orchestration — with progress monitoring, authority cycle detection, and adaptive demand estimation. 285 tests, LangGraph integration.",
+      description: "A C++17 library that extends Dijkstra’s Banker’s Algorithm for LLM agent orchestration, with progress monitoring, authority cycle detection, and adaptive demand estimation. 285 tests, LangGraph integration.",
       tags: ["Deadlock Prevention", "Multi-Agent Systems", "LangGraph"],
       link: "/research/agentguard-paper"
     },
@@ -110,8 +110,8 @@ response = model.generate(
               as <span className={styles.gradientText}>one discipline.</span>
             </h1>
             <p className={styles.heroSub}>
-              We publish what we build. Foundation models, on-device runtimes, multi-agent systems —
-              and the technical reports that explain how they work.
+              We publish what we build. Foundation models, on-device runtimes, and multi-agent systems,
+              with the technical reports that explain how they work.
             </p>
             <div className={styles.heroJump}>
               <a href="#models">Models</a>
@@ -136,7 +136,7 @@ response = model.generate(
             <span className={styles.eyebrow}>Models</span>
             <h2 className={styles.sectionTitle}>Built and shipped in-house.</h2>
             <p className={styles.sectionLede}>
-              Foundation and fine-tuned models we own end-to-end — design, training, eval, deployment.
+              Foundation and fine-tuned models we own end-to-end, design, training, eval, deployment.
             </p>
           </motion.div>
 

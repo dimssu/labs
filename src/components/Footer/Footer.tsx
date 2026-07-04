@@ -1,35 +1,81 @@
 import Link from 'next/link';
 import styles from './Footer.module.scss';
-import Logo from '../Logo';
+
+/* Real contact channels — mirror Contact / FAQ views + JsonLd. Do not invent. */
+const DIRECTOR_EMAIL = 'aryan@vruoom.com'; // Director
+const STUDIO_EMAIL = 'priyanshu@vruoom.com'; // CTO
+const WHATSAPP_DISPLAY = '+91 834 071 1366';
+const WHATSAPP_HREF = 'https://wa.me/918340711366';
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.footerContainer}`}>
-        <div className={styles.brand}>
-          <div className={styles.logoWrapper}>
-            <Logo />
-          </div>
-          <p className={styles.tagline}>India&apos;s AI-native product studio. We build AI products that ship.</p>
+        <div className={styles.directory}>
+          {/* PAGES */}
+          <section className={styles.column} aria-labelledby="colophon-pages">
+            <h2 id="colophon-pages" className={styles.columnTitle}>Pages</h2>
+            <ul className={styles.list}>
+              <li><Link href="/our-services" className={styles.link}>Services</Link></li>
+              <li><Link href="/portfolio" className={styles.link}>Portfolio</Link></li>
+              <li><Link href="/faq" className={styles.link}>FAQ</Link></li>
+              <li><Link href="/contact-us" className={styles.link}>Contact</Link></li>
+            </ul>
+          </section>
+
+          {/* STUDIO */}
+          <section className={styles.column} aria-labelledby="colophon-studio">
+            <h2 id="colophon-studio" className={styles.columnTitle}>Studio</h2>
+            <ul className={styles.list}>
+              <li className={styles.line}>AI-native product studio</li>
+              <li className={styles.line}>Design and ship in India</li>
+              <li>
+                <a
+                  href="https://atelier-travel-studio.buildspacelabs.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
+                  Atelier — travel studio ↗
+                </a>
+              </li>
+              <li className={styles.line}>A VRUOOM company</li>
+            </ul>
+          </section>
+
+          {/* CONTACT */}
+          <section className={styles.column} aria-labelledby="colophon-contact">
+            <h2 id="colophon-contact" className={styles.columnTitle}>Contact</h2>
+            <ul className={styles.list}>
+              <li>
+                <a href={`mailto:${DIRECTOR_EMAIL}`} className={styles.link}>Director — {DIRECTOR_EMAIL}</a>
+              </li>
+              <li>
+                <a href={`mailto:${STUDIO_EMAIL}`} className={styles.link}>CTO — {STUDIO_EMAIL}</a>
+              </li>
+              <li>
+                <a
+                  href={WHATSAPP_HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
+                  WhatsApp {WHATSAPP_DISPLAY}
+                </a>
+              </li>
+            </ul>
+          </section>
         </div>
-        
-        <div className={styles.linksBlock}>
-          <div className={styles.linkGroup}>
-            <h4 className={styles.groupTitle}>Company</h4>
-            <Link href="/portfolio" className={styles.link}>Portfolio</Link>
-            <Link href="/our-services" className={styles.link}>Services</Link>
-            <Link href="/contact-us" className={styles.link}>Contact</Link>
-          </div>
-          <div className={styles.linkGroup}>
-            <h4 className={styles.groupTitle}>Legal</h4>
-            <Link href="/privacy" className={styles.link}>Privacy Policy</Link>
-            <Link href="/terms" className={styles.link}>Terms & Conditions</Link>
-          </div>
+
+        {/* Colophon rule line — honest parent entity, no build stamp. */}
+        <div className={styles.specRule}>
+          <span className={styles.specLine}>
+            BuildspaceLabs, a Vruoom company&nbsp;·&nbsp;buildspacelabs.com&nbsp;·&nbsp;IND
+          </span>
+          <span className={styles.build}>
+            © {new Date().getFullYear()} BuildspaceLabs
+          </span>
         </div>
-      </div>
-      <div className={styles.footerBottom}>
-        <p>&copy; {new Date().getFullYear()} BuildspaceLabs. Built in India.</p>
-        <a href="mailto:priyanshu@vruoom.com" className={styles.footerEmail}>priyanshu@vruoom.com</a>
       </div>
     </footer>
   );

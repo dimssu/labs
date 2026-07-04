@@ -4,14 +4,19 @@ $bp-mobile: 768px;
 $bp-small: 480px;
 
 // Typography
-$font-primary: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-$font-heading: var(--font-space-grotesk), 'Space Grotesk', var(--font-inter), $font-primary;
-$font-mono: var(--font-mono), 'JetBrains Mono', ui-monospace, 'Fira Code', 'Courier New', monospace;
+// Body/UI = Geist Sans; statement headlines (H1/H2) = Source Serif 4;
+// mono (Geist Mono) reduced to near-zero. Deliberately off Inter/system defaults.
+$font-primary: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$font-body: $font-primary; // alias for clarity
+$font-display: var(--font-display), Georgia, Cambria, "Times New Roman", serif; // Source Serif 4
+$font-heading: $font-display; // H1/H2 statement voice = serif
+$font-mono: var(--font-geist-mono), ui-monospace, 'SFMono-Regular', Menlo, 'Fira Code', monospace;
 
 // Colors (Dynamic mapping)
 $color-background: var(--color-background);
 $color-surface: var(--color-surface);
 $color-surface-hover: var(--color-surface-hover);
+$color-surface-2: var(--color-surface-2);
 $color-border: var(--color-border);
 $color-border-focus: var(--color-border-focus);
 
@@ -23,9 +28,20 @@ $color-text-muted: var(--color-text-muted);
 // Accents
 $color-accent: var(--color-accent);
 $color-accent-hover: var(--color-accent-hover);
+$color-accent-emphasis: var(--color-accent-emphasis);
+$color-accent-solid: var(--color-accent-solid);
+$color-accent-solid-hover: var(--color-accent-solid-hover);
 $color-badge-bg: var(--color-badge-bg);
 $color-badge-text: var(--color-badge-text);
 $color-status-live: var(--color-status-live);
+$color-status-live-bg: var(--color-status-live-bg);
+
+// Structural tokens
+$color-surface-alt: var(--color-surface-alt);
+$color-ink: var(--color-ink);
+$rule-strong: var(--rule-strong);
+$grid-line: var(--grid-line);
+$crop: var(--crop);
 
 // Spacing
 $spacing-xs: 0.25rem; // 4px
@@ -47,13 +63,40 @@ $transition-fast: 0.15s ease-in-out;
 $transition-default: 0.25s ease-in-out;
 $transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-// Motion — one easing/duration system across the app
+// Motion — registration/typesetting system: straight axis, firm decelerate, no bounce
 $ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 $ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-register: var(--ease-register);
+$dur-micro: 0.15s;
 $dur-fast: 0.2s;
 $dur-base: 0.35s;
+$dur-draw: 0.5s;
 $dur-slow: 0.6s;
 
-// Accent tints (single-hue blue system — no purple/cyan)
-$accent-soft: rgba(59, 130, 246, 0.12);
-$accent-line: rgba(59, 130, 246, 0.35);
+// Accent tints (single hue; used only as punctuation)
+$accent-soft: var(--accent-soft);
+$accent-line: var(--accent-line);
+
+// Elevation + radii tokens (mapped to CSS custom props in global.scss)
+$shadow-rest: var(--shadow-rest);
+$shadow-hover: var(--shadow-hover);
+$shadow-hero: var(--shadow-hero);
+$shadow-sm: var(--shadow-sm);
+$shadow-md: var(--shadow-md);
+$shadow-lg: var(--shadow-lg);
+$shadow-plate: var(--shadow-plate);
+$shadow-panel: var(--shadow-panel);
+$radius-xs: var(--radius-xs);
+$radius-sm: var(--radius-sm);
+$radius-md: var(--radius-md);
+$radius-lg: var(--radius-lg);
+$radius-pill: var(--radius-pill);
+$radius-plate: var(--radius-plate);
+$radius-control: var(--radius-control);
+$border-radius-2xl: 20px;
+$border-radius-full: 999px;
+
+// Layout rhythm
+$content-max: var(--content-max);
+$section-pad: var(--section-pad);
+$gutter: var(--gutter);

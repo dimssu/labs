@@ -1,226 +1,438 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { type ReactNode } from 'react';
+import { motion } from 'framer-motion';
+import Reveal from '../../components/Reveal';
 import Link from 'next/link';
-import { ArrowUpRight, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { Check } from 'lucide-react';
 import styles from './Services.module.scss';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import ProductCard from '../../components/ProductCard';
+import Button from '../../components/Button';
+import Eyebrow from '../../components/Eyebrow';
+import ScreenshotFrame from '../../components/ScreenshotFrame';
+import { ArrowRightMotion } from '../../components/motion-icons';
 
-type Service = {
-  letter: string;
-  accent: string;
+const MotionA = motion.a;
+
+const cx = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(' ');
+
+/* --- Content ------------------------------------------------------------ */
+
+type SheetRow = { label: string; value: string };
+
+type Engagement = {
+  anchor: string;
+  /* Short label that opens the section (the Eyebrow). */
   tag: string;
   title: string;
   tagline: string;
+  /* One tight, plain-language line for the overview card — "best when…". */
+  bestWhen: string;
   bullets: string[];
-  ctaLabel: string;
-  cta: string;
-  hasGrid?: boolean;
+  /* Plain-language deliverable line — the honest "what you get". */
+  whatYouGet: string;
+  sheet: SheetRow[];
+  plate: { src: string; alt: string };
 };
 
-const services: Service[] = [
+/* Three engagements. Anchors match the JsonLd itemList in
+   app/our-services/page.tsx (#custom / #products / #fractional-cto) — keep them. */
+const ENGAGEMENTS: Engagement[] = [
   {
-    letter: 'A',
-    accent: '#3b82f6',
+    anchor: 'custom',
     tag: 'Custom build',
-    title: 'Custom software, built end-to-end.',
-    tagline: 'When you have a problem and want a senior team to architect, build, and ship the answer.',
+    title: 'Custom software, built end-to-end',
+    bestWhen: 'You want one senior team to own the whole build.',
+    tagline:
+      'When you have a problem and want a senior team to architect, build, and ship the answer, from first prototype through to production.',
     bullets: [
-      'Tightly scoped engagements that produce a working prototype inside the first sprint.',
-      'A small senior team — engineering, product, design — owning the build through to production.',
-      'Architecture, infra, and deployment handled. We hand over what we ship; nothing under the hood is a black box.',
+      'Tightly scoped engagements that produce a working prototype early in the build.',
+      'A small senior team — engineering, product, and design — owning the build through to production.',
+      'Architecture, infrastructure, and deployment handled, with nothing under the hood left as a black box.',
     ],
-    ctaLabel: 'Tell us about your project',
-    cta: '/contact-us',
+    whatYouGet: 'A production system, its full source, and a complete handover.',
+    sheet: [
+      { label: 'Duration', value: '8 to 16 weeks' },
+      { label: 'Team', value: '1 PM + 2 to 3 engineers + 1 designer' },
+    ],
+    plate: {
+      src: '/projects/grospace/hero.png',
+      alt: 'AI Lease Management extraction split-pane with confidence-scored fields cited to the source clause',
+    },
   },
   {
-    letter: 'B',
-    accent: '#3b82f6',
+    anchor: 'products',
     tag: 'Productised modules',
-    title: 'Production-ready AI modules you can deploy.',
-    tagline: 'When the problem is well-known and you want a sharp solution dropped into your stack.',
+    title: 'Production-ready AI modules you can deploy',
+    bestWhen: 'You want a proven module live in your stack, fast.',
+    tagline:
+      'When the problem is well understood and you want a sharp, hardened solution dropped into your stack, running in about a week instead of a quarter.',
     bullets: [
       'A library of modular AI products we have already shipped and hardened across clients.',
-      'Configurable, integrated, and brand-able — typically up and running inside a week, not a quarter.',
-      'You get the working system, the source, and a senior engineer alongside you for the rollout.',
+      'Configurable, integrated, and brandable — typically live inside a week, not a quarter.',
+      'A senior engineer works alongside you through the rollout, not a support queue.',
     ],
-    ctaLabel: 'Browse the modules',
-    cta: '#modules',
-    hasGrid: true,
+    whatYouGet: 'A configured module, its source, and a clean integration into your stack.',
+    sheet: [
+      { label: 'Duration', value: 'Live in about a week' },
+      { label: 'Team', value: '1 senior engineer alongside your rollout' },
+    ],
+    plate: {
+      src: '/projects/support-pulse/hero.png',
+      alt: 'Support Pulse triage inbox with tickets across five AI-classified urgency lanes',
+    },
   },
   {
-    letter: 'C',
-    accent: '#3b82f6',
-    tag: 'Partnership',
-    title: 'Fractional CTO and product partner.',
-    tagline: "When you're a founder who wants a senior technical co-pilot, not just a vendor.",
+    anchor: 'fractional-cto',
+    tag: 'Fractional CTO',
+    title: 'Fractional CTO and product partner',
+    bestWhen: 'You want a senior technical partner, not a vendor.',
+    tagline:
+      'When you are a founder who wants a senior technical co-pilot rather than a vendor, on call for the decisions that set the trajectory.',
     bullets: [
       'Hands-on technical leadership across architecture, hiring, and ship cadence.',
-      'Engagements structured around build cost plus equity or revenue share — incentives aligned.',
+      'Engagements structured around build cost plus equity or revenue share, so incentives are aligned.',
       'A small senior team behind the lead, so the strategy ships and the team grows with the work.',
     ],
-    ctaLabel: 'Start the conversation',
-    cta: '/contact-us',
+    whatYouGet: 'Hands-on ownership of architecture, hiring, and ship cadence, month to month.',
+    sheet: [
+      { label: 'Duration', value: 'Ongoing, month to month' },
+      { label: 'Team', value: '1 senior lead + team behind the work' },
+    ],
+    plate: {
+      src: '/projects/investor-update-drafter/hero.png',
+      alt: 'Investor Update Drafter metrics dashboard with sparklines and a draft-this-month action',
+    },
   },
 ];
 
-const products = [
-  { title: "AI Medical Scribe", description: "Doctors talk, notes write themselves. Cut documentation time by 80%.", category: "Healthcare", link: "/product/sanad" },
-  { title: "Clinic Management", description: "Patient check-in to follow-up scheduling. One AI system handles everything.", category: "Healthcare", link: "/product/focuscare" },
-  { title: "Fleet Tracking & Routing", description: "Know where every vehicle is, optimise routes in real time, manage drivers.", category: "Logistics", link: "/product/dsv-fleet-management" },
-  { title: "Location Finder", description: "Help customers find what's nearby, check availability, and get there.", category: "Maps & Discovery", link: "/product/charge-pulse" },
-  { title: "Marketplace Platform", description: "Multi-vendor marketplace with order tracking, payments, and settlements.", category: "Marketplace", link: "/product/food-ordering-platform" },
-  { title: "Jobsite Safety Monitor", description: "Catch safety violations before incidents. On-prem, no cloud required.", category: "Safety & Compliance", link: "/product/open-vision-ppe" },
-  { title: "Production Management", description: "Automated planning, quality checks, and real-time factory floor visibility.", category: "Manufacturing", link: "/product/factory-os" },
-  { title: "Lease Management", description: "Extract key terms from leases, track obligations, manage payments instantly.", category: "Real Estate", link: "/product/grospace" },
-  { title: "Deal Sourcing & Underwriting", description: "AI finds deals, runs numbers, drafts outreach and structures offers.", category: "Real Estate", link: "/product/ai-native-real-estate-fund" },
-  { title: "Job Application Autopilot", description: "Apply to hundreds of jobs automatically across Lever, Greenhouse, Workday.", category: "HR & Recruiting", link: "/product/ai-job-automation" },
+type ModuleRow = {
+  module: string;
+  sector: string;
+  slug: string;
+};
+
+/* Module index — the catalogue of shipped, deployable modules. Each row deep-links
+   to its product detail page. All live. */
+const MODULE_INDEX: ModuleRow[] = [
+  { module: 'AI Clinical Notes', sector: 'Healthcare', slug: 'sanad' },
+  { module: 'AI Lease Management', sector: 'Real Estate', slug: 'grospace' },
+  { module: 'Support Pulse', sector: 'SaaS Support', slug: 'support-pulse' },
+  { module: 'Sales Call Coach', sector: 'Sales', slug: 'sales-call-coach' },
+  { module: 'Inbox Zero', sector: 'Productivity', slug: 'inbox-zero' },
+  { module: 'Brief Forge', sector: 'Legal', slug: 'brief-forge' },
+  { module: 'Patient Front Desk', sector: 'Healthcare Ops', slug: 'patient-front-desk' },
+  { module: 'Reply Rail', sector: 'Local Business', slug: 'reply-rail' },
+  { module: 'Investor Update Drafter', sector: 'Founder Tools', slug: 'investor-update-drafter' },
+  { module: 'Charge Pulse', sector: 'EV / Logistics', slug: 'charge-pulse' },
 ];
 
-export default function Services() {
-  const [showSolutions, setShowSolutions] = useState(false);
+type Proof = {
+  title: string;
+  sector: string;
+  metric: string;
+  slug: string;
+};
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
-  };
+/* Flagship proof modules — the strongest shipped metric per product. */
+const PROOF_GRID: Proof[] = [
+  { title: 'AI Clinical Notes', sector: 'Healthcare', metric: '80% less doc time', slug: 'sanad' },
+  { title: 'AI Lease Management', sector: 'Real Estate', metric: '60+ fields extracted', slug: 'grospace' },
+  { title: 'Support Pulse', sector: 'SaaS Support', metric: '28+ tickets triaged', slug: 'support-pulse' },
+  { title: 'Charge Pulse', sector: 'EV / Logistics', metric: '60% fewer tickets', slug: 'charge-pulse' },
+  { title: 'Sales Call Coach', sector: 'Sales', metric: '11 signals / call', slug: 'sales-call-coach' },
+  { title: 'Brief Forge', sector: 'Legal', metric: '14+ fields drafted', slug: 'brief-forge' },
+];
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
+/* --- Motion ------------------------------------------------------------- */
 
+/** Soft, once-only entrance. Renders fully visible under reduced motion. */
+/* Small "Live" status pill — text conveys status, not colour alone. */
+function LivePill() {
   return (
-    <div className={styles.pageWrapper}>
-      <Header />
+    <span className={styles.statusDot}>
+      <span className={styles.dot} aria-hidden="true" />
+      Live
+    </span>
+  );
+}
 
-      <main className={styles.mainContent}>
-        {/* ── Hero ───────────────────────────────── */}
-        <section className={styles.heroSection}>
-          <div className={styles.heroGlow} aria-hidden="true" />
-          <div className="container">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9 }}
-              className={styles.heroContent}
-            >
-              <span className={styles.monoLabel}>{'// services'}</span>
-              <h1 className={styles.pageTitle}>
-                Three ways<br />
-                <span className={styles.gradientText}>we work with you.</span>
-              </h1>
-              <p className={styles.pageSubtitle}>
-                Pick the engagement that matches the moment. Same senior team behind all three.
-              </p>
-              <ul className={styles.heroJump} aria-label="Service options">
-                {services.map((svc, i) => (
-                  <li key={svc.letter}>
-                    <a href={`#service-${svc.letter}`} style={{ '--svc-accent': svc.accent } as React.CSSProperties}>
-                      <span className={styles.heroJumpLetter}>{svc.letter}</span>
-                      <span className={styles.heroJumpTag}>{svc.tag}</span>
-                    </a>
-                    {i < services.length - 1 && <span className={styles.heroJumpDivider} aria-hidden="true" />}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+/* Compact 2-row datasheet — hairline-separated, label + value. */
+function DataSheet({ rows }: { rows: SheetRow[] }) {
+  return (
+    <dl className={styles.sheet}>
+      {rows.map((row) => (
+        <div key={row.label} className={styles.sheetRow}>
+          <dt className={styles.sheetKey}>{row.label}</dt>
+          <dd className={styles.sheetVal}>{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/* --- Sections ----------------------------------------------------------- */
+
+function Masthead() {
+  return (
+    <section className={styles.masthead} aria-labelledby="services-title">
+      <div className={styles.shell}>
+        <div className={styles.mastGrid}>
+          <div className={styles.mastText}>
+            <Eyebrow>What we do</Eyebrow>
+            <h1 id="services-title" className={styles.mastTitle}>
+              Three engagements, one senior team.
+            </h1>
+            <p className={styles.mastLede}>
+              Pick the engagement that matches the moment — a full end-to-end build,
+              a hardened module dropped into your stack, or fractional leadership.
+              The same senior team is behind all three.
+            </p>
+            <div className={styles.mastActions}>
+              <Button href="/contact-us" variant="primary">Start a build</Button>
+              <Button href="/portfolio" variant="text">See the work</Button>
+            </div>
           </div>
-        </section>
+          <div className={styles.mastVisual}>
+            <Image
+              src="/media/services.webp"
+              alt="A senior team assembling one production system from design, engineering, and AI workstreams"
+              fill
+              priority
+              sizes="(max-width: 900px) 92vw, 460px"
+              className={styles.mastImg}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* ── Service Cards (sticky stack) ────── */}
-        <div className={styles.cardsStack}>
-          {services.map((svc, idx) => (
-            <section
-              key={svc.letter}
-              id={`service-${svc.letter}`}
-              className={`container ${styles.serviceBlock}`}
-              style={{ top: 80 + idx * 24, position: 'sticky', zIndex: idx + 10 }}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-                className={styles.cardContainer}
-                style={{ '--svc-accent': svc.accent } as React.CSSProperties}
+/* At-a-glance overview — the three offerings, scannable in seconds, each
+   jumping to its detailed section below. This is the clarity anchor for the page. */
+function OfferSummary() {
+  return (
+    <section className={styles.offer} aria-labelledby="offer-title">
+      <div className={styles.shell}>
+        <header className={styles.offerHead}>
+          <Eyebrow>What we offer</Eyebrow>
+          <h2 id="offer-title" className={styles.offerTitle}>Pick the one that fits</h2>
+          <p className={styles.offerLede}>
+            A quick overview of the three — each links to its full detail below.
+          </p>
+        </header>
+
+        <ol className={styles.offerGrid}>
+          {ENGAGEMENTS.map((e, i) => (
+            <Reveal as="li" key={e.anchor} className={styles.offerCardWrap} delay={i * 0.1}>
+              <MotionA
+                href={`#${e.anchor}`}
+                className={styles.offerCard}
+                initial="idle"
+                whileHover="active"
               >
-                <div className={styles.cardHead}>
-                  <span className={styles.cardLetter}>{svc.letter}</span>
-                  <span className={styles.cardTag}>{svc.tag}</span>
+                <span className={cx(styles.offerNo, 'tnum')} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className={styles.offerTag}>{e.tag}</h3>
+                <p className={styles.offerBest}>{e.bestWhen}</p>
+                <span className={styles.offerRule} aria-hidden="true" />
+                <div className={styles.offerGet}>
+                  <span className={styles.offerGetKey}>What you get</span>
+                  <p className={styles.offerGetVal}>{e.whatYouGet}</p>
                 </div>
-
-                <h2 className={styles.blockTitle}>{svc.title}</h2>
-                <p className={styles.blockTagline}>{svc.tagline}</p>
-
-                <ul className={styles.bulletList}>
-                  {svc.bullets.map((text, i) => (
-                    <li key={i}>
-                      <span className={styles.bulletMarker} style={{ background: svc.accent }} aria-hidden="true" />
-                      <span>{text}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className={styles.buttonGroup}>
-                  {svc.hasGrid ? (
-                    <button
-                      className={styles.toggleBtn}
-                      onClick={() => setShowSolutions(!showSolutions)}
-                      aria-expanded={showSolutions}
-                    >
-                      {showSolutions ? 'Hide modules' : svc.ctaLabel}
-                      {showSolutions ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    </button>
-                  ) : (
-                    <Link href={svc.cta} className={styles.ctaLink}>
-                      {svc.ctaLabel}
-                      <ArrowUpRight size={16} />
-                    </Link>
-                  )}
+                <div className={styles.offerFoot}>
+                  <span className={styles.offerDuration}>{e.sheet[0].value}</span>
+                  <span className={styles.offerJump}>
+                    How it works
+                    <ArrowRightMotion size={14} />
+                  </span>
                 </div>
+              </MotionA>
+            </Reveal>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
 
-                {svc.hasGrid && (
-                  <AnimatePresence>
-                    {showSolutions && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                        animate={{ opacity: 1, height: 'auto', marginTop: '3rem' }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        transition={{ duration: 0.4 }}
-                        className={styles.productsGridWrapper}
-                      >
-                        <div className={styles.productsGridHeader}>
-                          <ArrowRight size={14} className={styles.productsGridArrow} />
-                          <span>{products.length} modules ready to deploy</span>
-                        </div>
-                        <motion.div
-                          initial="hidden"
-                          animate="visible"
-                          variants={staggerContainer}
-                          className={styles.productsGrid}
-                        >
-                          {products.map((product, i) => (
-                            <motion.div key={i} variants={fadeUp}>
-                              <ProductCard {...product} />
-                            </motion.div>
-                          ))}
-                        </motion.div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )}
-              </motion.div>
-            </section>
+function EngagementSection({ engagement, tone }: { engagement: Engagement; tone: 'base' | 'alt' }) {
+  return (
+    <section
+      id={engagement.anchor}
+      className={cx(styles.section, tone === 'alt' && styles.sectionAlt)}
+      aria-labelledby={`eng-${engagement.anchor}`}
+    >
+      <div className={styles.shell}>
+        <div className={styles.engGrid}>
+          <Reveal className={styles.engBody}>
+            <Eyebrow>{engagement.tag}</Eyebrow>
+            <h2 id={`eng-${engagement.anchor}`} className={styles.engTitle}>
+              {engagement.title}
+            </h2>
+            <p className={styles.engTagline}>{engagement.tagline}</p>
+
+            <ul className={styles.tickList}>
+              {engagement.bullets.map((b) => (
+                <li key={b} className={styles.tickItem}>
+                  <span className={styles.tickMark} aria-hidden="true">
+                    <Check size={15} strokeWidth={2.25} />
+                  </span>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className={styles.deliver}>
+              <span className={styles.deliverKey}>What you get</span>
+              <p className={styles.deliverVal}>{engagement.whatYouGet}</p>
+            </div>
+
+            <DataSheet rows={engagement.sheet} />
+          </Reveal>
+
+          <div className={styles.engPlate}>
+            <ScreenshotFrame
+              src={engagement.plate.src}
+              alt={engagement.plate.alt}
+              aspect="16 / 10"
+              reveal={false}
+              sizes="(max-width: 1024px) 92vw, 520px"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Modules() {
+  return (
+    <section className={cx(styles.section, styles.sectionAlt)} aria-labelledby="modules-title">
+      <div className={styles.shell}>
+        <header className={styles.sectionHead}>
+          <Eyebrow>Deployable modules</Eyebrow>
+          <h2 id="modules-title" className={styles.sectionTitle}>
+            Ten modules already live in production
+          </h2>
+          <p className={styles.sectionStandfirst}>
+            Each of these is a product we&apos;ve shipped and hardened across clients,
+            packaged as a deployable module — drop any one into your stack. Open one to see how it works.
+          </p>
+        </header>
+
+        <div className={styles.moduleTable} role="list">
+          <div className={styles.moduleHead} aria-hidden="true">
+            <span>Module</span>
+            <span>Sector</span>
+            <span className={styles.colStatus}>Status</span>
+          </div>
+          {MODULE_INDEX.map((row) => (
+            <div key={row.slug} role="listitem">
+              <Link href={`/product/${row.slug}`} className={styles.moduleRow}>
+                <span className={styles.rowName}>{row.module}</span>
+                <span className={styles.rowSector}>{row.sector}</span>
+                <span className={styles.colStatus}>
+                  <LivePill />
+                </span>
+              </Link>
+            </div>
           ))}
         </div>
 
-        <div style={{ height: '60vh' }} aria-hidden="true" />
-      </main>
+        <div className={styles.proofHead}>
+          <Eyebrow>Flagship results</Eyebrow>
+        </div>
+        <ul className={styles.proofGrid}>
+          {PROOF_GRID.map((p, i) => (
+            <Reveal as="li" key={p.slug} className={styles.proofCardWrap} delay={i * 0.05}>
+              <Link href={`/product/${p.slug}`} className={styles.proofCard}>
+                <div className={styles.proofTop}>
+                  <span className={styles.proofSector}>{p.sector}</span>
+                  <LivePill />
+                </div>
+                <h3 className={styles.proofTitle}>{p.title}</h3>
+                <span className={styles.proofMetric}>{p.metric}</span>
+              </Link>
+            </Reveal>
+          ))}
+        </ul>
 
+        <div className={styles.sectionCta}>
+          <Button href="/portfolio" variant="text">See the full portfolio</Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Close() {
+  return (
+    <section className={styles.close} aria-labelledby="close-title">
+      <div className={styles.shell}>
+        <div className={styles.closeGrid}>
+          <div className={styles.closeMain}>
+            <Eyebrow>Start here</Eyebrow>
+            <h2 id="close-title" className={styles.closeTitle}>Not sure which one fits?</h2>
+            <p className={styles.closeLede}>
+              Tell us what you are building. A senior builder reads it and replies,
+              usually within one business day.
+            </p>
+            <Button href="/contact-us" variant="primary">Start a build</Button>
+          </div>
+
+          <dl className={styles.closeCoords}>
+            {[
+              {
+                k: 'Director',
+                v: (
+                  <a href="mailto:aryan@vruoom.com" className={styles.coordLink}>
+                    aryan@vruoom.com
+                  </a>
+                ),
+              },
+              {
+                k: 'CTO',
+                v: (
+                  <a href="mailto:priyanshu@vruoom.com" className={styles.coordLink}>
+                    priyanshu@vruoom.com
+                  </a>
+                ),
+              },
+              { k: 'Studio', v: 'India, working globally' },
+              { k: 'Response', v: 'Within one business day' },
+              { k: 'Parent', v: 'Vruoom' },
+            ].map((row) => (
+              <div key={row.k} className={styles.coordRow}>
+                <dt className={styles.coordKey}>{row.k}</dt>
+                <dd className={styles.coordVal}>{row.v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function Services() {
+  return (
+    <div className={styles.page}>
+      <Header />
+      <main>
+        <Masthead />
+        <OfferSummary />
+        {ENGAGEMENTS.map((e, i) => (
+          <EngagementSection key={e.anchor} engagement={e} tone={i % 2 === 1 ? 'alt' : 'base'} />
+        ))}
+        <Modules />
+        <Close />
+      </main>
       <Footer />
     </div>
   );

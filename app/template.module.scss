@@ -1,0 +1,30 @@
+/* Route transition. Default (no-JS / crawlers): fully visible, no animation.
+   With JS (html.js set pre-paint) the wrapper fades + lifts in on every mount,
+   so it replays on each client-side navigation. The transform animates only
+   during the 0.5s entrance (while the page is at scroll-top) and resolves to
+   `transform: none`, so it establishes NO persistent containing block for the
+   sticky header. Never bake a permanent transform in here. Reduced motion opts out. */
+.pageTransition {
+  opacity: 1;
+}
+
+:global(html.js) .pageTransition {
+  animation: pageIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html.js) .pageTransition {
+    animation: none;
+  }
+}

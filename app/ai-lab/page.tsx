@@ -3,7 +3,7 @@ import AILabClient from '@/views/AILab/AILab';
 import { JsonLd, breadcrumbSchema, SITE_URL } from '@/lib/seo/jsonLd';
 
 export const metadata: Metadata = {
-  title: 'AI Lab — Research, Models & Technical Papers',
+  title: 'AI Lab, Research, Models & Technical Papers',
   description:
     'BuildspaceLabs AI Lab: SLM360 (39ms on-device NLU), Med360 (multilingual medical AI for Indian healthcare), AgentGuard (deadlock prevention for multi-agent systems), VAJRA and KAVACH defence AI. Research meets engineering.',
   keywords: [
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: '/ai-lab' },
   openGraph: {
-    title: 'AI Lab — BuildspaceLabs',
+    title: 'AI Lab, BuildspaceLabs',
     description:
       'Foundation models, research papers, and technical deep-dives from BuildspaceLabs. SLM360, Med360, AgentGuard and more.',
     url: `${SITE_URL}/ai-lab`,

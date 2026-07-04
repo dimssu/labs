@@ -1,0 +1,63 @@
+/* Default (SSR / no-JS / crawlers): fully visible. Never hide content. */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* JS present (html.js added pre-paint): arm the entrance, reveal on view. */
+:global(html.js) .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:global(html.js) .reveal.inView {
+  opacity: 1;
+  transform: none;
+}
+
+/* scale — fade + gentle scale-in, for framed visuals. */
+:global(html.js) .reveal.scale {
+  transform: translateY(12px) scale(0.965);
+}
+:global(html.js) .reveal.scale.inView {
+  transform: none;
+}
+
+/* left / right — directional slide, for alternating editorial rows. Kept small
+   (≤ the section gutter) so the armed state never triggers horizontal scroll. */
+:global(html.js) .reveal.left {
+  transform: translate(-26px, 6px);
+}
+:global(html.js) .reveal.right {
+  transform: translate(26px, 6px);
+}
+:global(html.js) .reveal.left.inView,
+:global(html.js) .reveal.right.inView {
+  transform: none;
+}
+
+/* clip — cinematic left-to-right wipe + a small rise, for wide imagery. */
+:global(html.js) .reveal.clip {
+  transform: translateY(10px);
+  clip-path: inset(0 100% 0 0);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    clip-path 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+:global(html.js) .reveal.clip.inView {
+  transform: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* Reduced motion: always visible, no movement. */
+@media (prefers-reduced-motion: reduce) {
+  :global(html.js) .reveal,
+  :global(html.js) .reveal.inView {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+}

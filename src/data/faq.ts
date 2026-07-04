@@ -28,7 +28,7 @@ export const faqs: FAQCategory[] = [
       },
       {
         q: 'How do you differ from traditional IT consultancies?',
-        a: 'We are AI-native (built from the ground up around AI, not retrofitting it), we ship fast (working prototypes in days, not months), we provide direct access to senior talent (no layers of project managers), and we offer transparent pricing.',
+        a: 'We are AI-native (built from the ground up around AI, not retrofitting it), we move fast (prototype early, then harden toward production), and we give you direct access to senior talent — no layers of project managers between you and the people building your product.',
       },
       {
         q: 'What industries do you work with?',
@@ -59,16 +59,16 @@ export const faqs: FAQCategory[] = [
     ],
   },
   {
-    category: 'Pricing & Engagement',
-    description: 'Details on timelines, pricing limits, and how we handle projects.',
+    category: 'Engagement & Timelines',
+    description: 'How we scope, schedule, and run engagements.',
     questions: [
       {
-        q: 'How much do your services cost?',
-        a: 'AI agents and automations typically start at $1,200 USD. Web and mobile applications range from $3,600-$12,000 USD. Enterprise AI systems start at $10,000+ USD. We provide transparent pricing upfront based on scope.',
+        q: 'How do you price a project?',
+        a: 'Every engagement is scoped to the work rather than sold from a rate card, so pricing follows the problem. Tell us what you are building and we come back with a defined scope and a clear, fixed quote — usually within a couple of days.',
       },
       {
         q: 'How fast can you deliver?',
-        a: 'AI agents and automations: 1-2 weeks. Web applications and MVPs: 4-6 weeks. Complex enterprise systems: 8-12 weeks. We ship working prototypes within 24-48 hours of project kickoff.',
+        a: 'It depends on scope: AI agents and automations tend to run around 1-2 weeks, web applications and MVPs around 4-6 weeks, and larger enterprise systems 8-16 weeks. We get something working in front of you early in the engagement, then harden it toward production.',
       },
       {
         q: 'Do you offer post-launch support and maintenance?',

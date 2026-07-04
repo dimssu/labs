@@ -1,0 +1,75 @@
+@import '../../styles/variables';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  cursor: pointer;
+  transition: background $dur-fast $ease-standard, color $dur-fast $ease-standard,
+    border-color $dur-fast $ease-standard, transform $dur-fast $ease-standard,
+    box-shadow $dur-fast $ease-standard;
+
+  /* the arrow's forward nudge is driven by the motion variant, not CSS */
+  .arrow { display: inline-flex; align-items: center; }
+}
+
+/* Primary — accent fill, the one decisive action */
+.primary {
+  padding: 15px 24px;
+  border-radius: $radius-sm;
+  background: $color-accent;
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.16);
+
+  &:hover {
+    background: $color-accent-hover;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+  }
+  &:active { transform: translateY(0); }
+}
+
+/* Secondary — hairline outline, quiet */
+.secondary {
+  padding: 14px 23px;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+
+  &:hover {
+    background: $color-surface;
+    border-color: $color-border-focus;
+    color: $color-text-primary;
+    box-shadow: $shadow-rest;
+  }
+}
+
+/* Text — inline link with a drawn underline */
+.text {
+  gap: 0.4rem;
+  color: $color-text-primary;
+  font-weight: 500;
+
+  .label {
+    position: relative;
+    padding-bottom: 3px;
+    background-image: linear-gradient($color-accent, $color-accent);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 1.5px;
+    transition: background-size $dur-base $ease-out-expo;
+  }
+  .arrow { color: $color-accent; }
+
+  &:hover {
+    color: $color-accent;
+    .label { background-size: 100% 1.5px; }
+  }
+}

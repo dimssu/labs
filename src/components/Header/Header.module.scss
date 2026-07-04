@@ -1,90 +1,94 @@
 @import '../../styles/variables';
-@import '../../styles/mixins';
 
 .header {
   position: sticky;
   top: 0;
   z-index: 100;
-  // Use a targeted variable from global CSS to support dynamic switching
-  background: var(--color-header-bg, rgba(9, 9, 11, 0.85));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid $color-border;
-  padding: $spacing-md 0;
+  background: transparent;
+  backdrop-filter: blur(0);
+  border-bottom: 1px solid transparent;
+  padding: 18px 0;
+  transition: background $dur-base $ease-standard, border-color $dur-base $ease-standard,
+    box-shadow $dur-base $ease-standard, padding $dur-base $ease-standard;
 }
 
-/* Reading-progress bar pinned to the header's bottom edge. */
-.scrollProgressBar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: $color-accent;
-  transform-origin: 0 50%;
-  transform: scaleX(0);
-  z-index: 101;
+/* Solidify on scroll — translucent white with a hairline + soft lift. */
+.scrolled {
+  background: var(--color-header-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-bottom-color: $color-border;
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02), 0 8px 24px -18px rgba(16, 24, 40, 0.16);
+  padding: 12px 0;
 }
 
 .headerContainer {
-  @include flex-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 }
 
+/* LEFT — mark + horizontal wordmark */
 .logoLink {
   text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
 }
 
-.rightSection {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xl;
+.wordmark {
+  font-family: $font-body;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: $color-text-primary;
 
-  @media (max-width: 768px) {
-    gap: $spacing-sm;
-  }
+  @media (max-width: 420px) { display: none; }
 }
 
+/* CENTER — primary nav */
 .navDesktop {
   display: flex;
-  gap: $spacing-xl;
-  
-  @media (max-width: 768px) {
-    display: none;
-  }
+  gap: 34px;
+
+  @media (max-width: 900px) { display: none; }
 }
 
 .navLink {
   position: relative;
   color: $color-text-secondary;
+  font-family: $font-body;
   font-weight: 500;
-  font-size: 0.95rem;
-  transition: color $transition-fast;
+  font-size: 15px;
+  line-height: 1;
+  padding: 4px 0;
+  transition: color $dur-fast $ease-standard;
 
-  // Understated active/hover underline in the brand accent.
   &::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
+    left: 0; right: 0;
+    bottom: -3px;
     height: 1.5px;
     background: $color-accent;
     transform: scaleX(0);
     transform-origin: 0 50%;
-    transition: transform $transition-default;
+    transition: transform $dur-fast $ease-out-expo;
   }
 
-  &:hover {
-    color: $color-text-primary;
-  }
+  &:hover { color: $color-text-primary; &::after { transform: scaleX(1); } }
+  &.active { color: $color-text-primary; &::after { transform: scaleX(1); } }
+}
 
-  &.active {
-    color: $color-text-primary;
+/* RIGHT — utility cluster */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 
-    &::after { transform: scaleX(1); }
-  }
+  @media (max-width: 768px) { gap: 6px; }
 }
 
 .themeToggleBtn {
@@ -96,13 +100,37 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
-  border-radius: 50%;
-  transition: all $transition-fast;
-  
+  border-radius: $radius-sm;
+  transition: color $dur-fast $ease-standard, background $dur-fast $ease-standard;
+
+  &:hover { color: $color-text-primary; background: $color-surface-hover; }
+}
+
+/* Primary CTA — accent-filled pill. */
+.ctaLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: $color-accent;
+  padding: 10px 18px;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.16);
+  transition: background $dur-fast $ease-standard, transform $dur-fast $ease-standard;
+
+  svg { transition: transform $dur-fast $ease-out-expo; }
+
   &:hover {
-    color: $color-text-primary;
-    background: $color-surface-hover;
+    background: $color-accent-hover;
+    color: #fff;
+    svg { transform: translateX(3px); }
   }
+
+  @media (max-width: 560px) { display: none; }
 }
 
 .mobileMenuBtn {
@@ -115,40 +143,56 @@
   align-items: center;
   justify-content: center;
 
-  @media (max-width: 768px) {
-    display: inline-flex;
-  }
+  @media (max-width: 900px) { display: inline-flex; }
 }
 
+/* Mobile dropdown */
 .mobileMenu {
   position: absolute;
   top: 100%;
-  left: 0;
-  right: 0;
-  // Sit above the header's scroll-progress bar so the 2px accent line
-  // never paints over the dropdown's top edge.
+  left: 0; right: 0;
   z-index: 102;
   background: $color-surface;
-  padding: $spacing-md $spacing-lg;
+  padding: 20px 24px 24px;
   border-bottom: 1px solid $color-border;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  gap: 20px;
+  box-shadow: $shadow-hover;
 
-  @media (max-width: 480px) {
-    padding: $spacing-md;
-  }
+  @media (min-width: 901px) { display: none; }
 }
 
+.mobileNav { display: flex; flex-direction: column; }
+
 .mobileNavLink {
+  position: relative;
   color: $color-text-secondary;
-  font-size: 1.1rem;
+  font-family: $font-body;
+  font-size: 17px;
   font-weight: 500;
-  padding: $spacing-sm 0;
+  padding: 15px 0;
+  border-bottom: 1px solid $color-border;
   display: block;
-  
-  &:hover, &.active {
-    color: $color-text-primary;
-  }
+
+  &:hover, &.active { color: $color-text-primary; }
+  &.active { padding-left: 0.75rem; box-shadow: inset 2px 0 0 0 $color-accent; }
+}
+
+.mobileCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  background: $color-accent;
+  border-radius: $radius-sm;
+  padding: 14px 22px;
+  width: 100%;
+
+  svg { transition: transform $dur-fast $ease-out-expo; }
+  &:hover { background: $color-accent-hover; color: #fff; svg { transform: translateX(3px); } }
 }

@@ -1,9 +1,13 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
+/* The {bs} registration mark. Header now supplies the wordmark, so the mark
+   stays compact: accent braces as punctuation, ink 'bs'. Tabular mono. */
 .logo {
   font-family: $font-mono;
-  font-size: 1.75rem;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  font-size: 1.5rem;
+  line-height: 1;
   letter-spacing: -0.02em;
   display: inline-flex;
   align-items: center;
@@ -14,22 +18,22 @@
   white-space: nowrap;
 
   @media (max-width: 768px) {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
 
   @media (max-width: 380px) {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 }
 
 .brace {
   color: $color-accent;
   font-weight: 500;
-  margin: 0 0.12em;
+  margin: 0 0.08em;
 }
 
 .brand {
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.04em;
   color: $color-text-primary;
 }

@@ -1,569 +1,471 @@
 @import '../../styles/variables';
-@import '../../styles/mixins';
 
-.pageWrapper {
+/* =============================================================
+   Contact — calm, spacious enquiry page.
+   Masthead, then a two-column body: narrative + coordinates on
+   the left, a clean modern form on the right.
+   ============================================================= */
+
+.page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+  background: $color-background;
+  color: $color-text-primary;
 }
 
-.mainContent {
-  flex-grow: 1;
+.main {
+  flex: 1 0 auto;
   position: relative;
-  z-index: 1;
 }
 
-/* Atmospheric glow */
-.glowBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Centered content column. */
+.shell {
   width: 100%;
-  height: 800px;
-  background:
-    radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.12), transparent 45%),
-    radial-gradient(circle at 20% 40%, rgba(96, 165, 250, 0.08), transparent 40%);
-  z-index: -1;
-  pointer-events: none;
-}
-
-.contactSection {
-  padding: 9rem 0 7rem;
-  flex-grow: 1;
-
-  @media (max-width: 992px) { padding: 7rem 0 5rem; }
-  @media (max-width: 768px) { padding: 5.5rem 0 4rem; }
-  @media (max-width: 480px) { padding: 4.5rem 0 3rem; }
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 0.95fr 1.1fr;
-  gap: 5rem;
-  max-width: 1200px;
+  max-width: $content-max;
   margin: 0 auto;
-  align-items: start;
-
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-    gap: 3.5rem;
-  }
+  padding: 0 $gutter;
 }
 
-/* ── Left column ─────────────────────────────── */
-.infoCol {
-  display: flex;
-  flex-direction: column;
+.section {
+  padding-top: clamp(104px, 12vh, 156px);
+  padding-bottom: clamp(72px, 9vw, 128px);
 }
 
-.eyebrow {
-  display: inline-block;
-  font-family: $font-mono;
-  color: $color-accent;
-  font-size: 0.85rem;
-  margin-bottom: 1.5rem;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
-  align-self: flex-start;
+/* =============================================================
+   Masthead
+   ============================================================= */
+.masthead {
+  max-width: 760px;
+  margin-bottom: clamp(48px, 6vw, 80px);
 }
 
-.pageTitle {
-  font-family: $font-heading;
-  font-size: 4.5rem;
-  font-weight: 700;
+.title {
+  margin: 18px 0 0;
+  font-size: clamp(40px, 5vw, 64px);
   line-height: 1.04;
-  letter-spacing: -0.045em;
-  margin-bottom: 1.25rem;
-  color: $color-text-primary;
-
-  @media (max-width: 992px) { font-size: 3.5rem; }
-  @media (max-width: 768px) { font-size: 2.75rem; }
-  @media (max-width: 480px) { font-size: 2.1rem; }
+  text-wrap: balance;
 }
 
-.gradientText {
-  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.pageSubtitle {
-  font-family: $font-primary;
-  font-size: 1.18rem;
+.lede {
+  margin: 22px 0 0;
+  font-size: clamp(19px, 1.6vw, 22px);
+  line-height: 1.5;
   color: $color-text-secondary;
-  line-height: 1.6;
-  margin-bottom: 1.75rem;
-  max-width: 480px;
-
-  @media (max-width: 768px) { font-size: 1.05rem; }
-  @media (max-width: 480px) { font-size: 0.98rem; }
+  max-width: 44ch;
 }
 
-.responsePill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  align-self: flex-start;
-  padding: 0.45rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid $color-border;
-  background: rgba(107, 203, 119, 0.06);
-  font-family: $font-heading;
-  font-size: 0.85rem;
-  color: $color-text-secondary;
-  margin-bottom: 2.75rem;
-}
-
-.responseDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: $color-status-live;
-}
-
-/* ── Channel chooser cards ───────────────────── */
-.channelStack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.channelCard {
+/* =============================================================
+   Two-column body
+   ============================================================= */
+.split {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.4rem;
-  padding: 1.1rem 1.25rem;
-  border: 1px solid $color-border;
-  background: rgba(255, 255, 255, 0.015);
-  border-radius: 14px;
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+  gap: clamp(40px, 6vw, 88px);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: clamp(40px, 8vw, 56px);
+  }
+}
+
+/* --- Left: narrative + coordinates ----------------------------------- */
+.info {
+  min-width: 0;
+  max-width: 460px;
+}
+
+.infoVisual {
   position: relative;
-
-  &:hover {
-    border-color: $color-border-focus;
-    background: rgba(59, 130, 246, 0.05);
-    transform: translateY(-2px);
-
-    .channelArrow { transform: translate(2px, -2px); color: $color-text-primary; }
-    .channelLabel { color: $color-text-primary; }
-  }
-
-  &:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 3px;
-  }
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin-top: clamp(32px, 4vw, 44px);
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: $shadow-rest;
+  overflow: hidden;
 }
 
-.channelMeta {
+.infoImg { object-fit: contain; padding: clamp(10px, 1.5vw, 20px); }
+
+.narrative {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: $color-text-secondary;
+  max-width: 42ch;
+}
+
+.coords {
+  margin: clamp(32px, 4vw, 44px) 0 0;
+}
+
+.coordRow {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid $color-border;
+
+  &:last-child { border-bottom: 1px solid $color-border; }
 }
 
-.channelLabel {
-  font-family: $font-mono;
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+.coordKey {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   color: $color-text-muted;
-  transition: color 0.25s ease;
 }
 
-.channelArrow {
-  color: $color-text-muted;
-  transition: transform 0.25s ease, color 0.25s ease;
-}
-
-.channelValue {
-  font-family: $font-heading;
-  font-size: 1.08rem;
-  font-weight: 600;
+.coordVal {
+  font-size: 15px;
   color: $color-text-primary;
-  letter-spacing: -0.01em;
+  text-align: right;
   word-break: break-word;
 }
 
-.channelHint {
-  font-family: $font-primary;
-  font-size: 0.88rem;
-  color: $color-text-muted;
+.coordLink {
+  color: $color-accent;
+  transition: color $dur-fast $ease-standard;
+  &:hover { color: $color-accent-hover; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
 }
 
-/* ── Right column — form ─────────────────────── */
+/* =============================================================
+   Right: form
+   ============================================================= */
+.formCol {
+  min-width: 0;
+}
+
+.liveRegion { min-width: 0; }
+
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 2.75rem 2.75rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-
-  @media (max-width: 768px) { padding: 2rem 1.5rem; border-radius: 18px; }
-  @media (max-width: 480px) { padding: 1.5rem 1.25rem; border-radius: 14px; }
+  gap: clamp(22px, 2.6vw, 30px);
 }
 
-.formIntro {
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 2.6vw, 28px);
+
+  @media (max-width: 560px) { grid-template-columns: 1fr; }
+}
+
+/* --- Field ----------------------------------------------------------- */
+.field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 9px;
+  min-width: 0;
 }
 
-.formStep {
-  display: inline-flex;
-  align-items: center;
-  font-family: $font-mono;
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  color: $color-accent;
-  padding: 2px 8px;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 999px;
-  align-self: flex-start;
-  background: rgba(59, 130, 246, 0.06);
-}
+.fieldWide { width: 100%; }
 
-.formStepGroup {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-top: 1.1rem;
-  margin-bottom: 0.25rem;
-}
-
-.formHeading {
-  font-family: $font-heading;
-  font-size: 1.5rem;
-  font-weight: 600;
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
   color: $color-text-primary;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin: 0.15rem 0 0;
-
-  @media (max-width: 480px) { font-size: 1.25rem; }
 }
 
-.formSubheading {
-  font-family: $font-heading;
-  font-size: 1.1rem;
-  font-weight: 600;
+.input {
+  width: 100%;
+  padding: 13px 15px;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
   color: $color-text-primary;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
-.formCaption {
-  font-family: $font-primary;
-  font-size: 0.92rem;
-  color: $color-text-muted;
+  font-family: $font-body;
+  font-size: 16px;
   line-height: 1.5;
-  margin: 0;
-}
+  transition: border-color $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard;
 
-.textarea {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1rem 1.1rem;
-  color: $color-text-primary;
-  font-family: inherit;
-  font-size: 1rem;
-  line-height: 1.55;
-  resize: vertical;
-  min-height: 160px;
-  transition: border-color 0.2s, background 0.2s;
+  &::placeholder { color: $color-text-muted; }
+
+  &:hover { border-color: $color-border-focus; }
 
   &:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(59, 130, 246, 0.5);
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px $accent-soft;
   }
-
-  &::placeholder {
-    color: $color-text-muted;
-    opacity: 0.7;
-  }
-
-  @media (max-width: 480px) { font-size: 16px; padding: 0.85rem 0.95rem; }
 }
 
-/* ── Service picker chips ────────────────────── */
-.servicePicker {
+.textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+/* Error — accent-free ink treatment, message always visible. */
+.field[data-error='true'] .input,
+.segmentField[data-error='true'] .segments {
+  border-color: $color-text-primary;
+}
+
+.fieldError {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: $color-text-primary;
+
+  span { font-weight: 700; }
+}
+
+/* --- Engagement radiogroup ------------------------------------------- */
+.segmentField {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.segments {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem;
+  gap: 10px;
+  border: 0;
 
-  @media (max-width: 540px) { grid-template-columns: 1fr; }
+  &:focus { outline: none; }
+
+  @media (max-width: 380px) { grid-template-columns: 1fr; }
 }
 
-.serviceChip {
-  display: inline-flex;
+.segment {
+  display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
+  padding: 13px 16px;
+  min-height: 46px;
+  background: $color-surface;
   border: 1px solid $color-border;
-  background: rgba(255, 255, 255, 0.015);
-  color: $color-text-secondary;
-  font-family: $font-heading;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: -0.005em;
+  border-radius: $radius-sm;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s ease;
   text-align: left;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $color-text-secondary;
+  transition: color $dur-fast $ease-standard, border-color $dur-fast $ease-standard,
+    background $dur-fast $ease-standard, box-shadow $dur-fast $ease-standard;
 
   &:hover {
     border-color: $color-border-focus;
     color: $color-text-primary;
-    transform: translateY(-1px);
   }
 
   &:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 3px;
-  }
-}
-
-.serviceChipActive {
-  border-color: rgba(59, 130, 246, 0.7);
-  background: rgba(59, 130, 246, 0.1);
-  color: $color-text-primary;
-}
-
-.serviceLetter {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  font-family: $font-heading;
-  font-weight: 700;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  color: $color-text-primary;
-}
-
-.serviceChipActive .serviceLetter {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: #09090b;
-}
-
-.serviceCheck {
-  margin-left: auto;
-  color: #3b82f6;
-}
-
-/* ── Identity grid ───────────────────────────── */
-.identityGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.85rem;
-
-  @media (max-width: 540px) { grid-template-columns: 1fr; }
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-
-  input {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 0.85rem 1rem;
-    color: $color-text-primary;
-    font-family: inherit;
-    font-size: 1rem;
-    transition: border-color 0.2s, background 0.2s;
     outline: none;
-    width: 100%;
-
-    &:focus {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(59, 130, 246, 0.5);
-    }
-
-    &::placeholder { color: $color-text-muted; opacity: 0.7; }
-
-    @media (max-width: 480px) { font-size: 16px; padding: 0.75rem 0.9rem; }
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px $accent-soft;
   }
 }
 
-.fieldLabel {
-  font-family: $font-mono;
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: $color-text-muted;
+.segment[data-active='true'] {
+  color: $color-accent;
+  border-color: $color-accent;
+  background: $accent-soft;
 }
 
-/* ── Submit + footnote ───────────────────────── */
+/* =============================================================
+   Submit — the single accent primary action
+   ============================================================= */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
 .submitBtn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  background: $color-text-primary;
-  color: $color-background;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  font-family: $font-heading;
-  font-weight: 600;
-  font-size: 1rem;
+  gap: 8px;
+  padding: 15px 24px;
+  background: $color-accent;
+  color: #fff;
+  border: 1px solid $color-accent;
+  border-radius: $radius-sm;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.16);
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 500;
   letter-spacing: -0.01em;
-  border: 0;
+  line-height: 1;
   cursor: pointer;
-  margin-top: 0.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  transition: background $dur-fast $ease-standard, transform $dur-fast $ease-standard,
+    box-shadow $dur-fast $ease-standard;
 
-  svg { transition: transform 0.2s ease; }
+  .submitArrow { transition: transform $dur-fast $ease-standard; }
 
   &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 36px rgba(59, 130, 246, 0.25);
-
-    svg { transform: translateX(3px); }
+    background: $color-accent-hover;
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+    .submitArrow { transform: translateX(3px); }
   }
 
+  &:active:not(:disabled) { transform: translateY(0); }
+
   &:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid $color-accent;
     outline-offset: 3px;
   }
 
   &:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-
-  &.loading {
-    opacity: 0.7;
+    opacity: 0.6;
+    cursor: progress;
   }
 }
 
-.formError {
-  font-family: $font-primary;
-  font-size: 0.92rem;
-  color: #ff8a8a;
-  background: rgba(255, 107, 107, 0.08);
-  border: 1px solid rgba(255, 107, 107, 0.25);
-  border-radius: 10px;
-  padding: 0.75rem 0.9rem;
+.submitError {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1.5;
+  color: $color-text-primary;
+  max-width: 52ch;
 
-  a {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  > span { font-weight: 700; }
+}
 
-    &:hover { color: #fff; }
+.errorLink {
+  color: $color-accent;
+  border-bottom: 1px solid $color-accent;
+
+  &:hover { color: $color-accent-hover; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 3px;
+    border-radius: 2px;
   }
 }
 
-.formFootnote {
-  font-family: $font-primary;
-  font-size: 0.82rem;
-  color: $color-text-muted;
-  margin: 0.25rem 0 0;
-  text-align: center;
-}
-
-/* ── Modal ──────────────────────────────────── */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.78);
-  backdrop-filter: blur(10px);
+/* =============================================================
+   In-place confirmation — calm card
+   ============================================================= */
+.receipt {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(28px, 3vw, 40px);
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-rest;
 }
 
-.modalContent {
-  background: rgba(20, 20, 22, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
-  padding: 2.75rem 2.5rem;
-  text-align: center;
-  max-width: 460px;
-  width: 100%;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, transparent 65%);
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  > * { position: relative; z-index: 1; }
-
-  @media (max-width: 480px) { padding: 2rem 1.5rem; border-radius: 16px; }
-}
-
-.modalIcon {
+.receiptMark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  margin: 0 auto 1.25rem;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.25));
-  color: $color-text-primary;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: $accent-soft;
+  color: $color-accent;
+  margin-bottom: 20px;
 }
 
-.modalTitle {
-  font-family: $font-heading;
-  font-size: 1.85rem;
-  color: $color-text-primary;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-
-  @media (max-width: 480px) { font-size: 1.4rem; }
+.receiptHead {
+  margin: 0 0 10px;
+  font-size: clamp(22px, 2.2vw, 26px);
 }
 
-.modalText {
-  color: $color-text-secondary;
-  font-size: 1.02rem;
+.receiptBody {
+  margin: 0;
+  font-size: 16px;
   line-height: 1.55;
-  margin-bottom: 1.75rem;
-
-  @media (max-width: 480px) { font-size: 0.92rem; }
+  color: $color-text-secondary;
+  max-width: 46ch;
 }
 
-.modalBtn {
-  background: transparent;
-  color: $color-text-primary;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 0.6rem 1.5rem;
-  border-radius: 10px;
-  font-family: $font-heading;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+.receiptMeta {
+  margin: 24px 0 0;
+  width: 100%;
+  max-width: 380px;
+}
 
-  &:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.3); }
+.receiptMetaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding: 14px 0;
+  border-top: 1px solid $color-border;
+
+  &:last-child { border-bottom: 1px solid $color-border; }
+
+  dt {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: $color-text-muted;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 14px;
+    color: $color-text-primary;
+    text-align: right;
+  }
+}
+
+.sendAnother {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 24px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 500;
+  color: $color-text-primary;
+  transition: color $dur-fast $ease-standard;
+
+  svg { color: $color-accent; transition: transform $dur-fast $ease-standard; }
+
+  &:hover {
+    color: $color-accent;
+    svg { transform: translateX(3px); }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* =============================================================
+   Reduced motion — kill transforms/transitions
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .segment,
+  .submitBtn,
+  .submitArrow,
+  .coordLink,
+  .sendAnother,
+  .sendAnother svg {
+    transition: none;
+  }
+
+  .submitBtn:hover:not(:disabled) { transform: none; }
+  .submitBtn:hover:not(:disabled) .submitArrow { transform: none; }
+  .sendAnother:hover svg { transform: none; }
 }

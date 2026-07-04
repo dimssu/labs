@@ -9,7 +9,7 @@ import {
 } from '@/lib/seo/jsonLd';
 
 export const metadata: Metadata = {
-  title: 'Portfolio — Production AI & Software Projects',
+  title: 'Portfolio, Production AI & Software Projects',
   description:
     'Explore BuildspaceLabs\' portfolio: AI clinical notes, fleet management, EV charging, lease management, web scraping APIs, edge AI engines and more. All live. All in production.',
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: '/portfolio' },
   openGraph: {
-    title: 'Portfolio — BuildspaceLabs',
+    title: 'Portfolio, BuildspaceLabs',
     description:
       'Production AI and software projects across healthcare, logistics, real estate, government and more.',
     url: `${SITE_URL}/portfolio`,

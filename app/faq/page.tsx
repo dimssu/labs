@@ -9,21 +9,21 @@ import {
 } from '@/lib/seo/jsonLd';
 
 export const metadata: Metadata = {
-  title: 'FAQ — Frequently Asked Questions',
+  title: 'FAQ, Frequently Asked Questions',
   description:
-    'Answers to common questions about BuildspaceLabs: what we do, AI automation capabilities, pricing, timelines, and how to work with us. AI agents from $1,200. MVPs in 4-6 weeks.',
+    'Answers to common questions about BuildspaceLabs: what we do, AI automation capabilities, engagement timelines, and how to work with us.',
   keywords: [
     'BuildspaceLabs FAQ',
-    'AI agent pricing',
-    'AI development cost',
+    'AI agent development',
+    'AI engagement timeline',
     'MVP timeline',
     'AI automation questions',
   ],
   alternates: { canonical: '/faq' },
   openGraph: {
-    title: 'FAQ — BuildspaceLabs',
+    title: 'FAQ, BuildspaceLabs',
     description:
-      'Answers to questions about BuildspaceLabs services, pricing, timelines, AI capabilities, and engagement models.',
+      'Answers to questions about BuildspaceLabs services, timelines, AI capabilities, and engagement models.',
     url: `${SITE_URL}/faq`,
     type: 'website',
   },

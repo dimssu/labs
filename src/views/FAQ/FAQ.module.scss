@@ -1,439 +1,144 @@
 @import '../../styles/variables';
-@import '../../styles/mixins';
 
-.pageWrapper {
+/* =============================================================
+   FAQ — calm, institutional datasheet.
+   Masthead → hairline-separated category accordions → close CTA.
+   One blue accent, generous whitespace, big clear type.
+   ============================================================= */
+
+.page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+  background: $color-background;
+  color: $color-text-primary;
 }
 
-.mainContent {
-  flex-grow: 1;
-  position: relative;
-  z-index: 1;
-}
-
-/* Atmospheric Glow for background */
-.glowBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Centered content column inside full-bleed section backgrounds. */
+.shell {
   width: 100%;
-  height: 600px;
-  background: radial-gradient(circle at 10% 0%, rgba($color-accent, 0.15), transparent 40%),
-              radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.1), transparent 40%);
-  z-index: -1;
-  pointer-events: none;
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: 0 $gutter;
 }
 
-.headerSection {
-  padding: 12rem 0 6rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+/* =============================================================
+   Masthead
+   ============================================================= */
+.masthead {
+  padding-top: clamp(104px, 12vh, 156px);
+  padding-bottom: clamp(48px, 6vw, 80px);
+}
+
+.mastGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(40px, 5vw, 72px);
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; gap: 40px; }
+}
+
+.mastInner {
+  max-width: 620px;
+}
+
+.mastVisual {
   position: relative;
-
-  @media (max-width: 992px) {
-    padding: 9rem 0 4rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 7rem 0 3rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 5.5rem 0 2.5rem;
-  }
-}
-
-.heroContent {
-  max-width: 800px;
-}
-
-.eyebrow {
-  display: inline-block;
-  font-family: $font-mono;
-  color: $color-accent;
-  font-size: 0.85rem;
-  margin-bottom: 1.5rem;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
-}
-
-.pageTitle {
-  font-size: 4.5rem;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  margin-bottom: $spacing-lg;
-  color: $color-text-primary;
-
-  @media (max-width: 992px) {
-    font-size: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2.75rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2.1rem;
-  }
-}
-
-.titleHighlight {
-  background: linear-gradient(135deg, $color-text-primary 0%, $color-accent 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.pageSubtitle {
-  font-size: 1.2rem;
-  color: $color-text-secondary;
-  max-width: 600px;
-  line-height: 1.6;
-  margin-bottom: 2.5rem;
-
-  @media (max-width: 768px) {
-    font-size: 1.05rem;
-    margin-bottom: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.95rem;
-  }
-}
-
-/* ── Search + jump nav row ─────────────────────── */
-.searchRow {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 720px;
-}
-
-.searchField {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid $color-border;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.02);
-  transition: border-color 0.2s, background 0.2s;
-
-  &:focus-within {
-    border-color: $color-border-focus;
-    background: rgba(59, 130, 246, 0.04);
-  }
-
-  input {
-    flex: 1;
-    background: transparent;
-    border: 0;
-    outline: 0;
-    color: $color-text-primary;
-    font-family: $font-primary;
-    font-size: 1rem;
-    padding: 0;
-    min-width: 0;
-
-    &::placeholder { color: $color-text-muted; }
-  }
-}
-
-.searchIcon {
-  color: $color-text-muted;
-  flex-shrink: 0;
-}
-
-.searchClear {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 0;
-  background: rgba(255, 255, 255, 0.06);
-  color: $color-text-muted;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-
-  &:hover { background: rgba(255, 255, 255, 0.12); color: $color-text-primary; }
-}
-
-.jumpNav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.jumpPill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid $color-border;
-  background: rgba(255, 255, 255, 0.02);
-  color: $color-text-secondary;
-  font-family: $font-heading;
-  font-size: 0.88rem;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  text-decoration: none;
-  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s ease;
-
-  &:hover {
-    color: $color-text-primary;
-    border-color: $color-border-focus;
-    transform: translateY(-1px);
-  }
-}
-
-.jumpPillActive {
-  color: $color-text-primary;
-  border-color: rgba(59, 130, 246, 0.6);
-  background: rgba(59, 130, 246, 0.08);
-}
-
-.jumpCount {
-  font-family: $font-mono;
-  font-size: 0.72rem;
-  color: $color-text-muted;
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.searchSummary {
-  font-family: $font-mono;
-  font-size: 0.85rem;
-  color: $color-text-muted;
-  margin: 0;
-}
-
-/* Advanced Grid Layout for FAQ */
-.faqSection {
-  padding: 8rem 0;
-
-  @media (max-width: 992px) {
-    padding: 5rem 0;
-  }
-
-  @media (max-width: 768px) {
-    padding: 3.5rem 0;
-  }
-
-  @media (max-width: 480px) {
-    padding: 2.5rem 0;
-  }
-}
-
-.faqWrapper {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.categoryBlock {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 4rem;
-  padding-top: 5rem;
-  scroll-margin-top: 6rem;
-  align-items: start;
-
-  & + & {
-    border-top: 1px solid $color-border;
-  }
-
-  &:last-child { margin-bottom: 0; }
-
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    padding-top: 3rem;
-  }
-}
-
-.categoryHeader {
-  position: sticky;
-  top: 120px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-
-  @media (max-width: 992px) { position: static; }
-}
-
-.categoryNumber {
-  display: inline-block;
-  font-family: $font-mono;
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  color: $color-accent;
-  margin-bottom: 0.25rem;
-  opacity: 0.85;
-}
-
-.categoryTitle {
-  font-family: $font-heading;
-  font-size: 2.25rem;
-  color: $color-text-primary;
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-  margin: 0;
-
-  @media (max-width: 768px) { font-size: 1.75rem; }
-  @media (max-width: 480px) { font-size: 1.4rem; }
-}
-
-.categoryDesc {
-  color: $color-text-secondary;
-  font-size: 1.05rem;
-  line-height: 1.55;
-  margin: 0;
-
-  @media (max-width: 480px) { font-size: 0.95rem; }
-}
-
-.categoryCount {
-  font-family: $font-mono;
-  font-size: 0.78rem;
-  color: $color-text-muted;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding-top: 0.5rem;
-  border-top: 1px dashed $color-border;
-}
-
-.accordionGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 5rem 2rem;
-  text-align: center;
-  color: $color-text-secondary;
-
-  p { font-size: 1.1rem; }
-}
-
-.emptyEmail {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-family: $font-mono;
-  font-size: 0.95rem;
-  color: $color-text-primary;
-  text-decoration: none;
-  border-bottom: 1px solid $color-border;
-  padding: 0.4rem 0;
-  transition: border-color 0.2s, color 0.2s;
-
-  &:hover { border-color: $color-text-primary; }
-}
-
-/* Contact CTA */
-.contactSection {
-  padding: 5rem 0 8rem;
-
-  @media (max-width: 768px) {
-    padding: 3rem 0 5rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 2rem 0 3rem;
-  }
-}
-
-.contactBox {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 2.5rem 2.5rem;
-  max-width: 800px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2rem;
-  align-items: center;
-  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: $radius-lg;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  box-shadow: $shadow-rest;
   overflow: hidden;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    padding: 2rem 1.5rem;
-    border-radius: 16px;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -60%;
-    right: -10%;
-    width: 420px;
-    height: 420px;
-    background: radial-gradient(circle, rgba($color-accent, 0.10) 0%, transparent 60%);
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  > * { position: relative; z-index: 1; }
+  @media (max-width: 900px) { max-width: 460px; }
 }
 
-.contactTitle {
-  font-family: $font-heading;
-  font-size: 1.5rem;
-  color: $color-text-primary;
-  margin-bottom: 0.4rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+.mastImg { object-fit: contain; padding: clamp(10px, 1.5vw, 20px); }
 
-  @media (max-width: 480px) { font-size: 1.25rem; }
+.mastTitle {
+  margin: 20px 0 0;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.04;
+  text-wrap: balance;
 }
 
-.contactSub {
-  color: $color-text-secondary;
-  font-size: 1rem;
+.mastLede {
+  margin: 24px 0 0;
+  font-size: clamp(19px, 1.6vw, 22px);
   line-height: 1.5;
-  margin: 0;
-
-  @media (max-width: 480px) { font-size: 0.92rem; }
+  color: $color-text-secondary;
+  max-width: 48ch;
 }
 
-.contactBtn {
-  display: inline-flex;
+.mastActions {
+  display: flex;
   align-items: center;
-  gap: 0.55rem;
-  font-family: $font-mono;
-  font-size: 0.95rem;
-  color: $color-text-primary;
-  text-decoration: none;
-  border: 1px solid $color-border;
-  padding: 0.75rem 1.1rem;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  white-space: nowrap;
-  transition: border-color 0.2s, background 0.2s, transform 0.2s ease;
+  gap: 20px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
 
-  &:hover {
-    border-color: $color-border-focus;
-    background: rgba(59, 130, 246, 0.06);
-    transform: translateY(-1px);
-  }
+/* =============================================================
+   Category blocks
+   ============================================================= */
+.section {
+  padding: clamp(32px, 4vw, 56px) 0 $section-pad;
+}
 
-  @media (max-width: 768px) { width: 100%; justify-content: center; }
+.cats {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(56px, 7vw, 96px);
+}
+
+.catBlock {
+  scroll-margin-top: 104px;
+}
+
+.catHead {
+  max-width: 720px;
+  margin-bottom: clamp(28px, 3.5vw, 44px);
+}
+
+.catTitle {
+  margin: 16px 0 0;
+  font-size: clamp(24px, 2.8vw, 36px);
+  line-height: 1.14;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* Accordion rows carry their own hairline bottom border; this top hairline
+   closes the datasheet block above the first row. */
+.rows {
+  border-top: 1px solid $color-border;
+}
+
+/* =============================================================
+   Close / contact — full-bleed tonal band
+   ============================================================= */
+.close {
+  background: $color-surface-alt;
+  border-block: 1px solid $color-border;
+  padding: $section-pad 0;
+}
+
+.closeInner {
+  max-width: 560px;
+}
+
+.closeTitle {
+  margin: 18px 0 0;
+  text-wrap: balance;
+}
+
+.closeLede {
+  margin: 20px 0 32px;
+  font-size: clamp(18px, 1.4vw, 21px);
+  line-height: 1.5;
+  color: $color-text-secondary;
+  max-width: 46ch;
 }
