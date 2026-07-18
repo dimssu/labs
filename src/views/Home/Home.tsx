@@ -397,6 +397,21 @@ const STUDIOS: Studio[] = [
     ],
   },
   {
+    key: 'rep',
+    tag: 'Fitness & wellness',
+    title: 'A dedicated studio for gyms & fitness brands',
+    lede: 'The Rep Studio is our specialist studio for fitness & wellness brands — fast, high-energy websites for gyms, studios, boxes and wellness clubs that fill classes and sell memberships.',
+    href: 'https://buildpacelabs.github.io/the-rep-studio/',
+    cta: 'Visit The Rep Studio',
+    img: '/media/the-rep-studio.jpg',
+    imgAlt: 'The Rep Studio — a grid of gym and fitness-studio websites hand-built by BuildspaceLabs',
+    stats: [
+      { n: 20, l: 'brands built' },
+      { n: 100, suffix: '%', l: 'hand-built' },
+      { n: 0, l: 'templates used' },
+    ],
+  },
+  {
     key: 'travel',
     tag: 'Travel & tourism',
     title: 'A dedicated studio for travel & tourism',
