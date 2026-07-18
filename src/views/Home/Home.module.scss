@@ -502,6 +502,23 @@
   @media (max-width: 940px) { grid-template-columns: 1fr; gap: 28px; }
 }
 
+.studioList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 32px);
+}
+
+.studioCardAlt {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  .studioText { order: 2; }
+  .studioShot { order: 1; }
+  @media (max-width: 940px) {
+    grid-template-columns: 1fr;
+    .studioText { order: 1; }
+    .studioShot { order: 2; }
+  }
+}
+
 .studioText { min-width: 0; }
 
 .studioTitle {

@@ -366,60 +366,104 @@ function SelectedWork() {
   );
 }
 
-/* Specialist-studio spotlight — advertises Atelier, our travel & tourism studio.
-   The screenshot is a live capture of the real site; the number is its own proof. */
-function TravelStudio() {
+/* Specialist studios — web studios that each hand-build sites for one industry.
+   Screenshots are live captures of the real hubs; the numbers are their own proof. */
+type Studio = {
+  key: string;
+  tag: string;
+  title: string;
+  lede: string;
+  href: string;
+  cta: string;
+  img: string;
+  imgAlt: string;
+  stats: Array<{ n: number; suffix?: string; l: string }>;
+};
+
+const STUDIOS: Studio[] = [
+  {
+    key: 'pass',
+    tag: 'Food & beverage',
+    title: 'A dedicated studio for cafés & restaurants',
+    lede: 'The Pass Studio is our specialist studio for food & beverage brands — fast, appetite-driving websites for cafés, restaurants, bars and bakeries, each one hand-built from scratch.',
+    href: 'https://buildpacelabs.github.io/the-pass-studio/',
+    cta: 'Visit The Pass Studio',
+    img: '/media/the-pass-studio.jpg',
+    imgAlt: 'The Pass Studio — a grid of café and restaurant websites hand-built by BuildspaceLabs',
+    stats: [
+      { n: 20, l: 'brands built' },
+      { n: 100, suffix: '%', l: 'hand-built' },
+      { n: 0, l: 'templates used' },
+    ],
+  },
+  {
+    key: 'travel',
+    tag: 'Travel & tourism',
+    title: 'A dedicated studio for travel & tourism',
+    lede: 'Atelier is our specialist studio for travel and tourism brands — cinematic websites engineered for speed and direct bookings.',
+    href: 'https://atelier-travel-studio.buildspacelabs.com/',
+    cta: 'Visit Atelier Travel Studio',
+    img: '/media/atelier-travel.webp',
+    imgAlt: 'Atelier Travel Studio — a cinematic travel-agency website designed and built by BuildspaceLabs',
+    stats: [
+      { n: 29, l: 'brands transformed' },
+      { n: 21, suffix: '+', l: 'regions of India' },
+      { n: 100, suffix: '%', l: 'hand-built' },
+    ],
+  },
+];
+
+function Studios() {
   return (
-    <section className={styles.studio} aria-labelledby="studio-title">
+    <section className={styles.studio} aria-labelledby="studios-title">
       <div className={styles.shell}>
-        <Reveal>
-          <a
-            className={styles.studioCard}
-            href="https://atelier-travel-studio.buildspacelabs.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className={styles.studioText}>
-              <Eyebrow>Specialist studio</Eyebrow>
-              <h2 id="studio-title" className={styles.studioTitle}>
-                A dedicated studio for travel &amp; tourism
-              </h2>
-              <p className={styles.studioLede}>
-                Atelier is our specialist studio for travel and tourism brands —
-                cinematic websites engineered for speed and direct bookings.
-              </p>
-              <ul className={styles.studioStats}>
-                <li>
-                  <CountUp end={29} className={cx(styles.studioStatN, 'tnum')} />
-                  <span className={styles.studioStatL}>brands transformed</span>
-                </li>
-                <li>
-                  <CountUp end={21} suffix="+" className={cx(styles.studioStatN, 'tnum')} />
-                  <span className={styles.studioStatL}>regions of India</span>
-                </li>
-                <li>
-                  <CountUp end={100} suffix="%" className={cx(styles.studioStatN, 'tnum')} />
-                  <span className={styles.studioStatL}>hand-built</span>
-                </li>
-              </ul>
-              <span className={styles.studioCta}>
-                Visit Atelier Travel Studio
-                <ArrowUpRight size={17} strokeWidth={2} aria-hidden="true" />
-              </span>
-            </div>
-            <div className={styles.studioShot}>
-              <span className={styles.studioShotFrame}>
-                <Image
-                  src="/media/atelier-travel.webp"
-                  alt="Atelier Travel Studio — a cinematic travel-agency website designed and built by BuildspaceLabs"
-                  fill
-                  sizes="(max-width: 940px) 92vw, 560px"
-                  className={styles.studioImg}
-                />
-              </span>
-            </div>
-          </a>
-        </Reveal>
+        <SectionHead
+          id="studios-title"
+          eyebrow="Specialist studios"
+          title="Studios built for one industry each"
+          standfirst="Alongside our product work, we run specialist web studios — each hand-builds fast, distinctive sites for a single industry, with its own body of live work."
+        />
+        <div className={styles.studioList}>
+          {STUDIOS.map((s, i) => (
+            <Reveal key={s.key}>
+              <a
+                className={cx(styles.studioCard, i % 2 === 1 && styles.studioCardAlt)}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className={styles.studioText}>
+                  <Eyebrow>{s.tag}</Eyebrow>
+                  <h3 className={styles.studioTitle}>{s.title}</h3>
+                  <p className={styles.studioLede}>{s.lede}</p>
+                  <ul className={styles.studioStats}>
+                    {s.stats.map((st) => (
+                      <li key={st.l}>
+                        <CountUp end={st.n} suffix={st.suffix} className={cx(styles.studioStatN, 'tnum')} />
+                        <span className={styles.studioStatL}>{st.l}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <span className={styles.studioCta}>
+                    {s.cta}
+                    <ArrowUpRight size={17} strokeWidth={2} aria-hidden="true" />
+                  </span>
+                </div>
+                <div className={styles.studioShot}>
+                  <span className={styles.studioShotFrame}>
+                    <Image
+                      src={s.img}
+                      alt={s.imgAlt}
+                      fill
+                      sizes="(max-width: 940px) 92vw, 560px"
+                      className={styles.studioImg}
+                    />
+                  </span>
+                </div>
+              </a>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -525,7 +569,7 @@ export default function Home() {
         <Engagements />
         <Industries />
         <SelectedWork />
-        <TravelStudio />
+        <Studios />
         <Operate />
         <Close />
       </main>
