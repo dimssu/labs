@@ -412,6 +412,21 @@ const STUDIOS: Studio[] = [
     ],
   },
   {
+    key: 'close',
+    tag: 'Real estate',
+    title: 'A dedicated studio for property brands',
+    lede: 'The Close Studio is our specialist studio for real-estate brands — fast, trust-building websites for brokerages, developers and property companies that turn browsers into site visits.',
+    href: 'https://buildpacelabs.github.io/the-close-studio/',
+    cta: 'Visit The Close Studio',
+    img: '/media/the-close-studio.jpg',
+    imgAlt: 'The Close Studio — a grid of real-estate brokerage and developer websites hand-built by BuildspaceLabs',
+    stats: [
+      { n: 20, l: 'brands built' },
+      { n: 100, suffix: '%', l: 'hand-built' },
+      { n: 0, l: 'templates used' },
+    ],
+  },
+  {
     key: 'travel',
     tag: 'Travel & tourism',
     title: 'A dedicated studio for travel & tourism',
